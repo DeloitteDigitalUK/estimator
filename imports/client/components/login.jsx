@@ -105,7 +105,7 @@ export class Login extends Component {
 export class ResetPassword extends Component {
 
     static propTypes = {
-        params: PropTypes.object,
+        match: PropTypes.object,
         history: PropTypes.object
     }
 
@@ -160,7 +160,7 @@ export class ResetPassword extends Component {
 
         const history = this.props.history;
 
-        Accounts.resetPassword(this.props.params.token, this.state.password, err => {
+        Accounts.resetPassword(this.props.match.params.token, this.state.password, err => {
             if (err) {
                 this.setState({ invalid: false, error: true });
             } else {
@@ -174,7 +174,7 @@ export class ResetPassword extends Component {
 export class EnrollAccount extends Component {
 
     static propTypes = {
-        params: PropTypes.object,
+        match: PropTypes.object,
         history: PropTypes.object
     }
 
@@ -211,7 +211,7 @@ export class EnrollAccount extends Component {
                         <FormControl type="password" required placeholder="Confirm Password" value={confirmPassword} onChange={this.handleChange.bind(this, 'confirmPassword')} />
                     </FormGroup>
 
-                    <Button bsStyle="primary" block type="submit">Reset</Button>
+                    <Button bsStyle="primary" block type="submit">Confirm</Button>
                 </form>
             </div >
         );
@@ -229,7 +229,7 @@ export class EnrollAccount extends Component {
 
         const history = this.props.history;
 
-        Accounts.resetPassword(this.props.params.token, this.state.password, err => {
+        Accounts.resetPassword(this.props.match.params.token, this.state.password, err => {
             if (err) {
                 this.setState({ invalid: false, error: true });
             } else {
