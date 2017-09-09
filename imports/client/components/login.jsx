@@ -35,6 +35,8 @@ export class Login extends Component {
             <div className="container">
                 <form className="form-signin" onSubmit={this.onSubmit.bind(this)}>
 
+                    <h2 className="form-signin-heading">Log in</h2>
+
                     {this.state.sent ? <Alert bsStyle="info">Please check your email</Alert> : ''}
                     {this.state.invalid ? <Alert bsStyle="danger">Please enter email and password</Alert> : ''}
                     {this.state.emailRequired ? <Alert bsStyle="danger">Please enter your email address first.</Alert> : ''}

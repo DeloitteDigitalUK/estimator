@@ -31,7 +31,7 @@ const App = ({ loadingUsers, loadingProjects, loggingIn, user, projects }) => {
     return (
         <BrowserRouter>
             <div>
-                <Route path="/" component={TopNav} />
+                {isLoggedIn ? <Route path="/" component={TopNav} /> : null}
                 <div className="container">
                     <Switch>
                         
