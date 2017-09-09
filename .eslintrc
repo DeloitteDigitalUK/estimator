@@ -1,0 +1,36 @@
+{
+  "parser": "babel-eslint",
+  "rules": {
+      "no-undef": 1,
+      "no-unused-vars": [1, {"vars": "all", "args": "none"}],
+      "react/display-name": 1,
+      "react/jsx-boolean-value": 1,
+      "react/jsx-curly-spacing": 1,
+      "react/jsx-no-duplicate-props": 1,
+      "react/jsx-no-undef": 1,
+      "react/jsx-uses-react": 1,
+      "react/jsx-uses-vars": 1,
+      "react/no-danger": 1,
+      "react/no-did-update-set-state": 1,
+      "react/no-unknown-property": 1,
+      "react/react-in-jsx-scope": 1,
+      "react/self-closing-comp": 1,
+      "no-var": 1
+  },
+  "ecmaFeatures": {
+      "jsx": true,
+      "modules": true
+  },
+  "env": {
+      "browser": true
+  },
+  "plugins": [
+      "react"
+  ],
+  "globals" : {
+      "describe": false,
+      "it": false,
+      "ArrayBuffer": false,
+      "Uint8Array": false
+  },
+}

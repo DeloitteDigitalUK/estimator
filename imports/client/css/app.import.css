@@ -1,0 +1,162 @@
+body {
+    padding-top: 50px;
+}
+
+
+/*
+ * Please wait view
+ */
+
+.please-wait .modal {
+    position: inherit;
+}
+
+/*
+ * Login page
+ */
+
+.form-signin {
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
+
+
+.form-signin .form-signin-heading {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-signin .form-control {
+    position: relative;
+    /*height: auto;*/
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.form-signin .form-control:focus {
+    z-index: 2;
+}
+
+.form-signin .form-group {
+    margin-bottom: 5px;
+}
+
+.form-signin select {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.form-signin .form-group {
+    margin-top: 10px;
+    text-align: right;
+}
+
+/*
+ * Home page
+ */
+
+.home-page {
+    padding-top: 20px;
+}
+
+.project-list {
+    padding-left: 0;
+}
+
+.project-list li {
+    list-style: none;
+    float: left;
+    margin: 10px 10px 0 0;
+    width: 220px;
+    height: 105px;
+}
+
+.project-list > li > a {
+    width: 220px;
+    height: 105px;
+    display: block;
+    padding-bottom: 10px;
+    text-align: left;
+    overflow: hidden;
+}
+
+.project-list > li > a > span {
+    padding: 0 0 5px 0;
+    display: inline-block;
+    text-align: left;
+    white-space: normal;
+}
+
+.project-list > li > a > span > i {
+    margin-right: 5px;
+}
+
+.project-list > li > a > small {
+    display: block;
+    text-align: left;
+    white-space: normal;
+}
+
+/*
+ * Project CRUD
+ */
+
+.date-input input {
+    max-width: 150px;
+}
+
+.data-table {
+    width: 100%;
+}
+.data-table.large-table {
+    height: 400px;
+    overflow: hidden;
+}
+
+/*
+ * Handsontable
+ */
+
+.handsontableInputHolder {
+    z-index: 105;
+}
+
+.modal-content .autocompleteEditor {
+    width: auto !important; /* horrible hack to work around drop-down table being cut off */
+}
+
+.handsontable td.htInvalid {
+    background-color: #c9302c !important;
+}
+
+/* special day shading */
+.handsontable td.specialDay-weekend {
+    background-color: #eee;
+}
+.handsontable td.specialDay-holiday {
+    background-color: #eee;
+}
+.handsontable td.specialDay-marker {
+    background-color: #fcf8e3;
+}
+
+/*
+ * User admin page
+ */
+
+.accounts-search {
+    margin-top: 50px;
+}
+
+/*
+ * Confirm/delete modals
+ */
+
+.full-screen-confirm .modal {
+    position: inherit;
+}
