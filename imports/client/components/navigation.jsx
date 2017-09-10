@@ -9,6 +9,7 @@ import { Navbar, Nav, NavDropdown, MenuItem } from 'react-bootstrap';
 import { Switch, Route } from 'react-router';
 import { Link } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
+import { PrivateRoute } from './routing';
 
 import { HomeNav } from './home';
 
@@ -21,8 +22,8 @@ export default class Navigation extends Component {
     render() {
 
         const user = Meteor.user(),
-              isLoggedIn = user !== null,
-              isAdmin = isLoggedIn? Roles.userIsInRole(user, ['admin']) : false;
+              isAuthenticated = user !== null,
+              isAdmin = isAuthenticated? Roles.userIsInRole(user, ['admin']) : false;
 
         return (
             <Navbar inverse fixedTop>
@@ -33,14 +34,14 @@ export default class Navigation extends Component {
                 <Navbar.Collapse>
 
                     <Switch>
-                        <Route exact path="/" component={HomeNav} />
+                        <PrivateRoute isAuthenticated={isAuthenticated}  exact path="/" component={HomeNav} />
                     </Switch>
 
                     <Nav navbar pullRight>
                         <NavDropdown id="user-menu-dropdown" ref="userMenu" title={user ? user.username : 'Not logged in'}>
                             {isAdmin ? <LinkContainer to="/admin/users"><MenuItem>Manage users</MenuItem></LinkContainer> : null}
-                            {isLoggedIn ? <LinkContainer to="/change-password"><MenuItem>Change password</MenuItem></LinkContainer> : null}
-                            {isLoggedIn ? <MenuItem onClick={this.logout.bind(this)}>Log out</MenuItem> : null}
+                            {isAuthenticated ? <LinkContainer to="/change-password"><MenuItem>Change password</MenuItem></LinkContainer> : null}
+                            {isAuthenticated ? <MenuItem onClick={this.logout.bind(this)}>Log out</MenuItem> : null}
                         </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>

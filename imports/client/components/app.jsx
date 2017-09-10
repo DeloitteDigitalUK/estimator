@@ -2,8 +2,9 @@ import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 
 import React from 'react';
-import { Route, Switch, Redirect } from 'react-router';
+import { Route, Switch } from 'react-router';
 import { BrowserRouter } from 'react-router-dom';
+import { PrivateRoute } from './routing';
 
 import { Projects } from '../../collections/promisified';
 
@@ -19,19 +20,6 @@ import Home from './home';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../css/app.import.css';
-
-const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => (
-    <Route {...rest} render={props => (
-        isAuthenticated ? (
-            <Component {...props} />
-        ) : (
-                <Redirect to={{
-                    pathname: '/login',
-                    state: { from: props.location }
-                }} />
-            )
-    )} />
-)
 
 const App = ({ loadingUsers, loadingProjects, loggingIn, user, projects }) => {
 
