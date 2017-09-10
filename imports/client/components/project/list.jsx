@@ -15,7 +15,7 @@ const ProjectList = ({ projects }) => (
 
         <li>
             <Link className="btn btn-lg btn-success" to="/project/new">
-                <span><i className="glyphicon glyphicon-plus pull-left" />Create new project</span>
+                <span> <i className="glyphicon glyphicon-plus pull-left" /> Create new project</span>
             </Link>
         </li>
 

@@ -17,8 +17,11 @@ import TopNav from './navigation';
 
 import Home from './home';
 
+import NewProject from './project/new';
+
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
+import 'handsontable/dist/handsontable.full.css';
 import '../css/app.import.css';
 
 const App = ({ loadingUsers, loadingProjects, loggingIn, user, projects }) => {
@@ -41,13 +44,14 @@ const App = ({ loadingUsers, loadingProjects, loggingIn, user, projects }) => {
                         <Route exact path="/enroll-account/:token" component={EnrollAccount} />
                         <Route exact path="/change-password" component={ChangePassword} />
 
+                        <PrivateRoute isAuthenticated={isAuthenticated} exact path="/" render={props => <Home projects={projects} {...props} />} />
+                        
+                        <PrivateRoute isAuthenticated={isAuthenticated} exact path="/project/new" component={NewProject} />
+
                         <PrivateRoute isAuthenticated={isAuthenticated} exact path="/admin/users" component={AdminUsers} />
                         <PrivateRoute isAuthenticated={isAuthenticated} exact path="/admin/create-user" component={CreateUser} />
 
-                        <PrivateRoute isAuthenticated={isAuthenticated} exact path="/" render={props => <Home projects={projects} {...props} />} />
-
                         <Route render={() => <div className="page-not-found"><h1>Page not found</h1></div>} />
-
                     </Switch>
                 </div>
             </div>
