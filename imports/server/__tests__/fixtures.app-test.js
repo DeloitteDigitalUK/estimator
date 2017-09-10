@@ -54,7 +54,7 @@ if (Meteor.isAppTest) {
 
         'fixtures/testData/full': (owner, readOnlyShares=[], readWriteShares=[]) => {
             return Projects.insert({
-                ..._.omit(fullFixture, '_id'),
+                ..._.cloneDeep(_.omit(fullFixture, '_id')),
                 owner,
                 readOnlyShares,
                 readWriteShares
@@ -63,7 +63,7 @@ if (Meteor.isAppTest) {
 
         'fixtures/testData/empty': (owner, readOnlyShares, readWriteShares) => {
             return Projects.insert({
-                ..._.omit(minimalFixture, '_id'),
+                ..._.cloneDeep(_.omit(minimalFixture, '_id')),
                 owner,
                 readOnlyShares,
                 readWriteShares
