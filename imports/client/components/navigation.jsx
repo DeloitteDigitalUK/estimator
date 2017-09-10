@@ -35,6 +35,7 @@ export default class Navigation extends Component {
 
                     <Switch>
                         <PrivateRoute isAuthenticated={isAuthenticated}  exact path="/" component={HomeNav} />
+                        <PrivateRoute isAuthenticated={isAuthenticated}  exact path="/project/new" component={HomeNav} />
                     </Switch>
 
                     <Nav navbar pullRight>
