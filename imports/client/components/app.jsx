@@ -20,18 +20,31 @@ import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../css/app.import.css';
 
+const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => (
+    <Route {...rest} render={props => (
+        isAuthenticated ? (
+            <Component {...props} />
+        ) : (
+                <Redirect to={{
+                    pathname: '/login',
+                    state: { from: props.location }
+                }} />
+            )
+    )} />
+)
+
 const App = ({ loadingUsers, loadingProjects, loggingIn, user, projects }) => {
 
     if (loadingUsers) {
         return <Loading />;
     }
 
-    const isLoggedIn = user !== null;
+    const isAuthenticated = user !== null || loggingIn;
 
     return (
         <BrowserRouter>
             <div>
-                {isLoggedIn ? <Route path="/" component={TopNav} /> : null}
+                {isAuthenticated ? <Route path="/" component={TopNav} /> : null}
                 <div className="container">
                     <Switch>
                         
@@ -40,12 +53,12 @@ const App = ({ loadingUsers, loadingProjects, loggingIn, user, projects }) => {
                         <Route exact path="/enroll-account/:token" component={EnrollAccount} />
                         <Route exact path="/change-password" component={ChangePassword} />
 
-                        {isLoggedIn || loggingIn? null : <Redirect path="*" to="/login" />}
+                        <PrivateRoute isAuthenticated={isAuthenticated} exact path="/admin/users" component={AdminUsers} />
+                        <PrivateRoute isAuthenticated={isAuthenticated} exact path="/admin/create-user" component={CreateUser} />
 
-                        <Route exact path="/admin/users" component={AdminUsers} />
-                        <Route exact path="/admin/create-user" component={CreateUser} />
+                        <PrivateRoute isAuthenticated={isAuthenticated} exact path="/" component={Home} />
 
-                        <Route exact path="/" component={Home} />
+                        <Route render={() => <p>Page not found</p>} />
 
                     </Switch>
                 </div>

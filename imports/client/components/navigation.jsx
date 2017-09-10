@@ -2,12 +2,15 @@ import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
 
 import React, { Component } from 'react';
-import { Navbar, Nav, NavDropdown, MenuItem } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
-
 import PropTypes from 'prop-types';
 
+import { Navbar, Nav, NavDropdown, MenuItem } from 'react-bootstrap';
+
+import { Switch, Route } from 'react-router';
 import { Link } from 'react-router-dom';
+import { LinkContainer } from 'react-router-bootstrap';
+
+import { HomeNav } from './home';
 
 export default class Navigation extends Component {
 
@@ -28,6 +31,11 @@ export default class Navigation extends Component {
                 </Navbar.Brand>
                 <Navbar.Toggle />
                 <Navbar.Collapse>
+
+                    <Switch>
+                        <Route exact path="/" component={HomeNav} />
+                    </Switch>
+
                     <Nav navbar pullRight>
                         <NavDropdown id="user-menu-dropdown" ref="userMenu" title={user ? user.username : 'Not logged in'}>
                             {isAdmin ? <LinkContainer to="/admin/users"><MenuItem>Manage users</MenuItem></LinkContainer> : null}

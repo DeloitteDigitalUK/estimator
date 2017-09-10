@@ -1,5 +1,8 @@
 import React from 'react';
 
+import { Nav, NavDropdown, MenuItem } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
+
 const Home = ({ }) => (
     <div className="home-page">
         <div className="jumbotron">
@@ -19,3 +22,11 @@ const Home = ({ }) => (
 );
 
 export default Home;
+
+export const HomeNav = () => (
+    <Nav>
+        <NavDropdown id="project-menu-dropdown" title="Project">
+            <LinkContainer to="/project/new"><MenuItem>New&hellip;</MenuItem></LinkContainer>
+        </NavDropdown>
+    </Nav>
+);
