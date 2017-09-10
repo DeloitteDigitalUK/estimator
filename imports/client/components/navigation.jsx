@@ -12,7 +12,8 @@ import { LinkContainer } from 'react-router-bootstrap';
 export default class Navigation extends Component {
 
     static propTypes = {
-        history: PropTypes.object
+        history: PropTypes.object,
+        children: PropTypes.object
     }
 
     render() {
