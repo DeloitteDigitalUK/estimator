@@ -15,7 +15,7 @@ import Loading from './loading';
 
 import TopNav from './navigation';
 
-import Home from './home';
+import Home, { HomeNav } from './home';
 
 import NewProject from './project/new';
 
@@ -35,7 +35,16 @@ const App = ({ loadingUsers, loadingProjects, loggingIn, user, projects }) => {
     return (
         <BrowserRouter>
             <div>
-                {isAuthenticated ? <Route path="/" component={TopNav} /> : null}
+                
+                {!isAuthenticated? null : (
+                    <TopNav>
+                        <Switch>
+                            <Route exact path="/" component={HomeNav} />
+                            <Route exact path="/project/new" component={HomeNav} />
+                        </Switch>
+                    </TopNav>
+                )}
+
                 <div className="container">
                     <Switch>
                         

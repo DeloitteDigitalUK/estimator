@@ -6,12 +6,8 @@ import PropTypes from 'prop-types';
 
 import { Navbar, Nav, NavDropdown, MenuItem } from 'react-bootstrap';
 
-import { Switch, Route } from 'react-router';
 import { Link } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
-import { PrivateRoute } from './routing';
-
-import { HomeNav } from './home';
 
 export default class Navigation extends Component {
 
@@ -33,10 +29,7 @@ export default class Navigation extends Component {
                 <Navbar.Toggle />
                 <Navbar.Collapse>
 
-                    <Switch>
-                        <PrivateRoute isAuthenticated={isAuthenticated}  exact path="/" component={HomeNav} />
-                        <PrivateRoute isAuthenticated={isAuthenticated}  exact path="/project/new" component={HomeNav} />
-                    </Switch>
+                    {this.props.children}
 
                     <Nav navbar pullRight>
                         <NavDropdown id="user-menu-dropdown" ref="userMenu" title={user ? user.username : 'Not logged in'}>
