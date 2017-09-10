@@ -1,11 +1,11 @@
 {
   "name": "estimator",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "meteor run",
-    "test": "meteor test --driver-package practicalmeteor:mocha",
-    "app-test": "meteor test --full-app --driver-package practicalmeteor:mocha"
+    "test": "meteor test --driver-package practicalmeteor:mocha-console-runner",
+    "app-test": "meteor test --full-app --driver-package practicalmeteor:mocha-console-runner"
   },
   "dependencies": {
     "babel-runtime": "^6.20.0",

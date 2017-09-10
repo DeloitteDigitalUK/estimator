@@ -48,12 +48,11 @@ describe('Project CRUD and security', () => {
     it('should allow a user to create a project', async function (done) {
         let id = await Projects.insert({
             owner: Meteor.user()._id,
+            readOnlyShares: [],
+            readWriteShares: [],
             name: "My project",
             description: "My description",
-            startDate: new Date(),
-            endDate: new Date(),
-            readOnlyShares: [],
-            readWriteShares: []
+            solutions: []
         });
 
         expect(id).to.be.ok;
@@ -66,12 +65,11 @@ describe('Project CRUD and security', () => {
         try {
             await Projects.insert({
                 owner: this.primaryUserId,
+                readOnlyShares: [],
+                readWriteShares: [],
                 name: "My project",
                 description: "My description",
-                startDate: new Date(),
-                endDate: new Date(),
-                readOnlyShares: [],
-                readWriteShares: []
+                solutions: []
             });
         } catch (err) {
             expect(err).to.be.ok;
@@ -83,12 +81,11 @@ describe('Project CRUD and security', () => {
         try {
             await Projects.insert({
                 owner: this.secondaryUserId,
+                readOnlyShares: [],
+                readWriteShares: [],
                 name: "My project",
                 description: "My description",
-                startDate: new Date(),
-                endDate: new Date(),
-                readOnlyShares: [],
-                readWriteShares: []
+                solutions: []
             });
         } catch (err) {
             expect(err).to.be.ok;
@@ -99,12 +96,11 @@ describe('Project CRUD and security', () => {
     it('validates project ownership on update', async function (done) {
         let projectId = await Projects.insert({
             owner: Meteor.user()._id,
+            readOnlyShares: [],
+            readWriteShares: [],
             name: "My project",
             description: "My description",
-            startDate: new Date(),
-            endDate: new Date(),
-            readOnlyShares: [],
-            readWriteShares: []
+            solutions: []
         });
 
         try {
@@ -124,12 +120,11 @@ describe('Project CRUD and security', () => {
     it('allows update if ownership unchanged', async function (done) {
         let projectId = await Projects.insert({
             owner: Meteor.user()._id,
+            readOnlyShares: [],
+            readWriteShares: [],
             name: "My project",
             description: "My description",
-            startDate: new Date(),
-            endDate: new Date(),
-            readOnlyShares: [],
-            readWriteShares: []
+            solutions: []
         });
 
         await Projects.update(projectId, {
@@ -145,12 +140,11 @@ describe('Project CRUD and security', () => {
     it('allows deleting own project', async function (done) {
         let projectId = await Projects.insert({
             owner: Meteor.user()._id,
+            readOnlyShares: [],
+            readWriteShares: [],
             name: "My project",
             description: "My description",
-            startDate: new Date(),
-            endDate: new Date(),
-            readOnlyShares: [],
-            readWriteShares: []
+            solutions: []
         });
 
         await Projects.remove(projectId);
@@ -164,11 +158,11 @@ describe('Project CRUD and security', () => {
         let projectId = await Projects.insert({
             owner: Meteor.user()._id,
             name: "My project",
-            description: "My description",
-            startDate: new Date(),
-            endDate: new Date(),
             readOnlyShares: [this.secondaryUserId],
-            readWriteShares: []
+            readWriteShares: [],
+            description: "My description",
+            solutions: []
+            
         });
 
         await userHelpers.loginToSecondaryTestAccount();
@@ -188,12 +182,11 @@ describe('Project CRUD and security', () => {
     it('does not allow deleting other user project even if user in readWriteShares', async function (done) {
         let projectId = await Projects.insert({
             owner: Meteor.user()._id,
+            readOnlyShares: [],
+            readWriteShares: [this.secondaryUserId],
             name: "My project",
             description: "My description",
-            startDate: new Date(),
-            endDate: new Date(),
-            readOnlyShares: [],
-            readWriteShares: [this.secondaryUserId]
+            solutions: []
         });
 
 
@@ -214,12 +207,11 @@ describe('Project CRUD and security', () => {
     it('allows updating of other users project if user in readWriteShares', async function (done) {
         let projectId = await Projects.insert({
             owner: Meteor.user()._id,
+            readOnlyShares: [],
+            readWriteShares: [this.secondaryUserId],
             name: "My project",
             description: "My description",
-            startDate: new Date(),
-            endDate: new Date(),
-            readOnlyShares: [],
-            readWriteShares: [this.secondaryUserId]
+            solutions: []
         });
 
         await userHelpers.loginToSecondaryTestAccount();
@@ -238,12 +230,11 @@ describe('Project CRUD and security', () => {
     it('does not allow updating of other users project if user not in readWriteShares', async function (done) {
         let projectId = await Projects.insert({
             owner: Meteor.user()._id,
+            readOnlyShares: [this.secondaryUserId],
+            readWriteShares: [],
             name: "My project",
             description: "My description",
-            startDate: new Date(),
-            endDate: new Date(),
-            readOnlyShares: [this.secondaryUserId],
-            readWriteShares: []
+            solutions: []
         });
 
         await userHelpers.loginToSecondaryTestAccount();

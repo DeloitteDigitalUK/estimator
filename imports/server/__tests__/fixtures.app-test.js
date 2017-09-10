@@ -4,7 +4,12 @@ import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
 
+import _ from 'lodash';
+
 import Projects from '../../collections/projects';
+
+import fullFixture from '../../__tests__/fixture.full';
+import minimalFixture from '../../__tests__/fixture.minimal';
 
 if (Meteor.isAppTest) {
 
@@ -47,34 +52,22 @@ if (Meteor.isAppTest) {
             resetDatabase({ excludedCollections: excluded });
         },
 
-        'fixtures/testData/full': (userId, readOnlyShares, readWriteShares) => {
-
-            let projectId = Projects.insert({
-                owner: userId,
-                name: "Full project",
-                description: "A test project",
-                startDate: new Date(2017, 0, 1), // SUN
-                endDate: new Date(2017, 0, 31), // TUE
-                readOnlyShares: readOnlyShares || [],
-                readWriteShares: readWriteShares || []
+        'fixtures/testData/full': (owner, readOnlyShares=[], readWriteShares=[]) => {
+            return Projects.insert({
+                ..._.omit(fullFixture, '_id'),
+                owner,
+                readOnlyShares,
+                readWriteShares
             });
-
-            return projectId;
         },
 
-        'fixtures/testData/empty': (userId, readOnlyShares, readWriteShares) => {
-
-            let projectId = Projects.insert({
-                owner: userId,
-                name: "Empty project",
-                description: "Empty project for testing",
-                startDate: new Date(2017, 0, 1), // SUN
-                endDate: new Date(2017, 0, 31), // TUE
-                readOnlyShares: readOnlyShares || [],
-                readWriteShares: readWriteShares || []
+        'fixtures/testData/empty': (owner, readOnlyShares, readWriteShares) => {
+            return Projects.insert({
+                ..._.omit(minimalFixture, '_id'),
+                owner,
+                readOnlyShares,
+                readWriteShares
             });
-
-            return projectId;
         }
 
     });
