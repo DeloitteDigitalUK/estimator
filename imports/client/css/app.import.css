@@ -106,10 +106,6 @@ body {
  * Project CRUD
  */
 
-.date-input input {
-    max-width: 150px;
-}
-
 .data-table {
     width: 100%;
 }
@@ -134,17 +130,6 @@ body {
     background-color: #c9302c !important;
 }
 
-/* special day shading */
-.handsontable td.specialDay-weekend {
-    background-color: #eee;
-}
-.handsontable td.specialDay-holiday {
-    background-color: #eee;
-}
-.handsontable td.specialDay-marker {
-    background-color: #fcf8e3;
-}
-
 /*
  * User admin page
  */
@@ -159,4 +144,15 @@ body {
 
 .full-screen-confirm .modal {
     position: inherit;
+}
+
+/*
+ * 404
+ */
+ .page-not-found {
+    padding-top: 20px;
+}
+
+.page-not-found h1 {
+    padding-top: 20px;
 }

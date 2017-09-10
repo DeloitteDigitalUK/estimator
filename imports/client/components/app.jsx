@@ -44,9 +44,9 @@ const App = ({ loadingUsers, loadingProjects, loggingIn, user, projects }) => {
                         <PrivateRoute isAuthenticated={isAuthenticated} exact path="/admin/users" component={AdminUsers} />
                         <PrivateRoute isAuthenticated={isAuthenticated} exact path="/admin/create-user" component={CreateUser} />
 
-                        <PrivateRoute isAuthenticated={isAuthenticated} exact path="/" component={Home} />
+                        <PrivateRoute isAuthenticated={isAuthenticated} exact path="/" render={props => <Home projects={projects} {...props} />} />
 
-                        <Route render={() => <p>Page not found</p>} />
+                        <Route render={() => <div className="page-not-found"><h1>Page not found</h1></div>} />
 
                     </Switch>
                 </div>

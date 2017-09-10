@@ -3,7 +3,9 @@ import React from 'react';
 import { Nav, NavDropdown, MenuItem } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
-const Home = ({ }) => (
+import ProjectList from './project/list';
+
+const Home = ({ projects }) => (
     <div className="home-page">
         <div className="jumbotron">
             <h1>Welcome to Estimator</h1>
@@ -16,8 +18,7 @@ const Home = ({ }) => (
             Click <em>Create new project</em> to create a new one.
         </p>
 
-        TODO
-        
+        <ProjectList projects={projects} />
     </div>
 );
 
