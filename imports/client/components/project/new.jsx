@@ -36,7 +36,8 @@ export default class NewProject extends Component {
         try {
             let projectId = await Projects.insert({
                 ...data,
-                owner: Meteor.userId()
+                owner: Meteor.userId(),
+                solutions: []
             });
 
             this.props.history.push('/project/' + projectId);

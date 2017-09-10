@@ -235,8 +235,7 @@ export default class ProjectForm extends Component {
             this.props.onSubmit({
                 name: this.state.name,
                 description: this.state.description,
-                ...expandShares(this.state.shares),
-                solutions: []
+                ...expandShares(this.state.shares)
             })
         }
 
