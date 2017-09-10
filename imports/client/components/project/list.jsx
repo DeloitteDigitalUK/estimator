@@ -7,7 +7,7 @@ const ProjectList = ({ projects }) => (
         {projects.map(p =>
             <li key={p._id}>
                 <Link className="btn btn-lg btn-primary" to={"/project/" + p._id} title={p.description}>
-                    <span> <i className="glyphicon glyphicon-link pull-left" /> {p.name}</span>
+                    <span>{p.name}</span>
                     <small>{p.description}</small>
                 </Link>
             </li>
