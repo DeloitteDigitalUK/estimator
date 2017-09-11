@@ -9,7 +9,7 @@ import ProjectForm from './form';
 export default class NewProject extends Component {
 
     static propTypes = {
-        history: PropTypes.object
+        history: PropTypes.object.isRequired
     }
 
     render() {

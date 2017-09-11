@@ -73,8 +73,8 @@ export default class ProjectForm extends Component {
     static propTypes = {
         project: PropTypes.object,
 
-        onCancel: PropTypes.func,
-        onSubmit: PropTypes.func
+        onCancel: PropTypes.func.isRequired,
+        onSubmit: PropTypes.func.isRequired
     }
 
     constructor(props) {

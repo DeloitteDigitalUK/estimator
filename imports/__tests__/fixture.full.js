@@ -1,5 +1,7 @@
 const firstSolutionId = 'YW74Dcpr2BvLQdtSB';
 
+import { THROUGHPUT_SAMPLES, THROUGHPUT_ESTIMATE, WORK_PATTERN, FIXED_DATE, AFTER, WITH } from '../collections/projects';
+
 export default {
     _id: 'm2uNAAg6T5vYjAyDm',
     owner: 'CyLwgqZrGRckcyiGM',
@@ -11,9 +13,10 @@ export default {
         _id: firstSolutionId,
         name: "Front end",
         description: "Front end app and integrations",
+        startType: FIXED_DATE,
         startDate: new Date(2017, 0, 1),
-        // startAfter: firstSolutionId,
-        // startWith: firstSolutionId
+        // startDependency: firstSolutionId,
+        estimateType: THROUGHPUT_SAMPLES,
         scope: {
             lowGuess: 100,
             highGuess: 120,
@@ -64,9 +67,10 @@ export default {
     },{
         _id: 'fgFoRfMFTCQH5yACA',
         name: "Middlware",
+        startType: AFTER,
         // startDate: new Date(2017, 0, 1),
-        startAfter: firstSolutionId,
-        // startWith: firstSolutionId
+        startDependency: firstSolutionId,
+        estimateType: THROUGHPUT_ESTIMATE,
         scope: {
             lowGuess: 100,
             highGuess: 120,
@@ -88,9 +92,10 @@ export default {
     },{
         _id: 'uAxhHMCBjAfH4tyah',
         name: "Back end",
+        startType: WITH,
         // startDate: new Date(2017, 0, 1),
-        // startAfter: firstSolutionId,
-        startWith: firstSolutionId,
+        startDependency: firstSolutionId,
+        estimateType: WORK_PATTERN,
         // scope: {},
         team: {
             members: [],

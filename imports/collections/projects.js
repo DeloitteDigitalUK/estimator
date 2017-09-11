@@ -6,6 +6,14 @@ import SimpleSchema from 'simpl-schema';
 
 const Integer = SimpleSchema.Integer;
 
+export const THROUGHPUT_SAMPLES = "throughputSamples";
+export const THROUGHPUT_ESTIMATE = "throughputEstimate";
+export const WORK_PATTERN = "workPattern";
+
+export const FIXED_DATE = "fixedDate";
+export const AFTER = "after";
+export const WITH = "with";
+
 export const Project = new SimpleSchema({
     _id: String,
 
@@ -24,9 +32,12 @@ export const Project = new SimpleSchema({
     'solutions.$.name': String,
     'solutions.$.description': { type: String, optional: true },
 
+    'solutions.$.startType': { type: String, allowedValues: [FIXED_DATE, AFTER, WITH] },
+
     'solutions.$.startDate': { type: Date, optional: true },    // fixed date of starting
-    'solutions.$.startAfter': { type: String, optional: true }, // id of other solution in this project
-    'solutions.$.startWith': { type: String, optional: true },  // id of other solution in this project
+    'solutions.$.startDependency': { type: String, optional: true },  // id of other solution in this project
+
+    'solutions.$.estimateType': { type: String, allowedValues: [THROUGHPUT_SAMPLES, THROUGHPUT_ESTIMATE, WORK_PATTERN] },
 
     // definition of solution scope
     'solutions.$.scope': { type: Object, optional: true },
@@ -54,8 +65,8 @@ export const Project = new SimpleSchema({
     'solutions.$.team.members.$.quantity': { type: Number, min: 0, defaultValue: 1 },
 
     // throughput calculations
-    'solutions.$.team.throughputPeriodLength': { type: Number, min: 1, defaultValue: 1 }, // weeks
-    
+    'solutions.$.team.throughputPeriodLength': { type: Number, min: 1, defaultValue: 1 }, // weeks 
+
     // team's historical throughput
     'solutions.$.team.throughputSamples': { type: Array, optional: true },
     'solutions.$.team.throughputSamples.$': Object,

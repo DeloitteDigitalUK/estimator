@@ -17,6 +17,7 @@ import TopNav from './navigation';
 
 import Home, { HomeNav } from './home';
 
+import ProjectMain, { ProjectNav } from './project/main';
 import NewProject from './project/new';
 
 import 'bootstrap';
@@ -40,7 +41,9 @@ const App = ({ loadingUsers, loadingProjects, loggingIn, user, projects }) => {
                     <TopNav>
                         <Switch>
                             <Route exact path="/" component={HomeNav} />
+
                             <Route exact path="/project/new" component={HomeNav} />
+                            <Route path="/project/:_id" component={ProjectNav} />
                         </Switch>
                     </TopNav>
                 )}
@@ -56,6 +59,7 @@ const App = ({ loadingUsers, loadingProjects, loggingIn, user, projects }) => {
                         <PrivateRoute isAuthenticated={isAuthenticated} exact path="/" render={props => <Home projects={projects} {...props} />} />
                         
                         <PrivateRoute isAuthenticated={isAuthenticated} exact path="/project/new" component={NewProject} />
+                        <PrivateRoute isAuthenticated={isAuthenticated} path="/project/:_id" component={ProjectMain} />
 
                         <PrivateRoute isAuthenticated={isAuthenticated} exact path="/admin/users" component={AdminUsers} />
                         <PrivateRoute isAuthenticated={isAuthenticated} exact path="/admin/create-user" component={CreateUser} />
