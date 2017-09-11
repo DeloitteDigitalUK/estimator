@@ -152,3 +152,11 @@ body {
  .page-not-found {
     padding-top: 20px;
 }
+
+/*
+ * Solution list
+ */
+
+.solutions-list {
+    margin-top: 20px;
+}

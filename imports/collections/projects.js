@@ -30,10 +30,10 @@ export const Solution = new SimpleSchema({
     // definition of solution scope
     scope: { type: Object, optional: true },
 
-    'scope.lowGuess': { type: Integer, min: 0, defaultValue: 0 },
-    'scope.highGuess': { type: Integer, min: 0, defaultValue: 0 },
-    'scope.lowSplitRate': { type: Number, min: 1, defaultValue: 1 },
-    'scope.highSplitRate': { type: Number, min: 1, defaultValue: 1 },
+    'scope.lowGuess': { type: Integer, min: 0 },
+    'scope.highGuess': { type: Integer, min: 0 },
+    'scope.lowSplitRate': { type: Number, min: 1 },
+    'scope.highSplitRate': { type: Number, min: 1 },
 
     // possible risks that could increae scope
     'scope.risks': { type: Array, optional: true },
@@ -51,10 +51,10 @@ export const Solution = new SimpleSchema({
     'team.members.$': Object,
     'team.members.$.role': String,
     'team.members.$.description': { type: String, optional: true },
-    'team.members.$.quantity': { type: Number, min: 0, defaultValue: 1 },
+    'team.members.$.quantity': { type: Number, min: 0 },
 
     // throughput calculations
-    'team.throughputPeriodLength': { type: Number, min: 1, defaultValue: 1 }, // weeks 
+    'team.throughputPeriodLength': { type: Number, min: 1 }, // weeks 
 
     // team's historical throughput
     'team.throughputSamples': { type: Array, optional: true },
@@ -124,7 +124,7 @@ export function newSolution({ name, ...rest }) {
         
         team: {
             members: [],
-            throughputPeriod: 1,
+            throughputPeriodLength: 1,
             throughputSamples: [],
             throughputEstimate: {
                 lowGuess: 0,

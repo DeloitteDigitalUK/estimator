@@ -16,6 +16,8 @@ import EditProject from './edit';
 import DeleteProject from './delete';
 import DuplicateProject from './duplicate';
 
+import AddSolution from './solution/add';
+
 export default class ProjectMain extends Component {
 
     static propTypes = {
@@ -60,6 +62,7 @@ export default class ProjectMain extends Component {
                 <Switch location={isModal ? this.previousLocation : location}>
                     <Route exact path={prefix} render={() => <ViewProject project={project} prefix={prefix} />} />
                     {writer? <Route exact path={prefix + '/edit'} render={() => <EditProject project={project} history={history} />} /> : null}
+                    
 
                     <Route component={FourOhFour} />
                 </Switch>
@@ -67,6 +70,8 @@ export default class ProjectMain extends Component {
                 {/* Modals, which will overlay child pages */}
                 <Switch>
                     {owner? <Route exact path={prefix + '/delete'} render={() => <DeleteProject project={project} history={history} location={location} />} /> : null}
+                    {owner? <Route exact path={prefix + '/solution/add'} render={() => <AddSolution project={project} history={history} location={location} />} /> : null}
+                    
                     <Route exact path={prefix + '/duplicate'} render={() => <DuplicateProject project={project} history={history} location={location} />} />
                 </Switch>
             </div>
