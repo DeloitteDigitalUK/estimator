@@ -9,6 +9,8 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { Projects } from '../../../collections/promisified';
 import { isOwner, canWrite } from '../../../utils';
 
+import FourOhFour from '../fourohfour'
+
 import ViewProject from './view';
 import EditProject from './edit';
 import DeleteProject from './delete';
@@ -56,8 +58,10 @@ export default class ProjectMain extends Component {
             <div className="container">
                 {/* Child pages */}
                 <Switch location={isModal ? this.previousLocation : location}>
-                    <Route exact path={prefix} render={() => <ViewProject project={project} />} />
+                    <Route exact path={prefix} render={() => <ViewProject project={project} prefix={prefix} />} />
                     {writer? <Route exact path={prefix + '/edit'} render={() => <EditProject project={project} history={history} />} /> : null}
+
+                    <Route component={FourOhFour} />
                 </Switch>
 
                 {/* Modals, which will overlay child pages */}

@@ -20,6 +20,8 @@ import Home, { HomeNav } from './home';
 import ProjectMain, { ProjectNav } from './project/main';
 import NewProject from './project/new';
 
+import FourOhFour from './fourohfour'
+
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'handsontable/dist/handsontable.full.css';
@@ -64,7 +66,7 @@ const App = ({ loadingUsers, loadingProjects, loggingIn, user, projects }) => {
                         <PrivateRoute isAuthenticated={isAuthenticated} exact path="/admin/users" component={AdminUsers} />
                         <PrivateRoute isAuthenticated={isAuthenticated} exact path="/admin/create-user" component={CreateUser} />
 
-                        <Route render={() => <div className="page-not-found"><h1>Page not found</h1></div>} />
+                        <Route component={FourOhFour} />
                     </Switch>
                 </div>
             </div>
