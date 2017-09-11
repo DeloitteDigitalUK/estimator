@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
+import { Random } from 'meteor/random';
 
 import _ from 'lodash';
 import SimpleSchema from 'simpl-schema';
@@ -14,6 +15,73 @@ export const FIXED_DATE = "fixedDate";
 export const AFTER = "after";
 export const WITH = "with";
 
+export const Solution = new SimpleSchema({
+
+    _id: String,
+    name: String,
+    description: { type: String, optional: true },
+
+    startType: { type: String, allowedValues: [FIXED_DATE, AFTER, WITH] },
+    startDate: { type: Date, optional: true },  // fixed date of starting
+    startDependency: { type: String, optional: true },  // id of other solution in this project
+
+    estimateType: { type: String, allowedValues: [THROUGHPUT_SAMPLES, THROUGHPUT_ESTIMATE, WORK_PATTERN] },
+
+    // definition of solution scope
+    scope: { type: Object, optional: true },
+
+    'scope.lowGuess': { type: Integer, min: 0, defaultValue: 0 },
+    'scope.highGuess': { type: Integer, min: 0, defaultValue: 0 },
+    'scope.lowSplitRate': { type: Number, min: 1, defaultValue: 1 },
+    'scope.highSplitRate': { type: Number, min: 1, defaultValue: 1 },
+
+    // possible risks that could increae scope
+    'scope.risks': { type: Array, optional: true },
+    'scope.risks.$': Object,
+    'scope.risks.$.name': String,
+    'scope.risks.$.description': { type: String, optional: true },
+    'scope.risks.$.likelihood': { type: Number, min: 0, max: 1}, // percentage
+    'scope.risks.$.lowImpact': { type: Integer, min: 0 },  // number of work items added if risk hits (low guess)
+    'scope.risks.$.highImpact': { type: Integer, min: 0 }, // number of work items added if risk hits (high guess)
+
+    // definition of team
+    team: Object,
+
+    'team.members': { type: Array, optional: true },
+    'team.members.$': Object,
+    'team.members.$.role': String,
+    'team.members.$.description': { type: String, optional: true },
+    'team.members.$.quantity': { type: Number, min: 0, defaultValue: 1 },
+
+    // throughput calculations
+    'team.throughputPeriodLength': { type: Number, min: 1, defaultValue: 1 }, // weeks 
+
+    // team's historical throughput
+    'team.throughputSamples': { type: Array, optional: true },
+    'team.throughputSamples.$': Object,
+    'team.throughputSamples.$.periodStartDate': Date, // e.g. start of week or sprint
+    'team.throughputSamples.$.description': { type: String, optional: true },
+    'team.throughputSamples.$.throughput': Integer, // number of work items during this period
+
+    // guess of team's throughput (will be used if there are no historical samples)
+    'team.throughputEstimate': { type: Object, optional: true },
+    'team.throughputEstimate.lowGuess': { type: Integer, min: 0 }, // work items per period (low guess)
+    'team.throughputEstimate.highGuess': { type: Integer, min: 0 }, // work items per period (high guess)
+
+    // S-curve scaling
+    'team.rampUp': { type: Object, optional: true },
+    'team.rampUp.duration': { type: Number, min: 0 }, // number of periods of ramp up
+    'team.rampUp.throughputScalingLowGuess': { type: Number, min: 0 }, // work items per period (low guess)
+    'team.rampUp.throughputScalingHighGuess': { type: Number, min: 0 }, // work items per period (high guess)
+
+    // team's work pattern (will be used if there are no samples or throughput guesses)
+    'team.workPattern': { type: Array, optional: true },
+    'team.workPattern.$': Object,
+    'team.workPattern.$.startDate': Date,
+    'team.workPattern.$.endDate': Date
+
+});
+
 export const Project = new SimpleSchema({
     _id: String,
 
@@ -27,71 +95,46 @@ export const Project = new SimpleSchema({
     description: { type: String, optional: true },
 
     // list of solutions
-    'solutions': [Object],
-    'solutions.$._id': String,
-    'solutions.$.name': String,
-    'solutions.$.description': { type: String, optional: true },
-
-    'solutions.$.startType': { type: String, allowedValues: [FIXED_DATE, AFTER, WITH] },
-
-    'solutions.$.startDate': { type: Date, optional: true },    // fixed date of starting
-    'solutions.$.startDependency': { type: String, optional: true },  // id of other solution in this project
-
-    'solutions.$.estimateType': { type: String, allowedValues: [THROUGHPUT_SAMPLES, THROUGHPUT_ESTIMATE, WORK_PATTERN] },
-
-    // definition of solution scope
-    'solutions.$.scope': { type: Object, optional: true },
-    'solutions.$.scope.lowGuess': { type: Integer, min: 0, defaultValue: 0 },
-    'solutions.$.scope.highGuess': { type: Integer, min: 0, defaultValue: 0 },
-    'solutions.$.scope.lowSplitRate': { type: Number, min: 1, defaultValue: 1 },
-    'solutions.$.scope.highSplitRate': { type: Number, min: 1, defaultValue: 1 },
-
-    // possible risks that could increae scope
-    'solutions.$.scope.risks': { type: Array, optional: true },
-    'solutions.$.scope.risks.$': Object,
-    'solutions.$.scope.risks.$.name': String,
-    'solutions.$.scope.risks.$.description': { type: String, optional: true },
-    'solutions.$.scope.risks.$.likelihood': { type: Number, min: 0, max: 1}, // percentage
-    'solutions.$.scope.risks.$.lowImpact': { type: Integer, min: 0 },  // number of work items added if risk hits (low guess)
-    'solutions.$.scope.risks.$.highImpact': { type: Integer, min: 0 }, // number of work items added if risk hits (high guess)
-
-    // definition of team
-    'solutions.$.team': Object,
-
-    'solutions.$.team.members': { type: Array, optional: true },
-    'solutions.$.team.members.$': Object,
-    'solutions.$.team.members.$.role': String,
-    'solutions.$.team.members.$.description': { type: String, optional: true },
-    'solutions.$.team.members.$.quantity': { type: Number, min: 0, defaultValue: 1 },
-
-    // throughput calculations
-    'solutions.$.team.throughputPeriodLength': { type: Number, min: 1, defaultValue: 1 }, // weeks 
-
-    // team's historical throughput
-    'solutions.$.team.throughputSamples': { type: Array, optional: true },
-    'solutions.$.team.throughputSamples.$': Object,
-    'solutions.$.team.throughputSamples.$.periodStartDate': Date, // e.g. start of week or sprint
-    'solutions.$.team.throughputSamples.$.description': { type: String, optional: true },
-    'solutions.$.team.throughputSamples.$.throughput': Integer, // number of work items during this period
-
-    // guess of team's throughput (will be used if there are no historical samples)
-    'solutions.$.team.throughputEstimate': { type: Object, optional: true },
-    'solutions.$.team.throughputEstimate.lowGuess': { type: Integer, min: 0 }, // work items per period (low guess)
-    'solutions.$.team.throughputEstimate.highGuess': { type: Integer, min: 0 }, // work items per period (high guess)
-
-    // S-curve scaling
-    'solutions.$.team.rampUp': { type: Object, optional: true },
-    'solutions.$.team.rampUp.duration': { type: Number, min: 0 }, // number of periods of ramp up
-    'solutions.$.team.rampUp.throughputScalingLowGuess': { type: Number, min: 0 }, // work items per period (low guess)
-    'solutions.$.team.rampUp.throughputScalingHighGuess': { type: Number, min: 0 }, // work items per period (high guess)
-
-    // team's work pattern (will be used if there are no samples or throughput guesses)
-    'solutions.$.team.workPattern': { type: Array, optional: true },
-    'solutions.$.team.workPattern.$': Object,
-    'solutions.$.team.workPattern.$.startDate': Date,
-    'solutions.$.team.workPattern.$.endDate': Date,
-
+    solutions: [Solution]
 });
+
+/**
+ * Create a new minimal solution object
+ */
+export function newSolution({ name, ...rest }) {
+    return Solution.clean(_.extend({
+        _id: Random.id(),
+        name,
+        description: null,
+        
+        startType: FIXED_DATE,
+        startDate: null,
+        startDependency: null,
+        
+        estimateType: THROUGHPUT_ESTIMATE,
+        
+        scope: {
+            lowGuess: 0,
+            highGuess: 0,
+            lowSplitRate: 1,
+            highSplitRate: 1   
+        },
+
+        risks: [],
+        
+        team: {
+            members: [],
+            throughputPeriod: 1,
+            throughputSamples: [],
+            throughputEstimate: {
+                lowGuess: 0,
+                highGuess: 0
+            },
+            rampUp: null,
+            workPattern: []
+        }
+    }, rest));
+}
 
 const Projects = new Mongo.Collection("Projects");
 Projects.attachSchema(Project);
