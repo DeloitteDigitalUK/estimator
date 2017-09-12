@@ -21,7 +21,7 @@ export default Home;
 export const HomeNav = () => (
     <Nav>
         <NavDropdown id="project-menu-dropdown" title="Project">
-            <LinkContainer to="/project/new"><MenuItem>New&hellip;</MenuItem></LinkContainer>
+            <LinkContainer to="/project/add"><MenuItem>New&hellip;</MenuItem></LinkContainer>
         </NavDropdown>
     </Nav>
 );

@@ -1,6 +1,7 @@
 import React from 'react';
 import { HelpBlock, Button } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+
+import { ModalLinkContainer } from '../routing';
 
 import SolutionList from './solution/list';
 
@@ -23,9 +24,9 @@ const ViewProject = ({ project, prefix }) => {
 
             <SolutionList project={project} prefix={prefix} />
 
-            <LinkContainer to={{pathname: prefix + "/solution/add", state: { modal: true, returnTo: location.pathname }}}>
+            <ModalLinkContainer to={prefix + "/solution/add"}>
                 <Button bsStyle="primary">Add solution</Button>
-            </LinkContainer>
+            </ModalLinkContainer>
 
         </div>
     );

@@ -1,10 +1,16 @@
 import { Meteor } from 'meteor/meteor';
+import { Roles } from 'meteor/alanning:roles';
 import { withTracker } from 'meteor/react-meteor-data';
 
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import { Route, Switch } from 'react-router';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Link } from 'react-router-dom';
+import { LinkContainer } from 'react-router-bootstrap';
 import { PrivateRoute } from './routing';
+
+import { Navbar, Nav, NavDropdown, MenuItem } from 'react-bootstrap';
 
 import { Projects } from '../../collections/promisified';
 
@@ -13,12 +19,10 @@ import { AdminUsers, CreateUser } from './users';
 
 import Loading from './loading';
 
-import TopNav from './navigation';
-
 import Home, { HomeNav } from './home';
 
 import ProjectMain, { ProjectNav } from './project/main';
-import NewProject from './project/new';
+import AddProject from './project/add';
 
 import FourOhFour from './fourohfour'
 
@@ -60,8 +64,8 @@ const App = ({ loadingUsers, loadingProjects, loggingIn, user, projects }) => {
 
                         <PrivateRoute isAuthenticated={isAuthenticated} exact path="/" render={props => <Home projects={projects} {...props} />} />
                         
-                        <PrivateRoute isAuthenticated={isAuthenticated} exact path="/project/new" component={NewProject} />
-                        <PrivateRoute isAuthenticated={isAuthenticated} path="/project/:_id" component={ProjectMain} />
+                        <PrivateRoute isAuthenticated={isAuthenticated} exact path="/project/add" component={AddProject} />
+                        <PrivateRoute isAuthenticated={isAuthenticated}       path="/project/:_id" component={ProjectMain} />
 
                         <PrivateRoute isAuthenticated={isAuthenticated} exact path="/admin/users" component={AdminUsers} />
                         <PrivateRoute isAuthenticated={isAuthenticated} exact path="/admin/create-user" component={CreateUser} />
@@ -73,6 +77,50 @@ const App = ({ loadingUsers, loadingProjects, loggingIn, user, projects }) => {
 
         </BrowserRouter>
     );
+
+}
+
+export class TopNav extends Component {
+
+    static propTypes = {
+        history: PropTypes.object,
+        children: PropTypes.object
+    }
+
+    render() {
+
+        const user = Meteor.user(),
+              isAuthenticated = user !== null,
+              isAdmin = isAuthenticated? Roles.userIsInRole(user, ['admin']) : false;
+
+        return (
+            <Navbar inverse fixedTop>
+                <Navbar.Brand>
+                    <Link to="/">Estimator</Link>
+                </Navbar.Brand>
+                <Navbar.Toggle />
+                <Navbar.Collapse>
+
+                    {this.props.children}
+
+                    <Nav navbar pullRight>
+                        <NavDropdown id="user-menu-dropdown" ref="userMenu" title={user ? user.username : 'Not logged in'}>
+                            {isAdmin ? <LinkContainer to="/admin/users"><MenuItem>Manage users</MenuItem></LinkContainer> : null}
+                            {isAuthenticated ? <LinkContainer to="/change-password"><MenuItem>Change password</MenuItem></LinkContainer> : null}
+                            {isAuthenticated ? <MenuItem onClick={this.logout.bind(this)}>Log out</MenuItem> : null}
+                        </NavDropdown>
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar >
+        );
+    }
+
+    logout(e) {
+        e.preventDefault();
+        Meteor.logout();
+
+        this.props.history.push('/login');
+    }
 
 }
 

@@ -10,6 +10,7 @@ import { Projects } from '../../../collections/promisified';
 import { isOwner, canWrite } from '../../../utils';
 
 import FourOhFour from '../fourohfour'
+import { ModalLinkContainer, ModalSwitch, ModalRoutes } from '../routing'
 
 import ViewProject from './view';
 import EditProject from './edit';
@@ -18,67 +19,38 @@ import DuplicateProject from './duplicate';
 
 import AddSolution from './solution/add';
 
-export default class ProjectMain extends Component {
+const ProjectMain = ({ history, location, match }) => {
 
-    static propTypes = {
-        history: PropTypes.object.isRequired,
-        location: PropTypes.object.isRequired,
-        match: PropTypes.object.isRequired
+    const prefix = match.url,
+          pathPrefix = match.path,
+          projectId = match.params._id,
+          project = Projects.findOne(projectId);
+
+    if(!project) {
+        return <span />;
     }
+    
+    const writer = canWrite(project);
 
-    previousLocation = this.props.location
+    return (
+        <ModalSwitch className="container" {...{history, location, match}}>
 
-    componentWillUpdate(nextProps) {
-        const { location } = this.props;
-        if(nextProps.history.action !== 'POP' && (!location.state || !location.state.modal)) {
-            this.previousLocation = this.props.location;
-        }
-    }
+                     <Route exact path={pathPrefix} render={() => <ViewProject project={project} prefix={prefix} />} />
+            {writer? <Route exact path={pathPrefix + '/edit'} render={() => <EditProject project={project} history={history} />} /> : null}
+            
+                     <Route component={FourOhFour} />
 
-    render() {
+            <ModalRoutes>
+                {writer? <Route exact path={pathPrefix + '/delete'} render={() => <DeleteProject project={project} history={history} location={location} />} /> : null}
+                {writer? <Route exact path={pathPrefix + '/solution/add'} render={() => <AddSolution project={project} history={history} location={location} />} /> : null}
+                {writer? <Route exact path={pathPrefix + '/duplicate'} render={() => <DuplicateProject project={project} history={history} location={location} />} /> : null}
+            </ModalRoutes>
 
-        const { history, location, match } = this.props;
+        </ModalSwitch>
+    );
+};
 
-        const isModal = !!(
-            location.state &&
-            location.state.modal &&
-            this.previousLocation !== location // not initial render
-        );
-
-        const prefix = match.url,
-              projectId = match.params._id,
-              project = Projects.findOne(projectId);
-
-        if(!project) {
-            return <span />;
-        }
-        
-        const owner = isOwner(project),
-              writer = canWrite(project);
-
-        return (
-            <div className="container">
-                {/* Child pages */}
-                <Switch location={isModal ? this.previousLocation : location}>
-                    <Route exact path={prefix} render={() => <ViewProject project={project} prefix={prefix} />} />
-                    {writer? <Route exact path={prefix + '/edit'} render={() => <EditProject project={project} history={history} />} /> : null}
-                    
-
-                    <Route component={FourOhFour} />
-                </Switch>
-
-                {/* Modals, which will overlay child pages */}
-                <Switch>
-                    {owner? <Route exact path={prefix + '/delete'} render={() => <DeleteProject project={project} history={history} location={location} />} /> : null}
-                    {owner? <Route exact path={prefix + '/solution/add'} render={() => <AddSolution project={project} history={history} location={location} />} /> : null}
-                    
-                    <Route exact path={prefix + '/duplicate'} render={() => <DuplicateProject project={project} history={history} location={location} />} />
-                </Switch>
-            </div>
-        )
-    }
-
-}
+export default ProjectMain;
 
 export const ProjectNav = ({ match }) => {
 
@@ -96,12 +68,12 @@ export const ProjectNav = ({ match }) => {
     return (
         <Nav>
             <NavDropdown id="project-menu-dropdown" title="Project">
-                <LinkContainer to={"/project/new"}><MenuItem>New&hellip;</MenuItem></LinkContainer>
-                {writer? <LinkContainer to={prefix + "/edit"}><MenuItem>Edit</MenuItem></LinkContainer> : ""}
-                <LinkContainer to={{pathname: prefix + "/duplicate", state: { modal: true, returnTo: location.pathname }}}><MenuItem>Duplicate&hellip;</MenuItem></LinkContainer>
-                {owner? <LinkContainer to={{pathname: prefix + "/delete", state: { modal: true, returnTo: location.pathname }}}><MenuItem>Delete&hellip;</MenuItem></LinkContainer> : ""}
-                <MenuItem divider />
-                <LinkContainer isActive={() => false} to="/"><MenuItem>Choose another&hellip;</MenuItem></LinkContainer>
+                         <LinkContainer to={"/project/add"}><MenuItem>New&hellip;</MenuItem></LinkContainer>
+                {writer? <LinkContainer to={prefix + "/edit"}><MenuItem>Edit</MenuItem></LinkContainer> : null}
+                         <ModalLinkContainer to={prefix + "/duplicate"}><MenuItem>Duplicate&hellip;</MenuItem></ModalLinkContainer>
+                {owner?  <ModalLinkContainer to={prefix + "/delete"}><MenuItem>Delete&hellip;</MenuItem></ModalLinkContainer> : null}
+                         <MenuItem divider />
+                         <LinkContainer isActive={() => false} to="/"><MenuItem>Choose another&hellip;</MenuItem></LinkContainer>
             </NavDropdown>
         </Nav>
     );
