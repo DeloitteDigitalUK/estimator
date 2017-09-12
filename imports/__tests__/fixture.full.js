@@ -1,6 +1,6 @@
 const firstSolutionId = 'YW74Dcpr2BvLQdtSB';
 
-import { THROUGHPUT_SAMPLES, THROUGHPUT_ESTIMATE, WORK_PATTERN, FIXED_DATE, AFTER, WITH } from '../collections/projects';
+import { EstimateType, StartType, ThroughputType } from '../collections/projects';
 
 export default {
     _id: 'm2uNAAg6T5vYjAyDm',
@@ -13,11 +13,11 @@ export default {
         _id: firstSolutionId,
         name: "Front end",
         description: "Front end app and integrations",
-        startType: FIXED_DATE,
+        notes: "More details can go here",
+        estimateType: EstimateType.backlog,
+        startType: StartType.fixedDate,
         startDate: new Date(2017, 0, 1),
-        // startDependency: firstSolutionId,
-        estimateType: THROUGHPUT_SAMPLES,
-        scope: {
+        backlog: {
             lowGuess: 100,
             highGuess: 120,
             lowSplitRate: 1,
@@ -48,6 +48,7 @@ export default {
                 quantity: 2
             }],
             throughputPeriodLength: 2,
+            throughputType: ThroughputType.samples,
             throughputSamples: [{
                 periodStartDate: new Date(2017, 0, 1),
                 description: "First period",
@@ -56,53 +57,43 @@ export default {
                 periodStartDate: new Date(2017, 0, 15),
                 throughput: 15
             }],
-            // throughputEstimate: {},
             rampUp: {
                 duration: 2,
                 throughputScalingLowGuess: 0.1,
                 throughputScalingHighGuess: 0.5,
-            },
-            // workPattern: []
+            }
         }
     },{
         _id: 'fgFoRfMFTCQH5yACA',
         name: "Middlware",
-        startType: AFTER,
-        // startDate: new Date(2017, 0, 1),
+        estimateType: EstimateType.backlog,
+        startType: StartType.after,
         startDependency: firstSolutionId,
-        estimateType: THROUGHPUT_ESTIMATE,
-        scope: {
+        backlog: {
             lowGuess: 100,
             highGuess: 120,
             lowSplitRate: 1,
-            highSplitRate: 1.5,
-            // risks: []
+            highSplitRate: 1.5
         },
         team: {
             members: [],
             throughputPeriodLength: 1,
-            // throughputSamples: [],
+            throughputType: ThroughputType.estimate,
             throughputEstimate: {
                 lowGuess: 10,
                 highGuess: 15
-            },
-            // rampUp: {},
-            // workPattern: []
+            }
         }
     },{
         _id: 'uAxhHMCBjAfH4tyah',
         name: "Back end",
-        startType: WITH,
-        // startDate: new Date(2017, 0, 1),
+        estimateType: EstimateType.workPattern,
+        startType: StartType.with,
         startDependency: firstSolutionId,
-        estimateType: WORK_PATTERN,
-        // scope: {},
         team: {
             members: [],
-            throughputPeriodLength: 3,
-            // throughputSamples: [],
-            // throughputEstimate: {},
-            // rampUp: {},
+            throughputPeriodLength: 1,
+            throughputType: null,
             workPattern: [{
                 startDate: new Date(2017, 0, 1),
                 endDate: new Date(2017, 0, 7)

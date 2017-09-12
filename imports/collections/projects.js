@@ -5,81 +5,99 @@ import { Random } from 'meteor/random';
 import _ from 'lodash';
 import SimpleSchema from 'simpl-schema';
 
-const Integer = SimpleSchema.Integer;
+const { Integer } = SimpleSchema;
 
-export const THROUGHPUT_SAMPLES = "throughputSamples";
-export const THROUGHPUT_ESTIMATE = "throughputEstimate";
-export const WORK_PATTERN = "workPattern";
+export const EstimateType = {
+    backlog: "backlog",
+    workPattern: "workPattern"
+};
 
-export const FIXED_DATE = "fixedDate";
-export const AFTER = "after";
-export const WITH = "with";
+export const StartType = {
+    fixedDate: "fixedDate",
+    after: "after",
+    with: "with"
+};
+
+export const ThroughputType = {
+    samples: "throughputSamples",
+    estimate: "throughputEstimate",
+    none: "none"
+};
+
+export const Backlog = new SimpleSchema({
+
+    // backlog size
+    lowGuess: { type: Integer, min: 0 },
+    highGuess: { type: Integer, min: 0 },
+    lowSplitRate: { type: Number, min: 1 },
+    highSplitRate: { type: Number, min: 1 },
+
+    // possible risks that could increase scope
+    risks: { type: Array, optional: true },
+    
+    'risks.$': Object,
+    'risks.$.name': String,
+    'risks.$.description': { type: String, optional: true },
+    'risks.$.likelihood': { type: Number, min: 0, max: 1}, // percentage
+    'risks.$.lowImpact': { type: Integer, min: 0 },  // number of work items added if risk hits (low guess)
+    'risks.$.highImpact': { type: Integer, min: 0 }, // number of work items added if risk hits (high guess)
+
+});
+
+export const Team = new SimpleSchema({
+
+    members: { type: Array, optional: true },
+    'members.$': Object,
+    'members.$.role': String,
+    'members.$.description': { type: String, optional: true },
+    'members.$.quantity': { type: Number, min: 0 },
+
+    // throughput calculations
+    throughputPeriodLength: { type: Number, min: 1 }, // weeks 
+    throughputType: { type: String, optional: true, allowedValues: Object.values(ThroughputType) }, // are we using samples or estimates?
+
+    // team's historical throughput
+    throughputSamples: { type: Array, optional: true },
+    'throughputSamples.$': Object,
+    'throughputSamples.$.periodStartDate': Date, // e.g. start of week or sprint
+    'throughputSamples.$.description': { type: String, optional: true },
+    'throughputSamples.$.throughput': Integer, // number of work items during this period
+
+    // guess of team's throughput (will be used if there are no historical samples)
+    throughputEstimate: { type: Object, optional: true },
+    'throughputEstimate.lowGuess': { type: Integer, min: 0 }, // work items per period (low guess)
+    'throughputEstimate.highGuess': { type: Integer, min: 0 }, // work items per period (high guess)
+
+    // S-curve scaling
+    rampUp: { type: Object, optional: true },
+    'rampUp.duration': { type: Number, min: 0 }, // number of periods of ramp up
+    'rampUp.throughputScalingLowGuess': { type: Number, min: 0 }, // work items per period (low guess)
+    'rampUp.throughputScalingHighGuess': { type: Number, min: 0 }, // work items per period (high guess)
+
+    // team's work pattern (will be used if there are no samples or throughput guesses)
+    workPattern: { type: Array, optional: true },
+    'workPattern.$': Object,
+    'workPattern.$.startDate': Date,
+    'workPattern.$.endDate': Date
+
+});
+
 
 export const Solution = new SimpleSchema({
 
     _id: String,
     name: String,
     description: { type: String, optional: true },
+    notes: { type: String, optional: true },
 
-    startType: { type: String, allowedValues: [FIXED_DATE, AFTER, WITH] },
+    estimateType: { type: String, allowedValues: Object.values(EstimateType) },
+
+    startType: { type: String, allowedValues: Object.values(StartType) },
     startDate: { type: Date, optional: true },  // fixed date of starting
     startDependency: { type: String, optional: true },  // id of other solution in this project
 
-    estimateType: { type: String, allowedValues: [THROUGHPUT_SAMPLES, THROUGHPUT_ESTIMATE, WORK_PATTERN] },
-
-    // definition of solution scope
-    scope: { type: Object, optional: true },
-
-    'scope.lowGuess': { type: Integer, min: 0 },
-    'scope.highGuess': { type: Integer, min: 0 },
-    'scope.lowSplitRate': { type: Number, min: 1 },
-    'scope.highSplitRate': { type: Number, min: 1 },
-
-    // possible risks that could increae scope
-    'scope.risks': { type: Array, optional: true },
-    'scope.risks.$': Object,
-    'scope.risks.$.name': String,
-    'scope.risks.$.description': { type: String, optional: true },
-    'scope.risks.$.likelihood': { type: Number, min: 0, max: 1}, // percentage
-    'scope.risks.$.lowImpact': { type: Integer, min: 0 },  // number of work items added if risk hits (low guess)
-    'scope.risks.$.highImpact': { type: Integer, min: 0 }, // number of work items added if risk hits (high guess)
-
-    // definition of team
-    team: Object,
-
-    'team.members': { type: Array, optional: true },
-    'team.members.$': Object,
-    'team.members.$.role': String,
-    'team.members.$.description': { type: String, optional: true },
-    'team.members.$.quantity': { type: Number, min: 0 },
-
-    // throughput calculations
-    'team.throughputPeriodLength': { type: Number, min: 1 }, // weeks 
-
-    // team's historical throughput
-    'team.throughputSamples': { type: Array, optional: true },
-    'team.throughputSamples.$': Object,
-    'team.throughputSamples.$.periodStartDate': Date, // e.g. start of week or sprint
-    'team.throughputSamples.$.description': { type: String, optional: true },
-    'team.throughputSamples.$.throughput': Integer, // number of work items during this period
-
-    // guess of team's throughput (will be used if there are no historical samples)
-    'team.throughputEstimate': { type: Object, optional: true },
-    'team.throughputEstimate.lowGuess': { type: Integer, min: 0 }, // work items per period (low guess)
-    'team.throughputEstimate.highGuess': { type: Integer, min: 0 }, // work items per period (high guess)
-
-    // S-curve scaling
-    'team.rampUp': { type: Object, optional: true },
-    'team.rampUp.duration': { type: Number, min: 0 }, // number of periods of ramp up
-    'team.rampUp.throughputScalingLowGuess': { type: Number, min: 0 }, // work items per period (low guess)
-    'team.rampUp.throughputScalingHighGuess': { type: Number, min: 0 }, // work items per period (high guess)
-
-    // team's work pattern (will be used if there are no samples or throughput guesses)
-    'team.workPattern': { type: Array, optional: true },
-    'team.workPattern.$': Object,
-    'team.workPattern.$.startDate': Date,
-    'team.workPattern.$.endDate': Date
-
+    backlog: { type: Backlog, optional: true },
+    team: Team
 });
 
 export const Project = new SimpleSchema({
@@ -106,14 +124,15 @@ export function newSolution({ name, ...rest }) {
         _id: Random.id(),
         name,
         description: null,
+        notes: null,
+
+        estimateType: EstimateType.backlog,
         
-        startType: FIXED_DATE,
+        startType: StartType.fixedDate,
         startDate: null,
         startDependency: null,
         
-        estimateType: THROUGHPUT_ESTIMATE,
-        
-        scope: {
+        backlog: {
             lowGuess: 0,
             highGuess: 0,
             lowSplitRate: 1,
@@ -125,6 +144,7 @@ export function newSolution({ name, ...rest }) {
         team: {
             members: [],
             throughputPeriodLength: 1,
+            throughputType: ThroughputType.estimate,
             throughputSamples: [],
             throughputEstimate: {
                 lowGuess: 0,
