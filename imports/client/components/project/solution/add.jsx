@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
-import { Modal, Button, FormGroup, FormControl } from 'react-bootstrap';
-
+import { Modal, Button, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 
 import { Projects } from '../../../../collections/promisified';
-import { newSolution } from '../../../../collections/projects';
+import { EstimateType, newSolution } from '../../../../collections/projects';
 
 export default class AddSolution extends Component {
 
@@ -21,7 +20,8 @@ export default class AddSolution extends Component {
 
         this.state = {
             name: "",
-            description: ""
+            description: "",
+            estimateType: EstimateType.backlog
         };
     }
 
@@ -46,7 +46,7 @@ export default class AddSolution extends Component {
                             <FormControl
                                 type="text"
                                 placeholder="Solution name"
-                                value={this.state.name || ""}
+                                value={this.state.name}
                                 onChange={e => { this.setState({name: e.target.value}); }}
                                 />
                         </FormGroup>
@@ -55,9 +55,22 @@ export default class AddSolution extends Component {
                             <FormControl
                                 componentClass='textarea'
                                 placeholder="A short description of the solution"
-                                value={this.state.description || ""}
+                                value={this.state.description}
                                 onChange={e => { this.setState({description: e.target.value}); }}
                                 />
+                        </FormGroup>
+
+                        <FormGroup controlId="estimateType">
+                            <ControlLabel>Estimate type</ControlLabel>
+                            <FormControl
+                                componentClass="select"
+                                placeholder="select"
+                                value={this.state.estimateType}
+                                onChange={e => { this.setState({estimateType: e.target.value}); }}
+                            >
+                                <option value={EstimateType.backlog}>Working through a backlog</option>
+                                <option value={EstimateType.workPattern}>Fixed working pattern</option>
+                            </FormControl>
                         </FormGroup>
 
                     </form>
@@ -75,7 +88,11 @@ export default class AddSolution extends Component {
         e.preventDefault();
 
         try {
-            const solution = newSolution({ name: this.state.name, description: this.state.description })
+            const solution = newSolution({
+                name: this.state.name,
+                description: this.state.description,
+                estimateType: this.state.estimateType
+            });
 
             await Projects.update(this.props.project._id, {
                 $push: {

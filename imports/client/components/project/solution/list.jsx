@@ -3,26 +3,30 @@ import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
 import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc';
-import { ListGroup, ListGroupItem, } from 'react-bootstrap';
+import { ListGroup, ListGroupItem, Glyphicon } from 'react-bootstrap';
 
 import { canWrite } from '../../../../utils';
 import { Projects } from '../../../../collections/promisified';
+import { EstimateType } from '../../../../collections/projects';
 
-const SolutionItem = SortableElement(({ solution, prefix }) =>
-    <ListGroupItem header={<Link to={`${prefix}/solution/${solution._id}`}>{solution.name}</Link>}>
-        {solution.description}
+const SolutionItem = SortableElement(({ solution, prefix }) => (
+    <ListGroupItem header={
+            <span>
+                <Glyphicon glyph={solution.estimateType === EstimateType.workPattern? 'calendar' : 'list-alt'} />
+                <Link to={`${prefix}/solution/${solution._id}`}>{solution.name}</Link>
+            </span>
+        }>
+            {solution.description}
     </ListGroupItem>
-);
+));
 
-const SolutionListContainer = SortableContainer(({ items, disabled, prefix }) => {
-    return (
-        <ListGroup className="solutions-list">
-            {items.map((value, index) => (
-                <SolutionItem disabled={disabled} prefix={prefix} key={`item-${index}`} index={index} solution={value} />
-            ))}
-        </ListGroup>
-    );
-});
+const SolutionListContainer = SortableContainer(({ items, disabled, prefix }) => (
+    <ListGroup className="solutions-list">
+        {items.map((value, index) => (
+            <SolutionItem disabled={disabled} prefix={prefix} key={`item-${index}`} index={index} solution={value} />
+        ))}
+    </ListGroup>
+));
 
 export default class SolutionList extends Component {
 

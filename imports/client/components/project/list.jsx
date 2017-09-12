@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Glyphicon } from 'react-bootstrap'
 
 const ProjectList = ({ projects }) => (
     <ul className="project-list">
@@ -13,9 +14,9 @@ const ProjectList = ({ projects }) => (
             </li>
         )}
 
-        <li>
+        <li className="project-list">
             <Link className="btn btn-lg btn-success" to="/project/new">
-                <span> <i className="glyphicon glyphicon-plus pull-left" /> Create new project</span>
+                <span> <Glyphicon className="pull-left" glyph="plus" /> Create new project</span>
             </Link>
         </li>
 

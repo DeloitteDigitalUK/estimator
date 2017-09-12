@@ -98,6 +98,7 @@ export const Solution = new SimpleSchema({
 
     backlog: { type: Backlog, optional: true },
     team: Team
+    
 });
 
 export const Project = new SimpleSchema({

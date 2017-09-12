@@ -154,9 +154,22 @@ body {
 }
 
 /*
+ * Project list
+ */
+
+.project-list .glyphicon {
+    margin-right: 10px;
+}
+
+/*
  * Solution list
  */
 
 .solutions-list {
     margin-top: 20px;
+}
+
+.solutions-list .glyphicon {
+    margin-right: 5px;
+    font-size: 90%;
 }
