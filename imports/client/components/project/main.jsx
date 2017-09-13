@@ -71,7 +71,6 @@ export const ProjectNav = ({ match }) => {
         <Nav>
             <LinkContainer to={prefix}><NavItem>{project.name}</NavItem></LinkContainer>
             <NavDropdown id="project-menu-dropdown" title="Project">
-                    <LinkContainer to="/project/add"><MenuItem>New project&hellip;</MenuItem></LinkContainer>
                 {w? <LinkContainer to={`${prefix}/edit`}><MenuItem>Edit</MenuItem></LinkContainer> : null}
                     <ModalLinkContainer to={`${prefix}/duplicate`}><MenuItem>Duplicate&hellip;</MenuItem></ModalLinkContainer>
                 {o? <ModalLinkContainer to={`${prefix}/delete`}><MenuItem>Delete&hellip;</MenuItem></ModalLinkContainer> : null}
