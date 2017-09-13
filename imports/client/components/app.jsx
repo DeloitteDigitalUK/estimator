@@ -19,7 +19,7 @@ import { AdminUsers, CreateUser } from './users';
 
 import Loading from './loading';
 
-import Home, { HomeNav } from './home';
+import Home from './home';
 
 import ProjectMain, { ProjectNav } from './project/main';
 import AddProject from './project/add';
@@ -43,20 +43,10 @@ const App = ({ loadingUsers, loadingProjects, loggingIn, user, projects }) => {
         <BrowserRouter>
             <div>
                 
-                {!isAuthenticated? null : (
-                    <TopNav>
-                        <Switch>
-                            <Route exact path="/" component={HomeNav} />
-
-                            <Route exact path="/project/new" component={HomeNav} />
-                            <Route path="/project/:_id" component={ProjectNav} />
-                        </Switch>
-                    </TopNav>
-                )}
+                {isAuthenticated? <TopNav /> : null}
 
                 <div className="container">
                     <Switch>
-                        
                         <Route exact path="/login" component={Login} />
                         <Route exact path="/reset-password/:token" component={ResetPassword} />
                         <Route exact path="/enroll-account/:token" component={EnrollAccount} />
@@ -83,8 +73,7 @@ const App = ({ loadingUsers, loadingProjects, loggingIn, user, projects }) => {
 export class TopNav extends Component {
 
     static propTypes = {
-        history: PropTypes.object,
-        children: PropTypes.object
+        history: PropTypes.object
     }
 
     render() {
@@ -101,7 +90,9 @@ export class TopNav extends Component {
                 <Navbar.Toggle />
                 <Navbar.Collapse>
 
-                    {this.props.children}
+                    <Switch>
+                        <Route path="/project/:_id" component={ProjectNav} />
+                    </Switch>
 
                     <Nav navbar pullRight>
                         <NavDropdown id="user-menu-dropdown" ref="userMenu" title={user ? user.username : 'Not logged in'}>

@@ -1,8 +1,4 @@
 import React from 'react';
-
-import { Nav, NavDropdown, MenuItem } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
-
 import ProjectList from './project/list';
 
 const Home = ({ projects }) => (
@@ -17,11 +13,3 @@ const Home = ({ projects }) => (
 );
 
 export default Home;
-
-export const HomeNav = () => (
-    <Nav>
-        <NavDropdown id="project-menu-dropdown" title="Project">
-            <LinkContainer to="/project/add"><MenuItem>New&hellip;</MenuItem></LinkContainer>
-        </NavDropdown>
-    </Nav>
-);

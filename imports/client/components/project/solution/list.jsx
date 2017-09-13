@@ -12,7 +12,7 @@ import { EstimateType } from '../../../../collections/projects';
 const SolutionItem = SortableElement(({ solution, prefix }) => (
     <ListGroupItem header={
             <span>
-                <Glyphicon glyph={solution.estimateType === EstimateType.workPattern? 'calendar' : 'list-alt'} />
+                <Glyphicon className="solution-type" glyph={solution.estimateType === EstimateType.workPattern? 'calendar' : 'list-alt'} />
                 <Link to={`${prefix}/solution/${solution._id}`}>{solution.name}</Link>
             </span>
         }>
@@ -42,6 +42,7 @@ export default class SolutionList extends Component {
                 disabled={!canWrite(this.props.project)}
                 prefix={this.props.prefix}
                 lockAxis="y"
+                distance={5}
                 items={this.props.project.solutions}
                 onSortEnd={this.updateOrder.bind(this)}
             />

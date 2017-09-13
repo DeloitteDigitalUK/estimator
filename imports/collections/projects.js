@@ -121,7 +121,7 @@ export const Project = new SimpleSchema({
  * Create a new minimal solution object
  */
 export function newSolution({ name, ...rest }) {
-    return Solution.clean(_.extend({
+    return Solution.clean(_.assignIn({
         _id: Random.id(),
         name,
         description: null,

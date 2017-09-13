@@ -5,7 +5,7 @@ import { ModalLinkContainer } from '../routing';
 
 import SolutionList from './solution/list';
 
-const ViewProject = ({ project, prefix }) => {
+const ViewProject = ({ project, match }) => {
 
     return (
         <div className="view-project">
@@ -22,9 +22,9 @@ const ViewProject = ({ project, prefix }) => {
                 and reorder solutions below.
             </HelpBlock>
 
-            <SolutionList project={project} prefix={prefix} />
+            <SolutionList project={project} prefix={match.url} />
 
-            <ModalLinkContainer to={prefix + "/solution/add"}>
+            <ModalLinkContainer to={`${match.url}/solution/add`}>
                 <Button bsStyle="primary">Add solution</Button>
             </ModalLinkContainer>
 

@@ -1,24 +1,29 @@
+import _ from 'lodash';
+
+import { Random } from 'meteor/random';
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
 import { Modal, Button, FormGroup, FormControl } from 'react-bootstrap';
 
-import { callMethod } from '../../../utils';
+import { Projects } from '../../../../collections/promisified';
 
-export default class DuplicateProject extends Component {
+export default class DuplicateSolution extends Component {
 
     static propTypes = {
         project: PropTypes.object.isRequired,
+        solution: PropTypes.object.isRequired,
         location: PropTypes.object.isRequired,
-        history: PropTypes.object.isRequired
+        history: PropTypes.object.isRequired,
     }
 
     constructor(props) {
         super(props);
 
         this.state = {
-            name: `${props.project.name} copy`
+            name: `${props.solution.name} copy`
         };
     }
 
@@ -27,13 +32,13 @@ export default class DuplicateProject extends Component {
         return (
             <Modal show>
                 <Modal.Header>
-                    <Modal.Title>Duplicate project</Modal.Title>
+                    <Modal.Title>Duplicate solution</Modal.Title>
                 </Modal.Header>
 
                 <Modal.Body>
 
                     <p>
-                        To duplicate <strong>{this.props.project.name}</strong>,
+                        To duplicate <strong>{this.props.solution.name}</strong>,
                         enter a new name below and click <em>Duplicate</em>.
                     </p>
 
@@ -41,7 +46,7 @@ export default class DuplicateProject extends Component {
                         <FormGroup controlId="name" validationState={this.state.name? null : 'error'}>
                             <FormControl
                                 type="text"
-                                placeholder="Project name"
+                                placeholder="Solution name"
                                 value={this.state.name || ""}
                                 onChange={e => { this.setState({name: e.target.value}); }}
                                 />
@@ -61,11 +66,18 @@ export default class DuplicateProject extends Component {
         e.preventDefault();
 
         try {
-            let projectId = await callMethod('project/duplicate', this.props.project._id, this.state.name);
-            this.props.history.push('/project/' + projectId);
+            const solution = _.assignIn(_.cloneDeep(this.props.solution), {_id: Random.id()});
+            
+            await Projects.update(this.props.project._id, {
+                $push: {
+                    solutions: solution
+                }
+            });
+            
+            this.props.history.push(`/project/${this.props.project._id}/solution/${solution._id}`);
         } catch(err) {
             console.log(err);
-            alert("UNEXPECTED ERROR: Unable to duplicate projects");
+            alert("UNEXPECTED ERROR: Unable to duplicate solutions");
         }
     }
 
