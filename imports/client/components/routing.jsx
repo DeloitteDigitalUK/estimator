@@ -25,7 +25,17 @@ export const PrivateRoute = ({ component: Component, render, isAuthenticated, ..
  * Wrap a subset of the child `<Route />` objects in a `<ModalRoutes />`
  * tag to make them behave like modals.
  * 
- * To link to a modal, use <ModalLink /> or <ModalLinkContainer />
+ * To link to a modal, use `<ModalLink />` or `<ModalLinkContainer />`
+ * 
+ * Note that if you have (indirectly) nested `<ModalSwitch />` blocks,
+ * you may get into trouble with modals in the innemost switch not working,
+ * because in effect the outermost modal "swallows" the request and starts
+ * to render things differently.
+ * 
+ * To get around this, set `modalTarget` on `<ModalSwitch />` to a unique
+ * string and use the same string in the `modalTarget` attribute of any
+ * `<ModalLink />` or `<ModalLinkContainer />` that references modals
+ * for this switch. The default `modalTarget` is `"default"`.
  */
 export class ModalSwitch extends Component {
 
@@ -34,8 +44,14 @@ export class ModalSwitch extends Component {
         location: PropTypes.object.isRequired,
         match: PropTypes.object.isRequired,
 
+        modalTarget: PropTypes.string,
+
         className: PropTypes.string,
         children: PropTypes.array
+    }
+
+    static defaultProps = {
+        modalTarget: "default"
     }
 
     previousLocation = this.props.location
@@ -54,6 +70,7 @@ export class ModalSwitch extends Component {
         const isModal = !!(
             location.state &&
             location.state.modal &&
+            location.state.modalTarget === this.props.modalTarget &&
             this.previousLocation !== location // not initial render
         );
 
@@ -89,10 +106,10 @@ export const ModalRoutes = ({ children, location }) => {
     );
 };
 
-export const ModalLink = ({ to, ...rest }) => (
-    <Link to={{pathname: to, state: { modal: true, returnTo: location.pathname }}} {...rest} />
+export const ModalLink = ({ to, modalTarget="default", ...rest }) => (
+    <Link to={{pathname: to, state: { modal: true, modalTarget, returnTo: location.pathname }}} {...rest} />
 )
 
-export const ModalLinkContainer = ({ to, ...rest }) => (
-    <LinkContainer to={{pathname: to, state: { modal: true, returnTo: location.pathname }}} {...rest} />
+export const ModalLinkContainer = ({ to, modalTarget="default", ...rest }) => (
+    <LinkContainer to={{pathname: to, state: { modal: true, modalTarget, returnTo: location.pathname }}} {...rest} />
 )

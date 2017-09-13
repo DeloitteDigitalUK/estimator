@@ -29,7 +29,7 @@ const SolutionMain = ({ history, location, match, project }) => {
     const w = canWrite(project);
 
     return (
-        <ModalSwitch className="solution-container" {...{history, location, match}}>
+        <ModalSwitch className="solution-container" {...{history, location, match}} modalTarget="solution">
 
             <Route exact path={prefix} render={props => <ViewSolution {...{project, solution, ...props}} />} />
             {w? <Route exact path={`${prefix}/edit`} render={props => <EditSolution {...{project, solution, ...props}} />} /> : null}
@@ -63,8 +63,8 @@ export const SolutionNav = ({ match, project }) => {
         <Nav>
             <NavDropdown id="solution-menu-dropdown" title="Solution">
                 {w? <LinkContainer to={`${prefix}/edit`}><MenuItem>Edit</MenuItem></LinkContainer> : null}
-                {w? <ModalLinkContainer to={`${prefix}/duplicate`}><MenuItem>Duplicate&hellip;</MenuItem></ModalLinkContainer> : null}
-                {w? <ModalLinkContainer to={`${prefix}/delete`}><MenuItem>Delete&hellip;</MenuItem></ModalLinkContainer> : null}
+                {w? <ModalLinkContainer to={`${prefix}/duplicate`} modalTarget="solution"><MenuItem>Duplicate&hellip;</MenuItem></ModalLinkContainer> : null}
+                {w? <ModalLinkContainer to={`${prefix}/delete`} modalTarget="solution"><MenuItem>Delete&hellip;</MenuItem></ModalLinkContainer> : null}
                 <LinkContainer to={`/project/${project._id}`} isActive={() => false}><MenuItem>Close</MenuItem></LinkContainer>
             </NavDropdown>
         </Nav>

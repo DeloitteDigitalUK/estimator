@@ -34,8 +34,7 @@ const ProjectMain = ({ history, location, match }) => {
     return (
         <ModalSwitch className="container" {...{history, location, match}}>
 
-            {/* XXX: the need to explicitly pass `location` here is problematic. Somehow <Route /> isn't picking up the right context. */}
-            <Route path={`${path}/solution/:solution_id`} render={props => <SolutionMain {...{project, ...props, location}} />} />
+            <Route path={`${path}/solution/:solution_id`} render={props => <SolutionMain {...{project, ...props}} />} />
 
             <Route exact path={path} render={props => <ViewProject {...{project, ...props}} />} />
             {w? <Route exact path={`${path}/edit`} render={props => <EditProject {...{project, ...props}} />} /> : null}

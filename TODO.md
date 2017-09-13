@@ -1,7 +1,5 @@
 # Bugs
 
-* `<ModalSwitch />` requires workaround for passing `location` to nested `SolutionMain` route.
-
 * When creating a new project and adding a solution for the first time, the
   list of solutions is not draggable.
 
