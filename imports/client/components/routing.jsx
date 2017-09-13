@@ -57,11 +57,13 @@ export class ModalSwitch extends Component {
             this.previousLocation !== location // not initial render
         );
 
-        const routes = [], modalRoutes = [];
+        let routes = [], modalRoutes = null;
 
         React.Children.forEach(children, child => {
+            if (!React.isValidElement(child)) return;
+
             if(child.type === ModalRoutes) {
-                modalRoutes.push(child);
+                modalRoutes = child;
             } else {
                 routes.push(child);
             }
@@ -72,16 +74,16 @@ export class ModalSwitch extends Component {
                 <Switch location={isModal ? this.previousLocation : location}>
                     {routes}
                 </Switch>
-                {modalRoutes}
+                {modalRoutes? React.cloneElement(modalRoutes, { location }) : null}
             </div>
         );
     }
 
 }
 
-export const ModalRoutes = ({ children }) => {
+export const ModalRoutes = ({ children, location }) => {
     return (
-        <Switch>
+        <Switch location={location}>
             {children}
         </Switch>
     );

@@ -66,7 +66,10 @@ export default class DuplicateSolution extends Component {
         e.preventDefault();
 
         try {
-            const solution = _.assignIn(_.cloneDeep(this.props.solution), {_id: Random.id()});
+            const solution = _.assignIn(_.cloneDeep(this.props.solution), {
+                _id: Random.id(),
+                name: this.state.name
+            });
             
             await Projects.update(this.props.project._id, {
                 $push: {
