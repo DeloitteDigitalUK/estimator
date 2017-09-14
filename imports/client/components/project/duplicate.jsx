@@ -1,10 +1,14 @@
+import _ from 'lodash';
+
+import { Meteor } from 'meteor/meteor';
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import { Link } from 'react-router-dom';
 import { Modal, Button, FormGroup, FormControl } from 'react-bootstrap';
 
-import { callMethod } from '../../../utils';
+import { Projects } from '../../../collections/promisified';
 
 export default class DuplicateProject extends Component {
 
@@ -61,7 +65,12 @@ export default class DuplicateProject extends Component {
         e.preventDefault();
 
         try {
-            let projectId = await callMethod('project/duplicate', this.props.project._id, this.state.name);
+            const projectId = await Projects.insert({
+                ..._.cloneDeep(_.omit(this.props.project, '_id', 'owner', 'name')),
+                owner: Meteor.userId(),
+                name: this.state.name
+            });
+
             this.props.history.push('/project/' + projectId);
         } catch(err) {
             console.log(err);

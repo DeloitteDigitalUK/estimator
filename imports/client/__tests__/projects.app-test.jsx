@@ -9,9 +9,8 @@ import * as userHelpers from './userhelpers.app-test';
 
 import { callMethod, subscribe } from '../../utils';
 
-import {
-    Projects
-} from '../../collections/promisified';
+import { newProject } from '../../collections/projects';
+import { Projects } from '../../collections/promisified';
 
 describe('Project CRUD and security', () => {
 
@@ -46,14 +45,11 @@ describe('Project CRUD and security', () => {
     // Tests
 
     it('should allow a user to create a project', async function (done) {
-        let id = await Projects.insert({
+        let id = await Projects.insert(newProject({
             owner: Meteor.user()._id,
-            readOnlyShares: [],
-            readWriteShares: [],
             name: "My project",
             description: "My description",
-            solutions: []
-        });
+        }));
 
         expect(id).to.be.ok;
         done();
@@ -63,14 +59,11 @@ describe('Project CRUD and security', () => {
         await userHelpers.logout();
 
         try {
-            await Projects.insert({
+            await Projects.insert(newProject({
                 owner: this.primaryUserId,
-                readOnlyShares: [],
-                readWriteShares: [],
                 name: "My project",
                 description: "My description",
-                solutions: []
-            });
+            }));
         } catch (err) {
             expect(err).to.be.ok;
             done();
@@ -79,14 +72,11 @@ describe('Project CRUD and security', () => {
 
     it('validates project ownership on creation', async function (done) {
         try {
-            await Projects.insert({
+            await Projects.insert(newProject({
                 owner: this.secondaryUserId,
-                readOnlyShares: [],
-                readWriteShares: [],
                 name: "My project",
                 description: "My description",
-                solutions: []
-            });
+            }));
         } catch (err) {
             expect(err).to.be.ok;
             done();
@@ -94,14 +84,11 @@ describe('Project CRUD and security', () => {
     });
 
     it('validates project ownership on update', async function (done) {
-        let projectId = await Projects.insert({
+        let projectId = await Projects.insert(newProject({
             owner: Meteor.user()._id,
-            readOnlyShares: [],
-            readWriteShares: [],
             name: "My project",
             description: "My description",
-            solutions: []
-        });
+        }));
 
         try {
             await Projects.update(projectId, {
@@ -118,14 +105,11 @@ describe('Project CRUD and security', () => {
     });
 
     it('allows update if ownership unchanged', async function (done) {
-        let projectId = await Projects.insert({
+        let projectId = await Projects.insert(newProject({
             owner: Meteor.user()._id,
-            readOnlyShares: [],
-            readWriteShares: [],
             name: "My project",
-            description: "My description",
-            solutions: []
-        });
+            description: "My description"
+        }));
 
         await Projects.update(projectId, {
             $set: { name: "New name" }
@@ -138,14 +122,11 @@ describe('Project CRUD and security', () => {
     });
 
     it('allows deleting own project', async function (done) {
-        let projectId = await Projects.insert({
+        let projectId = await Projects.insert(newProject({
             owner: Meteor.user()._id,
-            readOnlyShares: [],
-            readWriteShares: [],
             name: "My project",
             description: "My description",
-            solutions: []
-        });
+        }));
 
         await Projects.remove(projectId);
         await subscribe("projects");
@@ -155,15 +136,13 @@ describe('Project CRUD and security', () => {
     });
 
     it('does not allow deleting other user project', async function (done) {
-        let projectId = await Projects.insert({
+        let projectId = await Projects.insert(newProject({
             owner: Meteor.user()._id,
             name: "My project",
             readOnlyShares: [this.secondaryUserId],
             readWriteShares: [],
             description: "My description",
-            solutions: []
-            
-        });
+        }));
 
         await userHelpers.loginToSecondaryTestAccount();
         await subscribe("projects");
@@ -180,14 +159,13 @@ describe('Project CRUD and security', () => {
     });
 
     it('does not allow deleting other user project even if user in readWriteShares', async function (done) {
-        let projectId = await Projects.insert({
+        let projectId = await Projects.insert(newProject({
             owner: Meteor.user()._id,
             readOnlyShares: [],
             readWriteShares: [this.secondaryUserId],
             name: "My project",
             description: "My description",
-            solutions: []
-        });
+        }));
 
 
         await userHelpers.loginToSecondaryTestAccount();
@@ -205,14 +183,13 @@ describe('Project CRUD and security', () => {
     });
 
     it('allows updating of other users project if user in readWriteShares', async function (done) {
-        let projectId = await Projects.insert({
+        let projectId = await Projects.insert(newProject({
             owner: Meteor.user()._id,
             readOnlyShares: [],
             readWriteShares: [this.secondaryUserId],
             name: "My project",
             description: "My description",
-            solutions: []
-        });
+        }));
 
         await userHelpers.loginToSecondaryTestAccount();
         await subscribe('projects');
@@ -228,14 +205,13 @@ describe('Project CRUD and security', () => {
     });
 
     it('does not allow updating of other users project if user not in readWriteShares', async function (done) {
-        let projectId = await Projects.insert({
+        let projectId = await Projects.insert(newProject({
             owner: Meteor.user()._id,
             readOnlyShares: [this.secondaryUserId],
             readWriteShares: [],
             name: "My project",
             description: "My description",
-            solutions: []
-        });
+        }));
 
         await userHelpers.loginToSecondaryTestAccount();
         await subscribe('projects');
@@ -260,8 +236,11 @@ describe('Project CRUD and security', () => {
         await subscribe("projects");
 
         const oldProject = Projects.findOne(oldProjectId);
-
-        const newProjectId = await callMethod('project/duplicate', oldProjectId, "Duplicated");
+        const newProjectId = await Projects.insert({
+            ..._.cloneDeep(_.omit(oldProject, '_id', 'owner', 'name')),
+            owner: Meteor.userId(),
+            name: "Duplicated"
+        });
 
         await subscribe("projects");
 

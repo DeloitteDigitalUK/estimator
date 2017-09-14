@@ -3,10 +3,15 @@ import { Meteor } from 'meteor/meteor';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import moment from 'moment';
+
 import { FormGroup, ControlLabel, FormControl, HelpBlock, ButtonToolbar, Button, Row, Col, Alert } from 'react-bootstrap';
+import DatePicker from 'react-bootstrap-date-picker';
 
 import Table, { validators, rowValidator as $v, KeyValueAutocompleteCell } from '../table/table';
-import { getPublicSetting, debounce, callMethod } from '../../../utils';
+import { getPublicSetting, debounce, callMethod, ISO } from '../../../utils';
+
+const DATE_FORMAT = getPublicSetting('dateFormat');
 
 const QUERY_DEBOUNCE = getPublicSetting('queryDebounce');
 const QUERY_MIN_LENGTH = getPublicSetting('queryMinLength');
@@ -88,9 +93,6 @@ export default class ProjectForm extends Component {
             startDate: props.project? props.project.startDate : null,
             startDateValid: true,
 
-            endDate: props.project? props.project.endDate : null,
-            endDateValid: true,
-
             shares: props.project? collapseShares(props.project) : [],
             sharesValid: true,
 
@@ -110,6 +112,18 @@ export default class ProjectForm extends Component {
 
                 this.setState(newState);
             }
+        };
+
+        const saveDate = field => {
+            return val => {
+                let date = moment.utc(val, "YYYY-MM-DD"),
+                    newState = {};
+
+                newState[field] = date.toDate();
+                newState[field + "Valid"] = date.isValid();
+
+                this.setState(newState);
+            };
         };
 
         return (
@@ -142,6 +156,19 @@ export default class ProjectForm extends Component {
                                 onChange={saveString('description')}
                                 />
                             <HelpBlock>Enter a longer description for the project</HelpBlock>
+                        </FormGroup>
+
+                        <FormGroup className="date-input" controlId="startDate" validationState={this.state.startDateValid? null : "error"}>
+                            <ControlLabel>Start date</ControlLabel>
+                                <DatePicker
+                                    weekStartsOn={1}
+                                    showClearButton={false}
+                                    value={this.state.startDate? moment(this.state.startDate).format(ISO) : null}
+                                    onChange={saveDate('startDate')}
+                                    dateFormat={DATE_FORMAT}
+                                    />
+                            <FormControl.Feedback />
+                            <HelpBlock>Enter the beginning of time for the plan</HelpBlock>
                         </FormGroup>
 
                         <FormGroup controlId="shares">
@@ -212,7 +239,6 @@ export default class ProjectForm extends Component {
         let validationState = {
             nameValid: true,
             startDateValid: true,
-            endDateValid: true,
             invalid: false,
             error: false
         };
@@ -226,6 +252,11 @@ export default class ProjectForm extends Component {
             validationState.invalid = true;
         }
 
+        if(!this.state.startDate || !moment(this.state.startDate).isValid()) {
+            validationState.startDateValid = false;
+            validationState.invalid = true;
+        }
+
         this.setState(validationState);
         if(validationState.invalid) {
             return;
@@ -235,6 +266,7 @@ export default class ProjectForm extends Component {
             this.props.onSubmit({
                 name: this.state.name,
                 description: this.state.description,
+                startDate: this.state.startDate,
                 ...expandShares(this.state.shares)
             })
         }

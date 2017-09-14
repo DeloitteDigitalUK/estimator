@@ -106,6 +106,10 @@ body {
  * Project CRUD
  */
 
+ .date-input input {
+    max-width: 150px;
+}
+
 .data-table {
     width: 100%;
 }

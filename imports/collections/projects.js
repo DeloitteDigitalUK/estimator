@@ -3,6 +3,7 @@ import { Mongo } from 'meteor/mongo';
 import { Random } from 'meteor/random';
 
 import _ from 'lodash';
+import moment from 'moment';
 import SimpleSchema from 'simpl-schema';
 
 const { Integer } = SimpleSchema;
@@ -112,10 +113,28 @@ export const Project = new SimpleSchema({
     // basic metadata
     name: String,
     description: { type: String, optional: true },
+    startDate: Date,
 
     // list of solutions
     solutions: [Solution]
 });
+
+/**
+ * Create a new minimal project object
+ */
+export function newProject({ name, owner, ...rest }) {
+    return Project.clean(_.assignIn({
+        _id: Random.id(),
+        owner,
+        readOnlyShares: [],
+        readWriteShares: [],
+
+        name,
+        description: null,
+        startDate: moment.utc().startOf('day').toDate(),
+        solutions: []
+    }, rest));
+}
 
 /**
  * Create a new minimal solution object

@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import { newProject } from '../../../collections/projects';
 import { Projects } from '../../../collections/promisified';
 import ProjectForm from './form';
 
@@ -34,11 +35,10 @@ export default class AddProject extends Component {
     async onSubmit(data) {
 
         try {
-            const projectId = await Projects.insert({
+            const projectId = await Projects.insert(newProject({
                 ...data,
-                owner: Meteor.userId(),
-                solutions: []
-            });
+                owner: Meteor.userId()
+            }));
 
             this.props.history.push('/project/' + projectId);
         } catch(err) {

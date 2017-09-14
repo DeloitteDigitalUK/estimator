@@ -1,14 +1,15 @@
 const firstSolutionId = 'YW74Dcpr2BvLQdtSB';
 
-import { EstimateType, StartType, ThroughputType } from '../collections/projects';
+import { EstimateType, StartType, ThroughputType, newProject } from '../collections/projects';
 
-export default {
+export default newProject({
     _id: 'm2uNAAg6T5vYjAyDm',
     owner: 'CyLwgqZrGRckcyiGM',
     readOnlyShares: [],
     readWriteShares: [],
     name: "Full project",
     description: "A test project",
+    startDate: new Date(2017, 0, 1),
     solutions: [{
         _id: firstSolutionId,
         name: "Front end",
@@ -103,4 +104,4 @@ export default {
             }]
         }
     }]
-};
+});
