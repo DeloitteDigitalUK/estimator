@@ -9,9 +9,7 @@ import { getPrivateSetting } from '../utils';
 // import './testing';
 
 // trigger import of collections and subscriptions
-import '../collections/promisified';
-
-// trigger allow/subscribe for user data
+import '../collections/projects';
 import '../collections/users';
 
 // trigger import of methods

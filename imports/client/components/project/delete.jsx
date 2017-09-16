@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Modal, Button } from 'react-bootstrap';
 
-import { Projects } from '../../../collections/promisified';
+import Projects from '../../../collections/projects';
 
 export default class DeleteProject extends Component {
 

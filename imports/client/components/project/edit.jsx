@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { Projects } from '../../../collections/promisified';
+import Projects from '../../../collections/projects';
 import ProjectForm from './form';
 
 export default class EditProject extends Component {

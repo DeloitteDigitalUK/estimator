@@ -88,3 +88,12 @@ export function subscribe(name, ...args) {
 export function callIfFunction(d) {
     return (d && _.isFunction(d)) ? d() : d
 }
+
+export const promisifyCollection = C => ({
+    insert: Promise.promisify(C.insert, { context: C }),
+    update: Promise.promisify(C.update, { context: C }),
+    upsert: Promise.promisify(C.upsert, { context: C }),
+    remove: Promise.promisify(C.remove, { context: C }),
+    find: C.find.bind(C),
+    findOne: C.findOne.bind(C)
+});

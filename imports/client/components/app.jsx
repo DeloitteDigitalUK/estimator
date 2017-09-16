@@ -12,7 +12,7 @@ import { PrivateRoute } from './routing';
 
 import { Navbar, Nav, NavDropdown, MenuItem } from 'react-bootstrap';
 
-import { Projects } from '../../collections/promisified';
+import Projects from '../../collections/projects';
 
 import { Login, ResetPassword, EnrollAccount, ChangePassword } from './login';
 import { AdminUsers, CreateUser } from './users';

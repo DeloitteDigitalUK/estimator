@@ -5,7 +5,7 @@ import { Route, Switch } from 'react-router'
 import { Nav, NavDropdown, MenuItem, NavItem } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
-import { Projects } from '../../../collections/promisified';
+import Projects from '../../../collections/projects';
 import { isOwner, canWrite } from '../../../utils';
 
 import FourOhFour from '../fourohfour'

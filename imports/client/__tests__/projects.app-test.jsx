@@ -9,8 +9,7 @@ import * as userHelpers from './userhelpers.app-test';
 
 import { callMethod, subscribe } from '../../utils';
 
-import { newProject } from '../../collections/projects';
-import { Projects } from '../../collections/promisified';
+import Projects, { newProject } from '../../collections/projects';
 
 describe('Project CRUD and security', () => {
 

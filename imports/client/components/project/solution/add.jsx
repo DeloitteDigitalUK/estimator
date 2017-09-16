@@ -4,8 +4,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Modal, Button, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 
-import { Projects } from '../../../../collections/promisified';
-import { EstimateType, newSolution } from '../../../../collections/projects';
+import Projects, { EstimateType, newSolution } from '../../../../collections/projects';
 
 export default class AddSolution extends Component {
 

@@ -6,8 +6,7 @@ import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-ho
 import { ListGroup, ListGroupItem, Glyphicon } from 'react-bootstrap';
 
 import { canWrite } from '../../../../utils';
-import { Projects } from '../../../../collections/promisified';
-import { EstimateType } from '../../../../collections/projects';
+import Projects, { EstimateType } from '../../../../collections/projects';
 
 const SolutionItem = SortableElement(({ solution, prefix }) => (
     <ListGroupItem header={

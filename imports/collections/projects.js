@@ -6,6 +6,8 @@ import _ from 'lodash';
 import moment from 'moment';
 import SimpleSchema from 'simpl-schema';
 
+import { promisifyCollection } from '../utils';
+
 const { Integer } = SimpleSchema;
 
 export const EstimateType = {
@@ -87,7 +89,7 @@ export const Team = new SimpleSchema({
 export const Solution = new SimpleSchema({
 
     _id: String,
-    name: String,
+    name: { type: String, min: 1 },
     description: { type: String, optional: true },
     notes: { type: String, optional: true },
 
@@ -176,7 +178,7 @@ export function newSolution({ name, ...rest }) {
     }, rest));
 }
 
-const Projects = new Mongo.Collection("Projects");
+export const Projects = new Mongo.Collection("Projects");
 Projects.attachSchema(Project);
 
 Projects.allow({
@@ -197,7 +199,7 @@ Projects.allow({
 
 });
 
-export default Projects;
+export default promisifyCollection(Projects);
 
 export function checkProjectOwnership(userId, projectId, canWrite) {
     if (!userId) {
