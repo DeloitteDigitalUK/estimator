@@ -16,6 +16,7 @@ export const EstimateType = {
 };
 
 export const StartType = {
+    immediately: "immediately",
     fixedDate: "fixedDate",
     after: "after",
     with: "with"
@@ -96,8 +97,16 @@ export const Solution = new SimpleSchema({
     estimateType: { type: String, allowedValues: Object.values(EstimateType) },
 
     startType: { type: String, allowedValues: Object.values(StartType) },
-    startDate: { type: Date, optional: true },  // fixed date of starting
-    startDependency: { type: String, optional: true },  // id of other solution in this project
+    startDate: { type: Date, optional: true, custom: function() {
+        if(!this.value && this.siblingField('startType').value === StartType.fixedDate) {
+            return SimpleSchema.ErrorTypes.REQUIRED;
+        }
+    } },
+    startDependency: { type: String, optional: true, custom: function() {
+        if(!this.value && (this.siblingField('startType').value === StartType.with || this.siblingField('startType').value === StartType.after)) {
+            return SimpleSchema.ErrorTypes.REQUIRED;
+        }
+    } },
 
     backlog: { type: Backlog, optional: true },
     team: Team
@@ -150,7 +159,7 @@ export function newSolution({ name, ...rest }) {
 
         estimateType: EstimateType.backlog,
         
-        startType: StartType.fixedDate,
+        startType: StartType.immediately,
         startDate: null,
         startDependency: null,
         
