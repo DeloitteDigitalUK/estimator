@@ -4,7 +4,7 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { ButtonToolbar, Button, Row, Col, Alert, PanelGroup, Panel } from 'react-bootstrap';
+import { ButtonToolbar, Button, Row, Col, Alert, PanelGroup, Panel, HelpBlock } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker';
 import { FormField } from '../../../forms';
 
@@ -59,10 +59,7 @@ export default class EditSolution extends Component {
                 <h1 className="page-header">Edit solution</h1>
                 <p>
                     A solution is a thing that has to be built or done to deliver the project.
-                    All estimation is based on the solution parameters set up here. You can choose
-                    to estimate a solution based on a team working through a backlog, or a fixed
-                    working pattern. You can also describe the team that will deliver the solution
-                    to enable resource forecasting.
+                    All estimation is based on the solution parameters set up here.
                 </p>
 
                 <form onSubmit={this.onSubmit.bind(this)}>
@@ -93,21 +90,14 @@ export default class EditSolution extends Component {
                                         onChange={saveValue('description')}
                                         />
                                     
-                                    <FormField
-                                        object={solution}
-                                        validationContext={validationContext}
-                                        control={
-                                            <textarea
-                                                className="form-control"
-                                                rows={10}
-                                                placeholder="Any additional notes you want to capture with this solution"
-                                                value={_.get(solution, 'notes') || ""}
-                                                onChange={saveValue('notes')}
-                                                />
-                                        }
-                                        field='notes'
-                                        title="Notes"
-                                        />
+                                    <HelpBlock>
+                                        We can either estimate how long it will take to deliver a particular
+                                        solution by estimating the size of a backlog of work and the pace
+                                        (throughput) with which a team works through that backlog, or we can
+                                        provide a fixed working pattern based on specific dates. When estimating
+                                        based on throughput, we also need to decide the denominator of any throughput
+                                        value, usually work items per 1 or 2 weeks.
+                                    </HelpBlock>
                                     
                                     <FormField
                                         object={solution}
@@ -121,6 +111,24 @@ export default class EditSolution extends Component {
                                         <option value={EstimateType.workPattern}>Fixed working pattern</option>
                                     </FormField>
 
+                                    {solution.estimateType !== EstimateType.backlog? null :
+                                        <FormField
+                                            object={solution}
+                                            validationContext={validationContext}
+                                            field='throughputPeriodLength'
+                                            title="Throughput period length (weeks)"
+                                            placeholder="1"
+                                            onChange={saveValue('throughputPeriodLength', e => parseInt(e.target.value, 10))}
+                                            />
+                                    }
+
+                                    <HelpBlock>
+                                        The estimated time to deliver each solution will be shown as lines on a
+                                        plan. To be able to do this, we need to decide how and when work starts:
+                                        right at the beginning of the project; on a particular date; after another
+                                        solution has been delivered; or when work on another solution begins.
+                                    </HelpBlock>
+
                                     <FormField
                                         object={solution}
                                         validationContext={validationContext}
@@ -132,7 +140,7 @@ export default class EditSolution extends Component {
                                         <option value={StartType.immediately}>As soon as the project starts</option>
                                         <option value={StartType.fixedDate}>On a fixed date</option>
                                         <option value={StartType.after}>After another solution is delivered</option>
-                                        <option value={StartType.with}>When work starts on another solution</option>
+                                        <option value={StartType.with}>When work begins on another solution</option>
                                     </FormField>
 
                                     {solution.startType !== StartType.fixedDate? null :
@@ -163,53 +171,221 @@ export default class EditSolution extends Component {
                                             title="Dependent solution"
                                             placeholder="Choose another solution that determines when work starts on this one"
                                             onChange={saveValue('startDependency')}>
-                                            <option value="">(none selected)</option>
                                             {project.solutions.map(s => (
                                                 s._id === solution._id? null : <option key={s._id} value={s._id} title={s.description}>{s.name}</option>
                                             ))}
                                         </FormField>
                                     }
+
                                 </Panel>
 
                                 {solution.estimateType !== EstimateType.backlog? null :
                                     <Panel collapsible header="Backlog parameters" eventKey="backlogParameters">
-                                        TODO: low guess
-                                        TODO: high guess
 
-                                        TODO: low split rate
-                                        TODO: high split rate
+                                        <HelpBlock>
+                                            When estimating based on a backlog, we simulate a team delivering
+                                            the work items in that backlog over a period of a time. It is difficult
+                                            to be 100% confident of the scope of any non-trivial solution up front,
+                                            so we provide a range, from a low guess to a high guess, of the size of the
+                                            backlog. The wider the range, the less certain we are.
+                                        </HelpBlock>
+
+                                        <Row>
+                                            <Col md={6}>
+                                                <FormField
+                                                    object={solution}
+                                                    validationContext={validationContext}
+                                                    field='backlog.lowGuess'
+                                                    title="Low backlog size guess"
+                                                    placeholder="50"
+                                                    onChange={saveValue('backlog.lowGuess', e => parseInt(e.target.value, 10))}
+                                                    />
+                                            </Col>
+                                            <Col md={6}>
+                                                <FormField
+                                                    object={solution}
+                                                    validationContext={validationContext}
+                                                    field='backlog.highGuess'
+                                                    title="High backlog size guess"
+                                                    placeholder="100"
+                                                    onChange={saveValue('backlog.highGuess', e => parseInt(e.target.value, 10))}
+                                                    />
+                                            </Col>
+                                        </Row>
+
+                                        <HelpBlock>
+                                            It is not uncommon that we will discover new scope when we begin to
+                                            work through the backlog. We can think of this work items being split,
+                                            with larger-than-expected work items being split into multiple smaller ones.
+                                            We can simulate this by estimating a "split factor": how many new work items
+                                            are created for each work item in the original backlog.
+                                        </HelpBlock>
+                                        
+                                        <Row>
+                                            <Col md={6}>
+                                                <FormField
+                                                    object={solution}
+                                                    validationContext={validationContext}
+                                                    field='backlog.lowSplitRate'
+                                                    title="Low split rate guess"
+                                                    placeholder="1.1"
+                                                    onChange={saveValue('backlog.lowSplitRate', e => parseInt(e.target.value, 10))}
+                                                    />
+                                            </Col>
+                                            <Col md={6}>
+                                                <FormField
+                                                    object={solution}
+                                                    validationContext={validationContext}
+                                                    field='backlog.highSplitRate'
+                                                    title="High split rate guess"
+                                                    placeholder="1.3"
+                                                    onChange={saveValue('backlog.highSplitRate', e => parseInt(e.target.value, 10))}
+                                                    />
+                                            </Col>
+                                        </Row>
 
                                         TODO: risks table (name, description, likelihood, low impact, high impact) 
                                     </Panel>
                                 }
 
                                 <Panel collapsible header="Team structure" eventKey="teamStructure">
-                                    TODO: team
+ 
                                     TODO: members table (role, description, quantity)
-                                    TODO: throughput period length
-                                    TODO: throughput type (sample, estimate)
                                 </Panel>
 
-                                <Panel collapsible header="Throughput parameters" eventKey="throughputParameters">
-                                    {solution.team.throughputType !== ThroughputType.samples? null :
-                                        "TODO: sample table (period start date, description, throughput)"
-                                    }
-                                    {solution.team.throughputType !== ThroughputType.estimate? null :
-                                        "TODO: throughput estimate (low guess, high guess)"
-                                    }
-                                </Panel>
+                                {solution.estimateType !== EstimateType.backlog? null :
+                                    <Panel collapsible header="Throughput parameters" eventKey="throughputParameters">
 
-                                <Panel collapsible header="Ramp-up" eventKey="rampUp">
-                                    TODO: ramp up duration
-                                    TODO: ramp up scaling low guess
-                                    TODO: ramp up scaling high guess
-                                </Panel>
+                                        <HelpBlock>
+                                            To estimate the team's throughput, we can we either use historical samples,
+                                            or simply estimate a range. Both deal in the number of items completed
+                                            per {solution.throughputPeriodLength} week(s). Estimates based on samples
+                                            are usually better, so long as we have a reasonable number of samples
+                                            (11-15 is a good rule of thumb) and we have reason to believe they are
+                                            representative of the work we are estimating.
+                                        </HelpBlock>
+
+
+                                        <FormField
+                                            object={solution}
+                                            validationContext={validationContext}
+                                            componentClass="select"
+                                            field='team.throughputType'
+                                            title="Throughput estimate type"
+                                            placeholder="Choose how team throughput will be estimated"
+                                            onChange={saveValue('team.throughputType')}>
+                                            <option value={ThroughputType.none}>(not selected)</option>
+                                            <option value={ThroughputType.samples}>Based on historical data</option>
+                                            <option value={ThroughputType.estimate}>Based on an estimated range</option>
+                                        </FormField>
+
+                                        {solution.team.throughputType !== ThroughputType.samples? null :
+                                            "TODO: sample table (period start date, description, throughput)"
+                                        }
+                                        {solution.team.throughputType !== ThroughputType.estimate? null :
+                                            <Row>
+                                                <Col md={6}>
+                                                    <FormField
+                                                        object={solution}
+                                                        validationContext={validationContext}
+                                                        field='team.throughputEstimate.lowGuess'
+                                                        title={`Low throughput guess (items/${solution.throughputPeriodLength} weeks)`}
+                                                        placeholder="5"
+                                                        onChange={saveValue('team.throughputEstimate.lowGuess', e => parseFloat(e.target.value, 10))}
+                                                        />
+                                                </Col>
+                                                <Col md={6}>
+                                                    <FormField
+                                                        object={solution}
+                                                        validationContext={validationContext}
+                                                        field='team.throughputEstimate.highGuess'
+                                                        title={`High guess (items/${solution.throughputPeriodLength} weeks)`}
+                                                        placeholder="8"
+                                                        onChange={saveValue('team.throughputEstimate.highGuess', e => parseFloat(e.target.value, 10))}
+                                                        />
+                                                </Col>
+                                            </Row>
+                                        }
+                                    </Panel>
+                                }
+                                {solution.estimateType !== EstimateType.backlog? null :
+                                    <Panel collapsible header="Ramp-up" eventKey="rampUp">
+                                        
+                                        <HelpBlock>
+                                            The team will typically not hit full productivity from day one. A
+                                            long period of ramping up is common - often as much as 20% of the total
+                                            delivery time! We can simulate this by indicating a ramp up length in weeks,
+                                            and using low and high guesses of the scaling factor that should be applied
+                                            to the team's throughput. This should be a number between 0 and 1.
+                                        </HelpBlock>
+
+                                        <FormField
+                                            object={solution}
+                                            validationContext={validationContext}
+                                            field='team.rampUp.duration'
+                                            title="Ramp up period (weeks)"
+                                            placeholder="8"
+                                            onChange={saveValue('team.rampUp.duration', e => parseInt(e.target.value, 10))}
+                                            />
+                                        
+                                        <Row>
+                                            <Col md={6}>
+                                                <FormField
+                                                    object={solution}
+                                                    validationContext={validationContext}
+                                                    field='team.rampUp.throughputScalingLowGuess'
+                                                    title="Low scaling factor guess"
+                                                    placeholder="0.2"
+                                                    onChange={saveValue('team.rampUp.throughputScalingLowGuess', e => parseInt(e.target.value, 10))}
+                                                    />
+                                            </Col>
+                                            <Col md={6}>
+                                                <FormField
+                                                    object={solution}
+                                                    validationContext={validationContext}
+                                                    field='team.rampUp.throughputScalingHighGuess'
+                                                    title="High scaling factor guess"
+                                                    placeholder="0.4"
+                                                    onChange={saveValue('team.rampUp.throughputScalingHighGuess', e => parseInt(e.target.value, 10))}
+                                                    />
+                                            </Col>
+                                        </Row>
+                                    </Panel>
+                                }
                                 
                                 {solution.estimateType !== EstimateType.workPattern? null :
                                     <Panel collapsible header="Work pattern" eventKey="workPattern">
                                         TODO: work pattern table (start date, end date)
                                     </Panel>
                                 }
+
+                                <Panel collapsible header="Notes" eventKey="notes">
+
+                                    <HelpBlock>
+                                        Use this field to capture assumptions, questions and any
+                                        other notes that will be helpful in interpreting the results
+                                        of the estimate in future.
+                                    </HelpBlock>
+            
+                                    <FormField
+                                        object={solution}
+                                        validationContext={validationContext}
+                                        control={
+                                            <textarea
+                                                className="form-control"
+                                                rows={10}
+                                                placeholder="Any additional notes you want to capture with this solution"
+                                                value={_.get(solution, 'notes') || ""}
+                                                onChange={saveValue('notes')}
+                                                />
+                                        }
+                                        field='notes'
+                                        title="Notes"
+                                        />
+
+                                </Panel>
+
+
                             </PanelGroup>
 
                             <ButtonToolbar>

@@ -57,7 +57,6 @@ export const Team = new SimpleSchema({
     'members.$.quantity': { type: Number, min: 0 },
 
     // throughput calculations
-    throughputPeriodLength: { type: Number, min: 1 }, // weeks 
     throughputType: { type: String, optional: true, allowedValues: Object.values(ThroughputType) }, // are we using samples or estimates?
 
     // team's historical throughput
@@ -75,8 +74,8 @@ export const Team = new SimpleSchema({
     // S-curve scaling
     rampUp: { type: Object, optional: true },
     'rampUp.duration': { type: Number, min: 0 }, // number of periods of ramp up
-    'rampUp.throughputScalingLowGuess': { type: Number, min: 0 }, // work items per period (low guess)
-    'rampUp.throughputScalingHighGuess': { type: Number, min: 0 }, // work items per period (high guess)
+    'rampUp.throughputScalingLowGuess': { type: Number, min: 0, max: 1 }, // work items per period (low guess)
+    'rampUp.throughputScalingHighGuess': { type: Number, min: 0, max: 1 }, // work items per period (high guess)
 
     // team's work pattern (will be used if there are no samples or throughput guesses)
     workPattern: { type: Array, optional: true },
@@ -95,6 +94,11 @@ export const Solution = new SimpleSchema({
     notes: { type: String, optional: true },
 
     estimateType: { type: String, allowedValues: Object.values(EstimateType) },
+    throughputPeriodLength: { type: Integer, optional: true, min: 1, custom: function() {
+        if(!_.isInteger(this.value) && this.siblingField('estimateType').value === EstimateType.backlog) {
+            return SimpleSchema.ErrorTypes.REQUIRED;
+        }
+    } },
 
     startType: { type: String, allowedValues: Object.values(StartType) },
     startDate: { type: Date, optional: true, custom: function() {
@@ -158,6 +162,7 @@ export function newSolution({ name, ...rest }) {
         notes: null,
 
         estimateType: EstimateType.backlog,
+        throughputPeriodLength: 1,
         
         startType: StartType.immediately,
         startDate: null,
@@ -174,7 +179,6 @@ export function newSolution({ name, ...rest }) {
         
         team: {
             members: [],
-            throughputPeriodLength: 1,
             throughputType: ThroughputType.estimate,
             throughputSamples: [],
             throughputEstimate: {

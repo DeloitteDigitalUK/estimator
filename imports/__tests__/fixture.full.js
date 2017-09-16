@@ -16,6 +16,7 @@ export default newProject({
         description: "Front end app and integrations",
         notes: "More details can go here",
         estimateType: EstimateType.backlog,
+        throughputPeriodLength: 2,
         startType: StartType.fixedDate,
         startDate: new Date(2017, 0, 1),
         backlog: {
@@ -48,7 +49,6 @@ export default newProject({
                 role: "Tester",
                 quantity: 2
             }],
-            throughputPeriodLength: 2,
             throughputType: ThroughputType.samples,
             throughputSamples: [{
                 periodStartDate: new Date(2017, 0, 1),
@@ -68,6 +68,7 @@ export default newProject({
         _id: 'fgFoRfMFTCQH5yACA',
         name: "Middlware",
         estimateType: EstimateType.backlog,
+        throughputPeriodLength: 1,
         startType: StartType.after,
         startDependency: firstSolutionId,
         backlog: {
@@ -78,7 +79,6 @@ export default newProject({
         },
         team: {
             members: [],
-            throughputPeriodLength: 1,
             throughputType: ThroughputType.estimate,
             throughputEstimate: {
                 lowGuess: 10,
@@ -93,7 +93,6 @@ export default newProject({
         startDependency: firstSolutionId,
         team: {
             members: [],
-            throughputPeriodLength: 1,
             throughputType: null,
             workPattern: [{
                 startDate: new Date(2017, 0, 1),
