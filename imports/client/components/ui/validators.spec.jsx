@@ -286,12 +286,12 @@ describe('Table validators', () => {
 
         it("100", () => {
             validators.percentage(100, res => {
-                expect(res).to.be.true;
+                expect(res).to.be.false;
             });
         });
 
-        it("101", () => {
-            validators.percentage(101, res => {
+        it("1.1", () => {
+            validators.percentage(1.1, res => {
                 expect(res).to.be.false;
             });
         });
@@ -362,11 +362,11 @@ describe('Table validators', () => {
 
         it("100", () => {
             validators.requiredPercentage(100, res => {
-                expect(res).to.be.true;
+                expect(res).to.be.false;
             });
         });
 
-        it("101", () => {
+        it("1.1", () => {
             validators.requiredPercentage(101, res => {
                 expect(res).to.be.false;
             });

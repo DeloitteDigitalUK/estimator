@@ -5,8 +5,11 @@
 
 # Tasks
 
-* Solution view + forecast
+* Refactor Project add/edit form to use `forms` helpers
+
+* Solution view
 * Solution edit
+* Solution forecast
 
 * Plan forecast (one swimlane per solution, different bars for different confidence intervals)
 * Resource forecast (at a particular confidence interval (table)

@@ -8,7 +8,7 @@ import moment from 'moment';
 import { FormGroup, ControlLabel, FormControl, HelpBlock, ButtonToolbar, Button, Row, Col, Alert } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker';
 
-import Table, { validators, rowValidator as $v, KeyValueAutocompleteCell } from '../table/table';
+import Table, { validators, rowValidator as $v, KeyValueAutocompleteCell } from '../ui/table';
 import { getPublicSetting, debounce, callMethod, ISO } from '../../../utils';
 
 const DATE_FORMAT = getPublicSetting('dateFormat');

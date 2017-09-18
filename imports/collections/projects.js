@@ -42,7 +42,7 @@ export const Backlog = new SimpleSchema({
     'risks.$': Object,
     'risks.$.name': String,
     'risks.$.description': { type: String, optional: true },
-    'risks.$.likelihood': { type: Number, min: 0, max: 1}, // percentage
+    'risks.$.likelihood': { type: Number, min: 0, max: 100}, // percentage
     'risks.$.lowImpact': { type: Integer, min: 0 },  // number of work items added if risk hits (low guess)
     'risks.$.highImpact': { type: Integer, min: 0 }, // number of work items added if risk hits (high guess)
 

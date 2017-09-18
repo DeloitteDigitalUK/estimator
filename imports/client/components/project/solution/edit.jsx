@@ -6,7 +6,9 @@ import PropTypes from 'prop-types';
 
 import { ButtonToolbar, Button, Row, Col, Alert, PanelGroup, Panel, HelpBlock } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker';
-import { FormField } from '../../../forms';
+
+import { FormField, TableField } from '../../ui/forms';
+import { validators, rowValidator as $v } from '../../ui/table';
 
 import Projects, { Solution, EstimateType, StartType, ThroughputType } from '../../../../collections/projects';
 
@@ -244,7 +246,31 @@ export default class EditSolution extends Component {
                                             </Col>
                                         </Row>
 
-                                        TODO: risks table (name, description, likelihood, low impact, high impact) 
+                                        <TableField
+                                            object={solution}
+                                            validationContext={validationContext}
+                                            field='backlog.risks'
+                                            title="Risks that could lead to more scope"
+                                            idProp={null}
+                                            data={solution.backlog.risks || []}
+                                            onChange={saveValue('backlog.risks', e => e)}
+                                            showCellErrors={this.state.invalid}
+                                            dataSchema={{
+                                                name: null,
+                                                description: null,
+                                                likelihood: null,
+                                                lowImpact: null,
+                                                highImpact: null
+                                            }}
+                                            columns={[
+                                                {data: "name", title: "Name", width: 150, validator: $v(validators.required), allowInvalid: true},
+                                                {data: "description", title: "Description", width: 300},
+                                                {data: "likelihood", title: "Likelihood", width: 85, type: "numeric", format: '0.0%', validator: $v(validators.requiredPercentage), allowInvalid: true},
+                                                {data: "lowImpact", title: "Low impact", width: 85, type: "numeric", validator: $v(validators.requiredNumber), allowInvalid: true},
+                                                {data: "highImpact", title: "High impact", width: 85, type: "numeric", validator: $v(validators.requiredNumber), allowInvalid: true},
+                                            ]}
+                                            />
+
                                     </Panel>
                                 }
 

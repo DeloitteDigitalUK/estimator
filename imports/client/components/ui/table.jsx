@@ -183,13 +183,21 @@ export default class Table extends Component {
                         item = this.getSourceDataAtRow(row);
 
                     // if a new row, set id and validate
-                    if(!item[idProp]) {
+                    if(idProp && !item[idProp]) {
                         item[idProp] = Random.id();
 
                         for(let j = 0; j < this.countCols(); ++j) {
                             this.validateCell(this.getDataAtCell(row, j), this.getCellMeta(row, j), () => {}, 'edit');
                         }
 
+                    }
+
+                    // we can't detect new rows easily without the `_id` property, so just revalidate
+                    // the whole row on all changes
+                    if(!idProp) {
+                        for(let j = 0; j < this.countCols(); ++j) {
+                            this.validateCell(this.getDataAtCell(row, j), this.getCellMeta(row, j), () => {}, 'edit');
+                        }
                     }
 
                 }

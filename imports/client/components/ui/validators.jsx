@@ -53,7 +53,7 @@ const validators = {
     percentage(value, callback) {
         if(value === null || value === undefined || value === "") {
             callback(true);
-        } else if(!_.isFinite(value) || value < 0 || value > 100) {
+        } else if(!_.isFinite(value) || value < 0 || value > 1) {
             callback(false);
         } else {
             callback(true);
@@ -61,7 +61,7 @@ const validators = {
     },
 
     requiredPercentage(value, callback) {
-        if(!_.isFinite(value) || value < 0 || value > 100) {
+        if(!_.isFinite(value) || value < 0 || value > 1) {
             callback(false);
         } else {
             callback(true);
