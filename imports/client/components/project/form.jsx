@@ -101,30 +101,22 @@ export default class ProjectForm extends Component {
         };
     }
 
+    saveString(field, e) {
+        this.setState({
+            [field]: e.target.value,
+            [field + "Valid"]: Boolean(e.target.value)
+        });
+    }
+
+    saveDate(field, val) {
+        let date = moment.utc(val, ISO);
+        this.setState({
+            [field]: date.toDate(),
+            [field + "Valid"]: date.isValid()
+        });
+    }
+
     render() {
-
-        const saveString = field => {
-            return e => {
-                let newState = {};
-
-                newState[field] = e.target.value;
-                newState[field + "Valid"] = Boolean(e.target.value);
-
-                this.setState(newState);
-            }
-        };
-
-        const saveDate = field => {
-            return val => {
-                let date = moment.utc(val, "YYYY-MM-DD"),
-                    newState = {};
-
-                newState[field] = date.toDate();
-                newState[field + "Valid"] = date.isValid();
-
-                this.setState(newState);
-            };
-        };
 
         return (
             <Row>
@@ -141,7 +133,7 @@ export default class ProjectForm extends Component {
                                 type="text"
                                 placeholder="Project name"
                                 value={this.state.name || ""}
-                                onChange={saveString('name')}
+                                onChange={this.saveString.bind(this, 'name')}
                                 />
                             <FormControl.Feedback />
                             <HelpBlock>Enter a descriptive name for the project</HelpBlock>
@@ -153,7 +145,7 @@ export default class ProjectForm extends Component {
                                 componentClass="textarea"
                                 placeholder="Long project description"
                                 value={this.state.description || ""}
-                                onChange={saveString('description')}
+                                onChange={this.saveString.bind(this, 'description')}
                                 />
                             <HelpBlock>Enter a longer description for the project</HelpBlock>
                         </FormGroup>
@@ -164,7 +156,7 @@ export default class ProjectForm extends Component {
                                     weekStartsOn={1}
                                     showClearButton={false}
                                     value={this.state.startDate? moment(this.state.startDate).format(ISO) : null}
-                                    onChange={saveDate('startDate')}
+                                    onChange={this.saveDate.bind(this, 'startDate')}
                                     dateFormat={DATE_FORMAT}
                                     />
                             <FormControl.Feedback />
