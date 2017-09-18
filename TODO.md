@@ -5,6 +5,7 @@
 
 # Tasks
 
+* Add option to allow sign-ups
 * Refactor Project add/edit form to use `forms` helpers
 
 * Solution view

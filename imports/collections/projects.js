@@ -81,7 +81,8 @@ export const Team = new SimpleSchema({
     workPattern: { type: Array, optional: true },
     'workPattern.$': Object,
     'workPattern.$.startDate': Date,
-    'workPattern.$.endDate': Date
+    'workPattern.$.endDate': Date,
+    'workPattern.$.description': { type: String, optional: true }
 
 });
 

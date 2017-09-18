@@ -276,7 +276,33 @@ export default class EditSolution extends Component {
 
                                 <Panel collapsible header="Team structure" eventKey="teamStructure">
  
-                                    TODO: members table (role, description, quantity)
+                                    <HelpBlock>
+                                        To help us understand what capacity will be needed to deliver the solution
+                                        (and thus also the cost), we can define a team profile before. This can then
+                                        be used as the basis for a more detailed resource plan.
+                                    </HelpBlock>
+
+                                    <TableField
+                                        object={solution}
+                                        validationContext={validationContext}
+                                        field='team.members'
+                                        title="Team members"
+                                        idProp={null}
+                                        data={solution.team.members || []}
+                                        onChange={saveValue('team.members', e => e)}
+                                        showCellErrors={this.state.invalid}
+                                        dataSchema={{
+                                            role: null,
+                                            description: null,
+                                            quantity: null,
+                                        }}
+                                        columns={[
+                                            {data: "role", title: "Role", width: 150, validator: $v(validators.required), allowInvalid: true},
+                                            {data: "description", title: "Description", width: 300},
+                                            {data: "quantity", title: "Quantity", width: 85, type: "numeric", validator: $v(validators.requiredNumber), allowInvalid: true},
+                                        ]}
+                                        />
+
                                 </Panel>
 
                                 {solution.estimateType !== EstimateType.backlog? null :
@@ -306,7 +332,32 @@ export default class EditSolution extends Component {
                                         </FormField>
 
                                         {solution.team.throughputType !== ThroughputType.samples? null :
-                                            "TODO: sample table (period start date, description, throughput)"
+                                            <TableField
+                                                object={solution}
+                                                validationContext={validationContext}
+                                                field='team.throughputSamples'
+                                                title="Throughput samples"
+                                                idProp={null}
+                                                data={(solution.team.throughputSamples || []).map(d => ({
+                                                    ...d,
+                                                    periodStartDate: moment.utc(d.periodStartDate).format(DATE_FORMAT)
+                                                }))}
+                                                onChange={saveValue('team.throughputSamples', e => e.map(d => ({
+                                                    ...d,
+                                                    periodStartDate: moment.utc(d.periodStartDate, DATE_FORMAT).toDate()
+                                                })))}
+                                                showCellErrors={this.state.invalid}
+                                                dataSchema={{
+                                                    periodStartDate: null,
+                                                    description: null,
+                                                    throughput: null,
+                                                }}
+                                                columns={[
+                                                    {data: "periodStartDate", title: "Period start date", width: 150, type: "date", datePickerConfig: {firstDay: 1}, dateFormat: DATE_FORMAT, correctFormat: true, validator: $v(validators.requiredDate), allowInvalid: true},
+                                                    {data: "throughput", title: "Throughput in period", width: 150, type: "numeric", validator: $v(validators.requiredNumber), allowInvalid: true},
+                                                    {data: "description", title: "Description / notes", width: 300},
+                                                ]}
+                                                />
                                         }
                                         {solution.team.throughputType !== ThroughputType.estimate? null :
                                             <Row>
@@ -381,7 +432,34 @@ export default class EditSolution extends Component {
                                 
                                 {solution.estimateType !== EstimateType.workPattern? null :
                                     <Panel collapsible header="Work pattern" eventKey="workPattern">
-                                        TODO: work pattern table (start date, end date)
+                                    <TableField
+                                        object={solution}
+                                        validationContext={validationContext}
+                                        field='team.workPattern'
+                                        title="Work pattern"
+                                        idProp={null}
+                                        data={(solution.team.workPattern || []).map(d => ({
+                                            ...d,
+                                            startDate: moment.utc(d.startDate).format(DATE_FORMAT),
+                                            endDate: moment.utc(d.endDate).format(DATE_FORMAT)
+                                        }))}
+                                        onChange={saveValue('team.workPattern', e => e.map(d => ({
+                                            ...d,
+                                            startDate: moment.utc(d.startDate, DATE_FORMAT).toDate(),
+                                            endDate: moment.utc(d.endDate, DATE_FORMAT).toDate()
+                                        })))}
+                                        showCellErrors={this.state.invalid}
+                                        dataSchema={{
+                                            startDate: null,
+                                            endDate: null,
+                                            description: null,
+                                        }}
+                                        columns={[
+                                            {data: "startDate", title: "Start date", width: 150, type: "date", datePickerConfig: {firstDay: 1}, dateFormat: DATE_FORMAT, correctFormat: true, validator: $v(validators.requiredDate), allowInvalid: true},
+                                            {data: "endDate", title: "End date", width: 150, type: "date", datePickerConfig: {firstDay: 1}, dateFormat: DATE_FORMAT, correctFormat: true, validator: $v(validators.requiredDate), allowInvalid: true},
+                                            {data: "description", title: "Description / notes", width: 300},
+                                        ]}
+                                        />
                                     </Panel>
                                 }
 
