@@ -38,19 +38,23 @@ export default class EditSolution extends Component {
         };
     }
 
-    render() {
+    saveValue(key, modifier=null, e) {
+        if(e === undefined) { // shift arguments if only `key` and event defined.
+            e = modifier;
+            modifier = undefined;
+        }
 
-        const saveValue = (key, modifier) => {
-            return e => {
-                const value = modifier? modifier(e) : e.target.value;
-                this.setState((prevState, props) => {
-                    const solution = _.set(_.cloneDeep(prevState.solution), key, value),
-                          validationContext = Solution.newContext();
-                    validationContext.validate(solution);
-                    return { solution, validationContext };
-                });
-            }
-        };
+        const value = modifier? modifier(e) : e.target.value;
+
+        this.setState((prevState, props) => {
+            const solution = _.set(_.cloneDeep(prevState.solution), key, value),
+                  validationContext = Solution.newContext();
+            validationContext.validate(solution);
+            return { solution, validationContext };
+        });
+    }
+
+    render() {
 
         const { project } = this.props,
               { solution, validationContext } = this.state;
@@ -79,7 +83,7 @@ export default class EditSolution extends Component {
                                         field='name'
                                         title="Name"
                                         placeholder="Short solution name"
-                                        onChange={saveValue('name')}
+                                        onChange={this.saveValue.bind(this, 'name')}
                                         />
                                     
                                     <FormField
@@ -89,7 +93,7 @@ export default class EditSolution extends Component {
                                         field='description'
                                         title="Description"
                                         placeholder="A long description for this solution"
-                                        onChange={saveValue('description')}
+                                        onChange={this.saveValue.bind(this, 'description')}
                                         />
                                     
                                     <HelpBlock>
@@ -108,7 +112,7 @@ export default class EditSolution extends Component {
                                         field='estimateType'
                                         title="Estimate type"
                                         placeholder="The type of estimate to provide"
-                                        onChange={saveValue('estimateType')}>
+                                        onChange={this.saveValue.bind(this, 'estimateType')}>
                                         <option value={EstimateType.backlog}>Working through a backlog</option>
                                         <option value={EstimateType.workPattern}>Fixed working pattern</option>
                                     </FormField>
@@ -120,7 +124,7 @@ export default class EditSolution extends Component {
                                             field='throughputPeriodLength'
                                             title="Throughput period length (weeks)"
                                             placeholder="1"
-                                            onChange={saveValue('throughputPeriodLength', e => parseInt(e.target.value, 10))}
+                                            onChange={this.saveValue.bind(this, 'throughputPeriodLength', e => parseInt(e.target.value, 10))}
                                             />
                                     }
 
@@ -138,7 +142,7 @@ export default class EditSolution extends Component {
                                         field='startType'
                                         title="Work starts"
                                         placeholder="Choose how work on this solution will be scheduled"
-                                        onChange={saveValue('startType')}>
+                                        onChange={this.saveValue.bind(this, 'startType')}>
                                         <option value={StartType.immediately}>As soon as the project starts</option>
                                         <option value={StartType.fixedDate}>On a fixed date</option>
                                         <option value={StartType.after}>After another solution is delivered</option>
@@ -155,7 +159,7 @@ export default class EditSolution extends Component {
                                                     weekStartsOn={1}
                                                     showClearButton={false}
                                                     value={solution.startDate? moment(solution.startDate).format(ISO) : null}
-                                                    onChange={saveValue('startDate', v => moment.utc(v, ISO).toDate())}
+                                                    onChange={this.saveValue.bind(this, 'startDate', v => moment.utc(v, ISO).toDate())}
                                                     dateFormat={DATE_FORMAT}
                                                     />
                                             }
@@ -172,7 +176,7 @@ export default class EditSolution extends Component {
                                             field='startDependency'
                                             title="Dependent solution"
                                             placeholder="Choose another solution that determines when work starts on this one"
-                                            onChange={saveValue('startDependency')}>
+                                            onChange={this.saveValue.bind(this, 'startDependency')}>
                                             {project.solutions.map(s => (
                                                 s._id === solution._id? null : <option key={s._id} value={s._id} title={s.description}>{s.name}</option>
                                             ))}
@@ -200,7 +204,7 @@ export default class EditSolution extends Component {
                                                     field='backlog.lowGuess'
                                                     title="Low backlog size guess"
                                                     placeholder="50"
-                                                    onChange={saveValue('backlog.lowGuess', e => parseInt(e.target.value, 10))}
+                                                    onChange={this.saveValue.bind(this, 'backlog.lowGuess', e => parseInt(e.target.value, 10))}
                                                     />
                                             </Col>
                                             <Col md={6}>
@@ -210,7 +214,7 @@ export default class EditSolution extends Component {
                                                     field='backlog.highGuess'
                                                     title="High backlog size guess"
                                                     placeholder="100"
-                                                    onChange={saveValue('backlog.highGuess', e => parseInt(e.target.value, 10))}
+                                                    onChange={this.saveValue.bind(this, 'backlog.highGuess', e => parseInt(e.target.value, 10))}
                                                     />
                                             </Col>
                                         </Row>
@@ -231,7 +235,7 @@ export default class EditSolution extends Component {
                                                     field='backlog.lowSplitRate'
                                                     title="Low split rate guess"
                                                     placeholder="1.1"
-                                                    onChange={saveValue('backlog.lowSplitRate', e => parseInt(e.target.value, 10))}
+                                                    onChange={this.saveValue.bind(this, 'backlog.lowSplitRate', e => parseInt(e.target.value, 10))}
                                                     />
                                             </Col>
                                             <Col md={6}>
@@ -241,7 +245,7 @@ export default class EditSolution extends Component {
                                                     field='backlog.highSplitRate'
                                                     title="High split rate guess"
                                                     placeholder="1.3"
-                                                    onChange={saveValue('backlog.highSplitRate', e => parseInt(e.target.value, 10))}
+                                                    onChange={this.saveValue.bind(this, 'backlog.highSplitRate', e => parseInt(e.target.value, 10))}
                                                     />
                                             </Col>
                                         </Row>
@@ -253,7 +257,7 @@ export default class EditSolution extends Component {
                                             title="Risks that could lead to more scope"
                                             idProp={null}
                                             data={solution.backlog.risks || []}
-                                            onChange={saveValue('backlog.risks', e => e)}
+                                            onChange={this.saveValue.bind(this, 'backlog.risks', e => e)}
                                             showCellErrors={this.state.invalid}
                                             dataSchema={{
                                                 name: null,
@@ -289,7 +293,7 @@ export default class EditSolution extends Component {
                                         title="Team members"
                                         idProp={null}
                                         data={solution.team.members || []}
-                                        onChange={saveValue('team.members', e => e)}
+                                        onChange={this.saveValue.bind(this, 'team.members', e => e)}
                                         showCellErrors={this.state.invalid}
                                         dataSchema={{
                                             role: null,
@@ -325,7 +329,7 @@ export default class EditSolution extends Component {
                                             field='team.throughputType'
                                             title="Throughput estimate type"
                                             placeholder="Choose how team throughput will be estimated"
-                                            onChange={saveValue('team.throughputType')}>
+                                            onChange={this.saveValue.bind(this, 'team.throughputType')}>
                                             <option value={ThroughputType.none}>(not selected)</option>
                                             <option value={ThroughputType.samples}>Based on historical data</option>
                                             <option value={ThroughputType.estimate}>Based on an estimated range</option>
@@ -342,7 +346,7 @@ export default class EditSolution extends Component {
                                                     ...d,
                                                     periodStartDate: moment.utc(d.periodStartDate).format(DATE_FORMAT)
                                                 }))}
-                                                onChange={saveValue('team.throughputSamples', e => e.map(d => ({
+                                                onChange={this.saveValue.bind(this, 'team.throughputSamples', e => e.map(d => ({
                                                     ...d,
                                                     periodStartDate: moment.utc(d.periodStartDate, DATE_FORMAT).toDate()
                                                 })))}
@@ -368,7 +372,7 @@ export default class EditSolution extends Component {
                                                         field='team.throughputEstimate.lowGuess'
                                                         title={`Low throughput guess (items/${solution.throughputPeriodLength} weeks)`}
                                                         placeholder="5"
-                                                        onChange={saveValue('team.throughputEstimate.lowGuess', e => parseFloat(e.target.value, 10))}
+                                                        onChange={this.saveValue.bind(this, 'team.throughputEstimate.lowGuess', e => parseFloat(e.target.value, 10))}
                                                         />
                                                 </Col>
                                                 <Col md={6}>
@@ -378,7 +382,7 @@ export default class EditSolution extends Component {
                                                         field='team.throughputEstimate.highGuess'
                                                         title={`High guess (items/${solution.throughputPeriodLength} weeks)`}
                                                         placeholder="8"
-                                                        onChange={saveValue('team.throughputEstimate.highGuess', e => parseFloat(e.target.value, 10))}
+                                                        onChange={this.saveValue.bind(this, 'team.throughputEstimate.highGuess', e => parseFloat(e.target.value, 10))}
                                                         />
                                                 </Col>
                                             </Row>
@@ -402,7 +406,7 @@ export default class EditSolution extends Component {
                                             field='team.rampUp.duration'
                                             title="Ramp up period (weeks)"
                                             placeholder="8"
-                                            onChange={saveValue('team.rampUp.duration', e => parseInt(e.target.value, 10))}
+                                            onChange={this.saveValue.bind(this, 'team.rampUp.duration', e => parseInt(e.target.value, 10))}
                                             />
                                         
                                         <Row>
@@ -413,7 +417,7 @@ export default class EditSolution extends Component {
                                                     field='team.rampUp.throughputScalingLowGuess'
                                                     title="Low scaling factor guess"
                                                     placeholder="0.2"
-                                                    onChange={saveValue('team.rampUp.throughputScalingLowGuess', e => parseInt(e.target.value, 10))}
+                                                    onChange={this.saveValue.bind(this, 'team.rampUp.throughputScalingLowGuess', e => parseInt(e.target.value, 10))}
                                                     />
                                             </Col>
                                             <Col md={6}>
@@ -423,7 +427,7 @@ export default class EditSolution extends Component {
                                                     field='team.rampUp.throughputScalingHighGuess'
                                                     title="High scaling factor guess"
                                                     placeholder="0.4"
-                                                    onChange={saveValue('team.rampUp.throughputScalingHighGuess', e => parseInt(e.target.value, 10))}
+                                                    onChange={this.saveValue.bind(this, 'team.rampUp.throughputScalingHighGuess', e => parseInt(e.target.value, 10))}
                                                     />
                                             </Col>
                                         </Row>
@@ -443,7 +447,7 @@ export default class EditSolution extends Component {
                                             startDate: moment.utc(d.startDate).format(DATE_FORMAT),
                                             endDate: moment.utc(d.endDate).format(DATE_FORMAT)
                                         }))}
-                                        onChange={saveValue('team.workPattern', e => e.map(d => ({
+                                        onChange={this.saveValue.bind(this, 'team.workPattern', e => e.map(d => ({
                                             ...d,
                                             startDate: moment.utc(d.startDate, DATE_FORMAT).toDate(),
                                             endDate: moment.utc(d.endDate, DATE_FORMAT).toDate()
@@ -480,7 +484,7 @@ export default class EditSolution extends Component {
                                                 rows={10}
                                                 placeholder="Any additional notes you want to capture with this solution"
                                                 value={_.get(solution, 'notes') || ""}
-                                                onChange={saveValue('notes')}
+                                                onChange={this.saveValue.bind(this, 'notes')}
                                                 />
                                         }
                                         field='notes'
