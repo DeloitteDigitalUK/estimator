@@ -14,7 +14,7 @@ import { Navbar, Nav, NavDropdown, MenuItem } from 'react-bootstrap';
 
 import Projects from '../../collections/projects';
 
-import { Login, ResetPassword, EnrollAccount, ChangePassword } from './login';
+import { SignUp, Login, RequestPasswordReset, ResetPassword, EnrollAccount, ChangePassword } from './login';
 import { AdminUsers, CreateUser } from './users';
 
 import Loading from './loading';
@@ -25,6 +25,10 @@ import ProjectMain, { ProjectNav } from './project/main';
 import AddProject from './project/add';
 
 import FourOhFour from './fourohfour'
+
+import { getPublicSetting } from '../../utils';
+
+const ALLOW_SIGNUP = getPublicSetting('allowSignUp');
 
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -47,7 +51,9 @@ const App = ({ loadingUsers, loadingProjects, loggingIn, user, projects }) => {
 
                 <div className="container">
                     <Switch>
+                        {ALLOW_SIGNUP? <Route exact path="/signup" component={SignUp} /> : null}
                         <Route exact path="/login" component={Login} />
+                        <Route exact path="/reset-password" component={RequestPasswordReset} />
                         <Route exact path="/reset-password/:token" component={ResetPassword} />
                         <Route exact path="/enroll-account/:token" component={EnrollAccount} />
                         <Route exact path="/change-password" component={ChangePassword} />
@@ -82,6 +88,10 @@ export class TopNav extends Component {
               isAuthenticated = user !== null,
               isAdmin = isAuthenticated? Roles.userIsInRole(user, ['admin']) : false;
 
+        if(!isAuthenticated) {
+            return null;
+        }
+
         return (
             <Navbar inverse fixedTop>
                 <Navbar.Brand>
@@ -97,8 +107,8 @@ export class TopNav extends Component {
                     <Nav navbar pullRight>
                         <NavDropdown id="user-menu-dropdown" ref="userMenu" title={user ? user.username : 'Not logged in'}>
                             {isAdmin ? <LinkContainer to="/admin/users"><MenuItem>Manage users</MenuItem></LinkContainer> : null}
-                            {isAuthenticated ? <LinkContainer to="/change-password"><MenuItem>Change password</MenuItem></LinkContainer> : null}
-                            {isAuthenticated ? <MenuItem onClick={this.logout.bind(this)}>Log out</MenuItem> : null}
+                            <LinkContainer to="/change-password"><MenuItem>Change password</MenuItem></LinkContainer>
+                            <MenuItem onClick={this.logout.bind(this)}>Log out</MenuItem>
                         </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>
@@ -109,8 +119,6 @@ export class TopNav extends Component {
     logout(e) {
         e.preventDefault();
         Meteor.logout();
-
-        this.props.history.push('/login');
     }
 
 }

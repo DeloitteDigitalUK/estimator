@@ -8,6 +8,7 @@ export const ISO = 'YYYY-MM-DD';
 const defaultSettings = {
     allowedEmailDomains: null, // set to a list of domains, e.g. ["example.org", "example.com"]
     public: {
+        allowSignUp: true, // all users to sign up themselves
         locale: "en-GB",
         dateFormat: "DD/MM/YYYY",
         queryDebounce: 250,

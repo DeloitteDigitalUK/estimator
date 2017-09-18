@@ -3,7 +3,7 @@ import { Roles } from 'meteor/alanning:roles';
 import { Accounts } from 'meteor/accounts-base';
 
 import _ from 'lodash';
-import { getPrivateSetting } from '../utils';
+import { getPrivateSetting, getPublicSetting } from '../utils';
 
 // Trigger build of this so we can import in the meteor shell for testing
 // import './testing';
@@ -22,8 +22,8 @@ Meteor.startup(function () {
     }
 
     Accounts.config({
-        forbidClientAccountCreation: true,
-        // sendVerificationEmail: true, -- we use enrollment emails instead
+        forbidClientAccountCreation: !getPublicSetting('allowSignUp'),
+        sendVerificationEmail: false,
         restrictCreationByEmailDomain: email => {
             let domains = getPrivateSetting('allowedEmailDomains');
             if(!domains) {
@@ -37,7 +37,6 @@ Meteor.startup(function () {
         return Meteor.absoluteUrl('reset-password/' + token);
     };
 
-    // Not configured; we use enrollment emails instead
     // Accounts.urls.verifyEmail = token => {
     //     return Meteor.absoluteUrl('verify-email/' + token);
     // };
