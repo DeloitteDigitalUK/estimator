@@ -5,6 +5,9 @@
 
 # Tasks
 
+* Validate high/low guess relative values
+* Validate presence of throughput samples
+
 * Refactor Project add/edit form to use `forms` helpers
 
 * Solution view

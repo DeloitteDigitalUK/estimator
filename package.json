@@ -12,6 +12,7 @@
     "bluebird": "^3.5.0",
     "bootstrap": "^3.3.7",
     "handsontable": "^0.34.1",
+    "jStat": "^1.7.0",
     "lodash": "^4.17.4",
     "meteor-node-stubs": "~0.2.4",
     "moment": "^2.18.1",

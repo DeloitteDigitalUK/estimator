@@ -42,7 +42,7 @@ export const Backlog = new SimpleSchema({
     'risks.$': Object,
     'risks.$.name': String,
     'risks.$.description': { type: String, optional: true },
-    'risks.$.likelihood': { type: Number, min: 0, max: 100}, // percentage
+    'risks.$.likelihood': { type: Number, min: 0, max: 1}, // percentage
     'risks.$.lowImpact': { type: Integer, min: 0 },  // number of work items added if risk hits (low guess)
     'risks.$.highImpact': { type: Integer, min: 0 }, // number of work items added if risk hits (high guess)
 
@@ -95,6 +95,7 @@ export const Solution = new SimpleSchema({
     notes: { type: String, optional: true },
 
     estimateType: { type: String, allowedValues: Object.values(EstimateType) },
+
     throughputPeriodLength: { type: Integer, optional: true, min: 1, custom: function() {
         if(!_.isInteger(this.value) && this.siblingField('estimateType').value === EstimateType.backlog) {
             return SimpleSchema.ErrorTypes.REQUIRED;
@@ -102,11 +103,13 @@ export const Solution = new SimpleSchema({
     } },
 
     startType: { type: String, allowedValues: Object.values(StartType) },
+
     startDate: { type: Date, optional: true, custom: function() {
         if(!this.value && this.siblingField('startType').value === StartType.fixedDate) {
             return SimpleSchema.ErrorTypes.REQUIRED;
         }
     } },
+    
     startDependency: { type: String, optional: true, custom: function() {
         if(!this.value && (this.siblingField('startType').value === StartType.with || this.siblingField('startType').value === StartType.after)) {
             return SimpleSchema.ErrorTypes.REQUIRED;
