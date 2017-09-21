@@ -36,7 +36,7 @@ export const ErrorTypes = {
 SimpleSchema.setDefaultMessages({
     messages: {
         en: {
-            [ErrorTypes.shouldBeSmaller]: "{{{label}}} must be smaller than the high guess",
+            [ErrorTypes.shouldBeSmaller]: "{{{label}}} must be less than the high guess",
             [ErrorTypes.shouldBeGreater]: "{{{label}}} must be greater than the low guess",
         },
     },
@@ -257,7 +257,7 @@ export function newProject({ name, owner, ...rest }) {
  * Create a new minimal solution object
  */
 export function newSolution({ name, ...rest }) {
-    return Solution.clean(_.assignIn({
+    return Solution.clean({
         _id: Random.id(),
         name,
         description: null,
@@ -289,8 +289,10 @@ export function newSolution({ name, ...rest }) {
             },
             rampUp: null,
             workPattern: []
-        }
-    }, rest));
+        },
+
+        ...rest
+    });
 }
 
 export const Projects = new Mongo.Collection("Projects");
