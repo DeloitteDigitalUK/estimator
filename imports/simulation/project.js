@@ -6,12 +6,7 @@ import toposort from 'toposort-keys';
 import { StartType, EstimateType } from '../collections/projects';
 import simulateSolution, { CannotSimulate } from './solution';
 
-const getSuffix = number => (
-    number % 10 === 1? "st" :
-    number % 10 === 2? "nd" :
-    number % 10 === 3? "rd" :
-    "th"
-);
+import { getSuffix } from '../utils';
 
 function sortInDependencyOrder(solutions) {
     const lookup = solutions.reduce((m, s, idx) => ({...m, [s._id]: idx}), {}); // id => index in array

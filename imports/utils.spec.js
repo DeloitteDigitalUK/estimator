@@ -6,10 +6,10 @@ import { expect } from 'chai';
 import {
     isOwner,
     canWrite,
-
     setDefault,
     uint8ArrayToBinaryString,
-    callIfFunction
+    callIfFunction,
+    getSuffix
 } from './utils';
 
 describe('Utilities', function() {
@@ -165,6 +165,49 @@ describe('Utilities', function() {
 
         it("returns binary string for binary array", function() {
             expect(uint8ArrayToBinaryString(new Uint8Array([65,66,67]))).to.eql("ABC");
+        });
+
+    });
+
+    describe("getSuffix", function() {
+        
+        it("deals with single digit numbers", function() {
+            expect(getSuffix(0)).to.eql("th");
+            expect(getSuffix(1)).to.eql("st");
+            expect(getSuffix(2)).to.eql("nd");
+            expect(getSuffix(3)).to.eql("rd");
+            expect(getSuffix(4)).to.eql("th");
+            expect(getSuffix(5)).to.eql("th");
+            expect(getSuffix(6)).to.eql("th");
+            expect(getSuffix(7)).to.eql("th");
+            expect(getSuffix(8)).to.eql("th");
+            expect(getSuffix(9)).to.eql("th");
+        });
+
+        it("deals with two digit numbers", function() {
+            expect(getSuffix(10)).to.eql("th");
+            expect(getSuffix(11)).to.eql("st");
+            expect(getSuffix(12)).to.eql("nd");
+            expect(getSuffix(13)).to.eql("rd");
+            expect(getSuffix(14)).to.eql("th");
+            expect(getSuffix(15)).to.eql("th");
+            expect(getSuffix(16)).to.eql("th");
+            expect(getSuffix(17)).to.eql("th");
+            expect(getSuffix(18)).to.eql("th");
+            expect(getSuffix(19)).to.eql("th");
+        });
+
+        it("deals with three digit numbers", function() {
+            expect(getSuffix(210)).to.eql("th");
+            expect(getSuffix(211)).to.eql("st");
+            expect(getSuffix(212)).to.eql("nd");
+            expect(getSuffix(213)).to.eql("rd");
+            expect(getSuffix(214)).to.eql("th");
+            expect(getSuffix(215)).to.eql("th");
+            expect(getSuffix(216)).to.eql("th");
+            expect(getSuffix(217)).to.eql("th");
+            expect(getSuffix(218)).to.eql("th");
+            expect(getSuffix(219)).to.eql("th");
         });
 
     });

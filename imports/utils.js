@@ -98,3 +98,10 @@ export const promisifyCollection = C => ({
     find: C.find.bind(C),
     findOne: C.findOne.bind(C)
 });
+
+export const getSuffix = number => (
+    number % 10 === 1? "st" :
+    number % 10 === 2? "nd" :
+    number % 10 === 3? "rd" :
+    "th"
+);
