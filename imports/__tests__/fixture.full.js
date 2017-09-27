@@ -66,7 +66,7 @@ export default newProject({
         }
     },{
         _id: 'fgFoRfMFTCQH5yACA',
-        name: "Middlware",
+        name: "Middleware",
         estimateType: EstimateType.backlog,
         throughputPeriodLength: 1,
         startType: StartType.after,
