@@ -11,7 +11,7 @@ const ViewProject = ({ project, match }) => {
         <div className="view-project">
 
             <h1>{project.name}</h1>
-            <p>
+            <p className="description">
                 {project.description}
             </p>
             

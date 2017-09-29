@@ -191,3 +191,16 @@ body {
     margin-right: 5px;
     font-size: 90%;
 }
+
+/*
+ * Solution view
+ */
+
+.description {
+    font-style: italic;
+}
+
+.view-solution .table {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}

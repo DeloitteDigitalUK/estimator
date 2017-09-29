@@ -15,6 +15,9 @@ import Projects, { Solution, EstimateType, StartType, ThroughputType } from '../
 import { getPublicSetting, ISO } from '../../../../utils';
 const DATE_FORMAT = getPublicSetting('dateFormat');
 
+const toFloat = str => str && str[str.length-1] === "."? str : _.toNumber(str);
+const weeks = n => `${n} week${n > 1? "s" : ""}`;
+
 export default class EditSolution extends Component {
 
     static propTypes = {
@@ -177,6 +180,7 @@ export default class EditSolution extends Component {
                                             title="Dependent solution"
                                             placeholder="Choose another solution that determines when work starts on this one"
                                             onChange={this.saveValue.bind(this, 'startDependency')}>
+                                            <option value={null}>(select one)</option>
                                             {project.solutions.map(s => (
                                                 s._id === solution._id? null : <option key={s._id} value={s._id} title={s.description}>{s.name}</option>
                                             ))}
@@ -235,7 +239,7 @@ export default class EditSolution extends Component {
                                                     field='backlog.lowSplitRate'
                                                     title="Low split rate guess"
                                                     placeholder="1.1"
-                                                    onChange={this.saveValue.bind(this, 'backlog.lowSplitRate', e => parseInt(e.target.value, 10))}
+                                                    onChange={this.saveValue.bind(this, 'backlog.lowSplitRate', e => toFloat(e.target.value))}
                                                     />
                                             </Col>
                                             <Col md={6}>
@@ -245,7 +249,7 @@ export default class EditSolution extends Component {
                                                     field='backlog.highSplitRate'
                                                     title="High split rate guess"
                                                     placeholder="1.3"
-                                                    onChange={this.saveValue.bind(this, 'backlog.highSplitRate', e => parseInt(e.target.value, 10))}
+                                                    onChange={this.saveValue.bind(this, 'backlog.highSplitRate', e => toFloat(e.target.value))}
                                                     />
                                             </Col>
                                         </Row>
@@ -370,9 +374,9 @@ export default class EditSolution extends Component {
                                                         object={solution}
                                                         validationContext={validationContext}
                                                         field='team.throughputEstimate.lowGuess'
-                                                        title={`Low throughput guess (items/${solution.throughputPeriodLength} weeks)`}
+                                                        title={`Low throughput guess (items per ${weeks(solution.throughputPeriodLength)}`}
                                                         placeholder="5"
-                                                        onChange={this.saveValue.bind(this, 'team.throughputEstimate.lowGuess', e => parseFloat(e.target.value, 10))}
+                                                        onChange={this.saveValue.bind(this, 'team.throughputEstimate.lowGuess', e => toFloat(e.target.value))}
                                                         />
                                                 </Col>
                                                 <Col md={6}>
@@ -380,9 +384,9 @@ export default class EditSolution extends Component {
                                                         object={solution}
                                                         validationContext={validationContext}
                                                         field='team.throughputEstimate.highGuess'
-                                                        title={`High guess (items/${solution.throughputPeriodLength} weeks)`}
+                                                        title={`High guess (items per ${weeks(solution.throughputPeriodLength)})`}
                                                         placeholder="8"
-                                                        onChange={this.saveValue.bind(this, 'team.throughputEstimate.highGuess', e => parseFloat(e.target.value, 10))}
+                                                        onChange={this.saveValue.bind(this, 'team.throughputEstimate.highGuess', e => toFloat(e.target.value))}
                                                         />
                                                 </Col>
                                             </Row>
@@ -417,7 +421,7 @@ export default class EditSolution extends Component {
                                                     field='team.rampUp.throughputScalingLowGuess'
                                                     title="Low scaling factor guess"
                                                     placeholder="0.2"
-                                                    onChange={this.saveValue.bind(this, 'team.rampUp.throughputScalingLowGuess', e => parseInt(e.target.value, 10))}
+                                                    onChange={this.saveValue.bind(this, 'team.rampUp.throughputScalingLowGuess', e => toFloat(e.target.value))}
                                                     />
                                             </Col>
                                             <Col md={6}>
@@ -427,7 +431,7 @@ export default class EditSolution extends Component {
                                                     field='team.rampUp.throughputScalingHighGuess'
                                                     title="High scaling factor guess"
                                                     placeholder="0.4"
-                                                    onChange={this.saveValue.bind(this, 'team.rampUp.throughputScalingHighGuess', e => parseInt(e.target.value, 10))}
+                                                    onChange={this.saveValue.bind(this, 'team.rampUp.throughputScalingHighGuess', e => toFloat(e.target.value))}
                                                     />
                                             </Col>
                                         </Row>
