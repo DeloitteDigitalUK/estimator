@@ -122,12 +122,14 @@ body {
  * Solution CRUD
  */
 
- .edit-solution .panel-title {
+ .edit-solution .panel-title,
+ .view-solution .panel-title {
      font-size: inherit;
      font-weight: inherit;
  }
 
- .edit-solution .panel-title a:hover {
+ .edit-solution .panel-title a:hover,
+ .view-solution .panel-title a:hover {
     text-decoration: none;
     cursor: pointer;
 }
