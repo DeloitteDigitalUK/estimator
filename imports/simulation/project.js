@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment';
-
+import { quantile } from 'd3-array';
 import toposort from 'toposort-keys';
 
 import { StartType, EstimateType } from '../collections/projects';
@@ -76,11 +76,12 @@ function calculateDates(solution, lookup, projectStartDate, percentiles, runs, o
         
         case EstimateType.backlog:
 
-            let results = simulateSolution(solution, runs, false, overflow);
-            results.sort((a, b) => (a.periods - b.periods));
+            const results = simulateSolution(solution, runs, false, overflow);
+            const distribution = results.map(r => r.periods);
+            distribution.sort();
 
             return percentiles.map(percentile => {
-                const periods = results[Math.floor((results.length - 1) * (percentile / 100.0))].periods,
+                const periods = quantile(distribution, percentile),
                       startDate = calculateStartDate(solution, lookup, projectStartDate, percentile),
                       endDate = moment.utc(startDate).add((periods * periodLength) - 1, 'days').toDate(),
                       description = `${percentile}${getSuffix(percentile)} percentile`;
