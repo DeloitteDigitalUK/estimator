@@ -16,6 +16,7 @@ class Chart extends Component {
 
     static propTypes = {
         data: PropTypes.array.isRequired,        // [[values...]{x0, x1}]
+        percentiles: PropTypes.array.isRequired, // [{percentile, value}]
         xAxisLabel: PropTypes.string.isRequired,
         yAxisLabel: PropTypes.string.isRequired,
         height: PropTypes.string.isRequired,
@@ -26,8 +27,8 @@ class Chart extends Component {
         super(props);
 
         this.chart = nv.models.discreteBarChart()
-            .x(d => d.x)
-            .y(d => d.y)
+            .x(d => d)
+            .y(d => d.length)
             .staggerLabels(false)
             .showLegend(false)
             .showYAxis(true)
@@ -41,22 +42,13 @@ class Chart extends Component {
         this.chart.tooltip
             .enabled(true)
             .classes('xy-tooltip solution-forecast-tooltip')
-            // .keyFormatter(k => {
-            //     const idx = _.findIndex(this.props.data, d => k === this.getLabel(d));
-            //     if(idx < 0) {
-            //         console.warn(`Couldn't find ${k} in data, which should never happen`);
-            //         return;
-            //     }
-
-            //     const percentile = Math.round(((idx + 1) / this.props.data.length) * 100.0)
-
-            //     return `${k} weeks &mdash; ${percentile}${getSuffix(percentile)} percentile`
-            // })
+            .keyFormatter(k => `${this.getLabel(k)} weeks`)
             .valueFormatter(v => "")
             ;
 
         this.chart.xAxis
             .axisLabel(props.xAxisLabel)
+            .tickFormat(this.getLabel)
             .rotateLabels(-45)
             ;
 
@@ -91,10 +83,7 @@ class Chart extends Component {
     getData() {
         return [{
             key: "Distribution",
-            values: this.props.data.map(d => ({
-                x: this.getLabel(d),
-                y: d.length,
-            }))
+            values: this.props.data
         }];
     }
 
@@ -155,7 +144,10 @@ export default class SolutionForecast extends Component {
         const histogramGenerator = histogram()
         const data = histogramGenerator(distribution);
         
-        const percentiles = this.percentiles.map(p => ({percentile: Math.round(p * 100), value: Math.round(quantile(distribution, p))}));
+        const percentiles = this.percentiles.map(p => ({
+            percentile: Math.round(p * 100),
+            value: Math.round(quantile(distribution, p))
+        }));
 
         return (
             <div>
@@ -191,6 +183,7 @@ export default class SolutionForecast extends Component {
                             xAxisLabel="Weeks elapsed in simulation"
                             yAxisLabel="Number of simulations completing in this time"
                             data={data}
+                            percentiles={percentiles}
                             width="100%"
                             height="400px"
                             />

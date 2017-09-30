@@ -207,10 +207,6 @@ body {
     margin-bottom: 1em;
 }
 
-.solution-forecast-tooltip .legend-color-guide {
-    display: none !important;
-}
-
 .simulation-controls {
     margin-top: 27px;
 }
