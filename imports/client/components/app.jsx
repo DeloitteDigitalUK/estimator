@@ -33,7 +33,9 @@ const ALLOW_SIGNUP = getPublicSetting('allowSignUp');
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'handsontable/dist/handsontable.full.css';
+import 'nvd3/build/nv.d3.css';
 import '../css/app.import.css';
+
 
 const App = ({ loadingUsers, loadingProjects, loggingIn, user, projects }) => {
 

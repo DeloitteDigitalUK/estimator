@@ -206,3 +206,16 @@ body {
     margin-top: 1em;
     margin-bottom: 1em;
 }
+
+.solution-forecast-tooltip .legend-color-guide {
+    display: none !important;
+}
+
+.simulation-controls {
+    margin-top: 27px;
+}
+
+.simulation-controls .runs label {
+    text-align: left;
+}
+

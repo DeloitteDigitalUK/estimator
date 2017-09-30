@@ -29,7 +29,7 @@ const ViewSolution = ({ project, solution }) => {
 
 
             <PanelGroup>
-                <Panel collapsible defaultExpanded header="Simulation parameters" eventKey="simulationParameters">
+                <Panel collapsible defaultExpanded header="Parameters" eventKey="simulationParameters">
 
                     {solution.estimateType === EstimateType.backlog && (
                     <div>
@@ -43,7 +43,7 @@ const ViewSolution = ({ project, solution }) => {
                             )}
                             <li>with throughput measured to a cadence of <strong>{weeks(solution.throughputPeriodLength)}</strong></li>
                             <li>starting <strong>{
-                                solution.startType === StartType.immediately? "immedulatey" :
+                                solution.startType === StartType.immediately? "immediately" :
                                 solution.startType === StartType.fixedDate? `on ${moment(solution.startDate).format(DATE_FORMAT)}` :
                                 solution.startType === StartType.after? `after "${startDependency}"` :
                                 solution.startType === StartType.with? `at the same time as "${startDependency}"` : "ERROR"
