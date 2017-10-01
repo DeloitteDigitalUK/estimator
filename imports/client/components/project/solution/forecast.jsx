@@ -107,7 +107,7 @@ export default class SolutionForecast extends Component {
         this.percentiles = [1, 0.99, 0.95, 0.9, 0.85, 0.75, 0.5, 0.25]; // TODO: Make editable?
 
         this.state = {
-            runs: 1000,
+            runs: 2000,
         };
     }
 

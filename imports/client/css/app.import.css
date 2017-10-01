@@ -265,3 +265,29 @@ body {
 .react-calendar-timeline .rct-items .rct-item {
     background-color: rgb(31, 119, 180);
 }
+
+.project-plan-controls {
+    margin-top: 2em;
+}
+
+.project-plan-controls label {
+    display: inline-block;
+    vertical-align: top;
+    margin: 0.5em 1em;
+}
+
+.project-plan-controls label:first-child {
+    margin-left: 0;
+}
+
+.project-plan-controls input {
+    vertical-align: top;
+    display: inline-block;
+    width: inherit;
+}
+
+.project-plan-controls .Select {
+    vertical-align: top;
+    display: inline-block;
+    min-width: 150px;
+}

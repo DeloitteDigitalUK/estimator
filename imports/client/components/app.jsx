@@ -35,6 +35,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'handsontable/dist/handsontable.full.css';
 import 'nvd3/build/nv.d3.css';
 import 'react-calendar-timeline/lib/lib/Timeline.css';
+import 'react-select/dist/react-select.css';
 import '../css/app.import.css';
 
 const App = ({ loadingUsers, loadingProjects, loggingIn, user, projects }) => {

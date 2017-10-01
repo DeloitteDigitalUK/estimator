@@ -4,14 +4,14 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Alert } from 'react-bootstrap';
+import { Alert, Row, Col, ControlLabel, FormControl } from 'react-bootstrap';
 import Timeline from 'react-calendar-timeline'
+import Select from 'react-select';
 
 import simulateProject from '../../../simulation/project';
-import { getPublicSetting } from '../../../utils';
+import { getPublicSetting, getSuffix } from '../../../utils';
 
 const DATE_FORMAT = getPublicSetting('dateFormat');
-
 
 export default class Plan extends Component {
 
@@ -22,8 +22,10 @@ export default class Plan extends Component {
     constructor(props) {
         super(props);
 
-        this.percentiles = [0.95, 0.85, 0.75]; // TODO: Make editable?
-        this.runs = 2000; // TODO: Make editable?
+        this.state = {
+            percentiles: [0.95, 0.85, 0.75],
+            runs: 2000
+        };
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -35,7 +37,7 @@ export default class Plan extends Component {
         let simulationResults
 
         try {
-            simulationResults = simulateProject(this.props.project, this.percentiles, this.runs)
+            simulationResults = simulateProject(this.props.project, this.state.percentiles, this.state.runs)
         } catch(e) {
             return <Alert bsStyle="danger">{e.message}</Alert>;
         }
@@ -52,33 +54,68 @@ export default class Plan extends Component {
 
         return (                
             <div className="project-plan">
-                <Timeline
-                    minZoom={24 * 60 * 60 * 1000}
-                    canMove={false}
-                    canChangeGroup={false}
-                    canResize={false}
-                    stackItems
-                    stickyOffset={50}
-                    groups={this.props.project.solutions}
-                    items={items}
-                    keys={{
-                        groupIdKey: '_id',
-                        groupTitleKey: 'name',
-                        itemIdKey: 'id',
-                        itemTitleKey: 'title',
-                        itemDivTitleKey: 'description',
-                        itemGroupKey: 'group',
-                        itemTimeStartKey: 'start',
-                        itemTimeEndKey: 'end'
-                    }}
-                    sidebarWidth={200}
-                    fullUpdate
-                    defaultTimeStart={moment(this.props.project.startDate)}
-                    defaultTimeEnd={moment(this.props.project.startDate).add(6, 'month')}
-                    groupRenderer={({group}) => (
-                        <Link to={`/project/${this.props.project._id}/solution/${group._id}`} title={group.description}>{group.name}</Link>
-                    )}
-                />
+
+                <Row>
+                    <Col md={12}>
+                    <Timeline
+                        minZoom={24 * 60 * 60 * 1000}
+                        canMove={false}
+                        canChangeGroup={false}
+                        canResize={false}
+                        stackItems
+                        stickyOffset={50}
+                        groups={this.props.project.solutions}
+                        items={items}
+                        keys={{
+                            groupIdKey: '_id',
+                            groupTitleKey: 'name',
+                            itemIdKey: 'id',
+                            itemTitleKey: 'title',
+                            itemDivTitleKey: 'description',
+                            itemGroupKey: 'group',
+                            itemTimeStartKey: 'start',
+                            itemTimeEndKey: 'end'
+                        }}
+                        sidebarWidth={200}
+                        fullUpdate
+                        defaultTimeStart={moment(this.props.project.startDate)}
+                        defaultTimeEnd={moment(this.props.project.startDate).add(6, 'month')}
+                        groupRenderer={({group}) => (
+                            <Link to={`/project/${this.props.project._id}/solution/${group._id}`} title={group.description}>{group.name}</Link>
+                        )}
+                        />
+                    </Col>
+                </Row>
+
+                <div className="project-plan-controls">
+                    <ControlLabel title="The confidence percentiles to show for each simulated solution">
+                        Percentiles
+                    </ControlLabel>
+                    <Select
+                        value={this.state.percentiles}
+                        multi
+                        onChange={values => { this.setState({ percentiles: values.map(v => v.value) }); }}
+                        options={[1, 0.99, 0.95, 0.9, 0.85, 0.75, 0.5, 0.25].map(v => (
+                            { value: v, label: `${Math.round(v * 100)}${getSuffix(Math.round(v * 100))}` }
+                        ))}
+                        />
+                    <ControlLabel title="The number of runs of the simulator. More runs means a more nuanced result, but this will also take more time.">
+                        Simulations
+                    </ControlLabel>
+                    <FormControl
+                        type="number"
+                        min={100}
+                        max={10000}
+                        value={this.state.runs}
+                        onChange={e => {
+                            const value = e.target.value? parseInt(e.target.value, 10) : 0;
+                            if(_.isNaN(value) || value < 0 || value > 10000) {
+                                return;
+                            }
+                            this.setState({runs: value})
+                        }}
+                        />
+                </div>
                 
             </div>
         );
