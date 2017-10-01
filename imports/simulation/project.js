@@ -84,7 +84,7 @@ function calculateDates(solution, lookup, projectStartDate, percentiles, runs, o
                 const periods = quantile(distribution, percentile),
                       startDate = calculateStartDate(solution, lookup, projectStartDate, percentile),
                       endDate = moment.utc(startDate).add((periods * periodLength) - 1, 'days').toDate(),
-                      description = `${percentile}${getSuffix(percentile)} percentile`;
+                      description = `${Math.round(percentile * 100.0)}${getSuffix(percentile)} percentile`;
 
                 return {startDate, endDate, percentile, description};
             });

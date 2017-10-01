@@ -123,13 +123,15 @@ body {
  */
 
  .edit-solution .panel-title,
- .view-solution .panel-title {
+ .view-solution .panel-title,
+ .view-project .panel-title {
      font-size: inherit;
      font-weight: inherit;
  }
 
  .edit-solution .panel-title a:hover,
- .view-solution .panel-title a:hover {
+ .view-solution .panel-title a:hover,
+ .view-project .panel-title a:hover {
     text-decoration: none;
     cursor: pointer;
 }
@@ -215,3 +217,51 @@ body {
     text-align: left;
 }
 
+.back-link {
+    display: block;
+}
+
+/*
+ * Project view
+ */
+
+.react-calendar-timeline .rct-sidebar .rct-sidebar-header {
+    text-align: center;
+    vertical-align: middle;
+    color: black;
+    background-color: white;
+    font-weight: bold;
+}
+
+.react-calendar-timeline .rct-header .rct-label-group {
+    color: black;
+    background-color: white;
+    font-weight: bold;
+}
+
+.react-calendar-timeline .rct-items .rct-item.percentile-10,
+.react-calendar-timeline .rct-items .rct-item.percentile-9 {
+    background-color: rgb(44, 160, 44);
+}
+
+.react-calendar-timeline .rct-items .rct-item.percentile-8 {
+    background-color: rgb(31, 119, 180);
+}
+
+.react-calendar-timeline .rct-items .rct-item.percentile-7 {
+    background-color: rgb(255, 127, 14);
+}
+
+.react-calendar-timeline .rct-items .rct-item.percentile-6,
+.react-calendar-timeline .rct-items .rct-item.percentile-5,
+.react-calendar-timeline .rct-items .rct-item.percentile-4,
+.react-calendar-timeline .rct-items .rct-item.percentile-3,
+.react-calendar-timeline .rct-items .rct-item.percentile-2,
+.react-calendar-timeline .rct-items .rct-item.percentile-1,
+.react-calendar-timeline .rct-items .rct-item.percentile-0 {
+    background-color: rgb(214, 39, 40);
+}
+
+.react-calendar-timeline .rct-items .rct-item {
+    background-color: rgb(31, 119, 180);
+}

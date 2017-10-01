@@ -3,7 +3,7 @@ import _ from 'lodash';
 import React from 'react';
 import moment from 'moment';
 
-import { PanelGroup, Panel, Table } from 'react-bootstrap';
+import { PanelGroup, Panel, Table, HelpBlock } from 'react-bootstrap';
 
 import { EstimateType, StartType, ThroughputType } from '../../../../collections/projects';
 import { getPublicSetting } from '../../../../utils';
@@ -21,13 +21,12 @@ const ViewSolution = ({ project, solution }) => {
 
     return (
         <div className="view-solution">
-
+            
             <h1>{solution.name}</h1>
+            
             <p className="description">
                 {solution.description}
             </p>
-
-
             <PanelGroup>
                 <Panel collapsible defaultExpanded header="Parameters" eventKey="simulationParameters">
 
@@ -158,6 +157,34 @@ const ViewSolution = ({ project, solution }) => {
                 
                 {solution.estimateType === EstimateType.backlog && (
                 <Panel collapsible defaultExpanded header="Simulation results" eventKey="simulationResults">
+
+                    <HelpBlock>
+                        <p>
+                            Based on the parameters above, we can forecast the number of weeks required to
+                            deliver this solution. The various parameters all have a degree of uncertainty,
+                            expressed as high and low guesses or based on a set of samples &mdash; we cannot
+                            ever be completely sure about the future!
+                        </p>
+                        <p>
+                            We use Monte Carlo simulations to create a forecast that takes this uncertainty
+                            into account. In essence, we let the delivery play out many times over, each time
+                            picking a random sample or value within the given range for each parameter. We can
+                            then analyse the probability of a given outcome (e.g., "delivery completed in no
+                            more than 10 weeks"), based on the proportion of simulations that resulted in that
+                            outcome.
+                        </p>
+                        <p>
+                            The results of the simulation are shown as a histogram and a table of the outcomes
+                            at different confidence percentiles. For example, if the 85th percentile value is
+                            shown as &le; 10 weeks, that means that in 85% of simulations, delivery was completed
+                            in 10 weeks or fewer. The histogram shows how widely spread the simulated outcomes
+                            are: the wider the distribution, the more uncertainty. When adopting a forecast, we
+                            thus need to apply some judgement in choosing which simulated outcome to use. The
+                            higher the percentile, the more conservative the estimate. A value between 85% and
+                            95% is often a good place to start, but there is no universally correct answer.
+                        </p>
+                    </HelpBlock>
+
                     <SolutionForecast solution={solution} />
                 </Panel>
                 )}

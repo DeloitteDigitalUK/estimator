@@ -6,9 +6,9 @@
 # Tasks
 
 * Hints about estimation quality when building up solution parameters
+* Allow each solution to set out which confidence interval to use for the plan?
+* Make percentiles in solution and project (plan) view user editable?
+* Make run count in project (plan) view user editable?
 
-* Plan forecast (one swimlane per solution, different bars for different confidence intervals)
 * Resource forecast (at a particular confidence interval (table)
-
-* Export plan at a particular confidence interval
 * Export resource forecast at a particular confidence interval
