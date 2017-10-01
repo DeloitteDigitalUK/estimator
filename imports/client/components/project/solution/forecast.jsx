@@ -164,8 +164,8 @@ export default class SolutionForecast extends Component {
 
                         <FormGroup className="runs" title="The number of runs of the simulator. More runs means a more nuanced result, but this will also take more time.">
                             <Col sm={4}>
-                                <ControlLabel >
-                                    Simulations
+                                <ControlLabel>
+                                    Simulations:
                                 </ControlLabel>
                             </Col>
                             <Col sm={4}>
