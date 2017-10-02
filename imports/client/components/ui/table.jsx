@@ -5,7 +5,6 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
 import _ from 'lodash';
-import P from 'bluebird';
 
 import Handsontable from 'handsontable';
 
@@ -33,6 +32,9 @@ export default class Table extends Component {
     static propTypes = {
         // set a unique id; we'll only fully update the component if this changes
         id: PropTypes.string,
+
+        // always update data
+        updateData: PropTypes.bool,
 
         // list of objects; items should have a unique `_id` property
         data: PropTypes.array.isRequired,
@@ -74,9 +76,11 @@ export default class Table extends Component {
         rowHeaders: PropTypes.bool,
         manualRowMove: PropTypes.bool,
         afterGetColHeader: PropTypes.func,
+        mergeCells: PropTypes.array,
     }
 
     static defaultProps = {
+        updateData: false,
         idProp: '_id',
         tableConfig: {
             contextMenu: ['row_above', 'row_below', 'remove_row', 'undo', 'redo'],
@@ -99,15 +103,7 @@ export default class Table extends Component {
         manualRowMove: false,
         columnSorting: false,
         sortIndicator: true,
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-        // in general, we don't want to re-create the handsontable, because
-        // it is expensive and it's easy to lose its state. Only do this if
-        // we change the `id` attribute, which is meant to uniquely identify
-        // the table (logically: new id ==> new table)
-
-        return nextProps.id !== this.props.id;
+        mergeCells: null
     }
 
     constructor(props) {
@@ -117,12 +113,64 @@ export default class Table extends Component {
         this.state = {
             data: _.cloneDeep(this.props.data),
             invalid: {}
+        };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.updateData) {
+            this.state = {
+                data: _.cloneDeep(nextProps.data),
+            };
         }
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        return nextProps.updateData;
+    }
+
     componentDidMount() {
-        let container = ReactDOM.findDOMNode(this),
-            component = this;
+        let container = ReactDOM.findDOMNode(this);
+        this.hot = new Handsontable(container, this.buildHandsontableOptions());
+    }
+
+    componentWillUpdate() {
+        this.hot.destroy();
+    }
+
+    componentDidUpdate() {
+        let container = ReactDOM.findDOMNode(this);
+        this.hot = new Handsontable(container, this.buildHandsontableOptions());
+    }
+
+    componentWillUnmount() {
+        this.hot.destroy();
+    }
+
+    render() {
+        let className = "data-table";
+        if(this.props.maxVisibleRows && this.state.data.length > this.props.maxVisibleRows) {
+            className += " large-table";
+        }
+        return <div className={className} />;
+    }
+
+    getData() {
+        if(this.hot === null) {
+            return this.state.data;
+        }
+
+        let minSpareRows = this.hot.getSettings().minSpareRows;
+        if(minSpareRows > 0) {
+            return this.state.data.slice(0, -minSpareRows);
+        } else {
+            return this.state.data.slice();
+        }
+    }
+
+    buildHandsontableOptions() {
+
+        const component = this,
+              idProp = this.props.idProp;
 
         const onChange = () => {
             if(this.props.onChange) {
@@ -150,9 +198,7 @@ export default class Table extends Component {
             component.props.onValidate(_.isEmpty(component.state.invalid));
         } : null;
 
-        const idProp = this.props.idProp;
-
-        this.hot = new Handsontable(container, _.extend({}, this.props.tableConfig, {
+        return _.extend({}, this.props.tableConfig, {
             data: this.state.data,
             autoColumnSize: this.props.autoColumnSize,
             columnSorting: this.props.columnSorting,
@@ -169,6 +215,7 @@ export default class Table extends Component {
             manualRowMove: this.props.manualRowMove,
             rowHeaders: this.props.manualRowMove? true : this.props.rowHeaders,
             afterGetColHeader: this.props.afterGetColHeader,
+            mergeCells: this.props.mergeCells,
 
             afterValidate: afterValidate,
 
@@ -215,49 +262,6 @@ export default class Table extends Component {
                 onChange();
             }
 
-        }));
-    }
-
-    componentWillUnmount() {
-        this.hot.destroy();
-    }
-
-    render() {
-
-        let className = "data-table";
-        if(this.props.maxVisibleRows && this.state.data.length > this.props.maxVisibleRows) {
-            className += " large-table";
-        }
-
-        return <div className={className} />;
-    }
-
-    refresh() {
-        this.hot.render();
-    }
-
-    getData() {
-        if(this.hot === null) {
-            return this.state.data;
-        }
-
-        let minSpareRows = this.hot.getSettings().minSpareRows;
-        if(minSpareRows > 0) {
-            return this.state.data.slice(0, -minSpareRows);
-        } else {
-            return this.state.data.slice();
-        }
-    }
-
-    validate() {
-        if(this.hot === null) {
-            throw new Error("Not initialised");
-        }
-
-        return new P((resolve, reject) => {
-            this.hot.validateCells(valid => {
-                resolve(valid);
-            });
         });
     }
 

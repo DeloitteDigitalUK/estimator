@@ -24,7 +24,7 @@ export default class Plan extends Component {
 
         this.state = {
             percentiles: [0.95, 0.85, 0.75],
-            runs: 2000
+            runs: 1000
         };
     }
 

@@ -5,6 +5,7 @@ import { ModalLinkContainer } from '../routing';
 
 import SolutionList from './solution/list';
 import Plan from './plan';
+import ResourceForecast from './resources';
 
 const ViewProject = ({ project, match }) => {
 
@@ -47,6 +48,25 @@ const ViewProject = ({ project, match }) => {
                     </HelpBlock>
 
                     <Plan project={project} />
+
+                </Panel>
+                )}
+
+                {project.solutions.length > 0 && (
+                <Panel collapsible defaultExpanded header="Resource forecast" eventKey="resourceForecast">
+
+                    <HelpBlock>
+                        <p>
+                            We can also consider the number of people that will be required to deliver the
+                            project at a given confidence interval. We do this by simulating the project
+                            and overlaying the team profile defined for each solution. In the table
+                            below, we can see the number of people required week-by-week by role.
+                            (Note that we only consider full weeks: going down to days would imply a level
+                            of precision that isn't warranted by a project-level estimate such as this.)
+                        </p>
+                    </HelpBlock>
+
+                    <ResourceForecast project={project} />
 
                 </Panel>
                 )}

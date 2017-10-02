@@ -267,7 +267,7 @@ body {
 }
 
 .project-plan-controls {
-    margin-top: 2em;
+    margin: 2em 0;
 }
 
 .project-plan-controls > span {
@@ -292,4 +292,31 @@ body {
     vertical-align: top;
     display: inline-block;
     min-width: 150px;
+}
+
+.project-resources .handsontable {
+    height: 400px;
+    overflow: hidden;
+}
+
+.project-resources .handsontable thead tr th.date-cell {
+    height: 6.5em;
+}
+
+.project-resources .handsontable tr th {
+    vertical-align: bottom;
+    cursor: pointer;
+}
+
+.project-resources .handsontable thead tr th.date-cell > div {
+    padding: 0 10px;
+    transform: rotate(-90deg);
+}
+
+.project-resources .handsontable td.resource-table-header {
+    font-weight: bold;
+}
+
+.Select-menu-outer {
+    z-index: 500;
 }
