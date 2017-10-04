@@ -20,7 +20,7 @@ describe('Project simulation', function() {
             startDate: new Date(2017, 0, 1)
         });
 
-        const results = simulateProject(project, [50, 85, 95], 100);
+        const results = simulateProject(project, [.50, .85, .95], 100);
 
         expect(results).to.eql([]);
     });
@@ -51,7 +51,7 @@ describe('Project simulation', function() {
             ]
         });
 
-        const results = simulateProject(project, [50, 85, 95], 100);
+        const results = simulateProject(project, [.50, .85, .95], 100);
 
         expect(results.length).to.eql(1);
 
@@ -96,7 +96,7 @@ describe('Project simulation', function() {
             ]
         });
 
-        const results = simulateProject(project, [50, 85, 95], 100);
+        const results = simulateProject(project, [.50, .85, .95], 100);
 
         expect(results.length).to.eql(1);
 
@@ -104,17 +104,17 @@ describe('Project simulation', function() {
         expect(results[0].dates).to.eql([{
             startDate: new Date(2017, 0, 1),
             endDate: new Date(2017, 0, 21),
-            percentile: 50,
+            percentile: .50,
             description: '50th percentile'
         },{
             startDate: new Date(2017, 0, 1),
             endDate: new Date(2017, 0, 21),
-            percentile: 85,
+            percentile: .85,
             description: '85th percentile'
         },{
             startDate: new Date(2017, 0, 1),
             endDate: new Date(2017, 0, 21),
-            percentile: 95,
+            percentile: .95,
             description: '95th percentile'
         }]);
     });
@@ -152,7 +152,7 @@ describe('Project simulation', function() {
             ]
         });
 
-        const results = simulateProject(project, [50, 85, 95], 100);
+        const results = simulateProject(project, [.50, .85, .95], 100);
 
         expect(results.length).to.eql(1);
 
@@ -160,17 +160,17 @@ describe('Project simulation', function() {
         expect(results[0].dates).to.eql([{
             startDate: new Date(2017, 1, 1),
             endDate: new Date(2017, 1, 21),
-            percentile: 50,
+            percentile: .50,
             description: '50th percentile'
         },{
             startDate: new Date(2017, 1, 1),
             endDate: new Date(2017, 1, 21),
-            percentile: 85,
+            percentile: .85,
             description: '85th percentile'
         },{
             startDate: new Date(2017, 1, 1),
             endDate: new Date(2017, 1, 21),
-            percentile: 95,
+            percentile: .95,
             description: '95th percentile'
         }]);
     });
@@ -234,7 +234,7 @@ describe('Project simulation', function() {
             ]
         });
 
-        const results = simulateProject(project, [50], 100);
+        const results = simulateProject(project, [.50], 100);
 
         expect(results.length).to.eql(2);
 
@@ -242,7 +242,7 @@ describe('Project simulation', function() {
         expect(results[0].dates).to.eql([{
             startDate: new Date(2017, 1, 1),
             endDate: new Date(2017, 1, 21),
-            percentile: 50,
+            percentile: .50,
             description: '50th percentile'
         }]);
 
@@ -250,7 +250,7 @@ describe('Project simulation', function() {
         expect(results[1].dates).to.eql([{
             startDate: new Date(2017, 1, 22),
             endDate: new Date(2017, 2, 7),
-            percentile: 50,
+            percentile: .50,
             description: '50th percentile'
         }]);
 
@@ -314,7 +314,7 @@ describe('Project simulation', function() {
             ]
         });
 
-        const results = simulateProject(project, [50], 100);
+        const results = simulateProject(project, [.50], 100);
 
         expect(results.length).to.eql(2);
 
@@ -322,7 +322,7 @@ describe('Project simulation', function() {
         expect(results[0].dates).to.eql([{
             startDate: new Date(2017, 0, 1),
             endDate: new Date(2017, 0, 21),
-            percentile: 50,
+            percentile: .50,
             description: '50th percentile'
         }]);
 
@@ -330,7 +330,7 @@ describe('Project simulation', function() {
         expect(results[1].dates).to.eql([{
             startDate: new Date(2017, 0, 22),
             endDate: new Date(2017, 1, 4),
-            percentile: 50,
+            percentile: .50,
             description: '50th percentile'
         }]);
 
@@ -395,7 +395,7 @@ describe('Project simulation', function() {
             ]
         });
 
-        const results = simulateProject(project, [50], 100);
+        const results = simulateProject(project, [.50], 100);
 
         expect(results.length).to.eql(2);
 
@@ -403,7 +403,7 @@ describe('Project simulation', function() {
         expect(results[0].dates).to.eql([{
             startDate: new Date(2017, 1, 1),
             endDate: new Date(2017, 1, 21),
-            percentile: 50,
+            percentile: .50,
             description: '50th percentile'
         }]);
 
@@ -411,7 +411,7 @@ describe('Project simulation', function() {
         expect(results[1].dates).to.eql([{
             startDate: new Date(2017, 1, 1),
             endDate: new Date(2017, 1, 14),
-            percentile: 50,
+            percentile: .50,
             description: '50th percentile'
         }]);
 
@@ -501,7 +501,7 @@ describe('Project simulation', function() {
             ]
         });
 
-        const results = simulateProject(project, [50], 100);
+        const results = simulateProject(project, [.50], 100);
 
         expect(results.length).to.eql(3);
 
@@ -509,7 +509,7 @@ describe('Project simulation', function() {
         expect(results[0].dates).to.eql([{
             startDate: new Date(2017, 1, 1),
             endDate: new Date(2017, 1, 21),
-            percentile: 50,
+            percentile: .50,
             description: '50th percentile'
         }]);
 
@@ -517,7 +517,7 @@ describe('Project simulation', function() {
         expect(results[1].dates).to.eql([{
             startDate: new Date(2017, 1, 22),
             endDate: new Date(2017, 1, 28),
-            percentile: 50,
+            percentile: .50,
             description: '50th percentile'
         }]);
 
@@ -525,7 +525,7 @@ describe('Project simulation', function() {
         expect(results[2].dates).to.eql([{
             startDate: new Date(2017, 1, 22),
             endDate: new Date(2017, 2, 7),
-            percentile: 50,
+            percentile: .50,
             description: '50th percentile'
         }]);
 
@@ -583,7 +583,7 @@ describe('Project simulation', function() {
             ]
         });
 
-        const results = simulateProject(project, [50], 100);
+        const results = simulateProject(project, [.50], 100);
 
         expect(results.length).to.eql(2);
 
@@ -600,7 +600,7 @@ describe('Project simulation', function() {
         expect(results[1].dates).to.eql([{
             startDate: new Date(2017, 1, 21),
             endDate: new Date(2017, 2, 6),
-            percentile: 50,
+            percentile: .50,
             description: '50th percentile'
         }]);
 
@@ -658,7 +658,7 @@ describe('Project simulation', function() {
             ]
         });
 
-        const results = simulateProject(project, [50], 100);
+        const results = simulateProject(project, [.50], 100);
 
         expect(results.length).to.eql(2);
 
@@ -675,7 +675,7 @@ describe('Project simulation', function() {
         expect(results[1].dates).to.eql([{
             startDate: new Date(2017, 1, 1),
             endDate: new Date(2017, 1, 14),
-            percentile: 50,
+            percentile: .50,
             description: '50th percentile'
         }]);
 
@@ -727,7 +727,7 @@ describe('Project simulation', function() {
             ]
         });
 
-        const results = simulateProject(project, [50], 100);
+        const results = simulateProject(project, [.50], 100);
 
         expect(results.length).to.eql(2);
 
@@ -738,7 +738,7 @@ describe('Project simulation', function() {
         expect(results[1].dates).to.eql([{
             startDate: new Date(2017, 0, 1),
             endDate: new Date(2017, 0, 14),
-            percentile: 50,
+            percentile: .50,
             description: '50th percentile'
         }]);
 
@@ -778,12 +778,12 @@ describe('Project simulation', function() {
             ]
         });
 
-        expect(() => simulateProject(project, [50], 100)).to.throw();
+        expect(() => simulateProject(project, [.50], 100)).to.throw();
     });
 
     it("Can simulate a complex project", function() {
         
-        const results = simulateProject(fullFixture, [50, 75, 85, 95], 1000);
+        const results = simulateProject(fullFixture, [.50, .75, .85, .95], 1000);
 
         expect(results.length).to.eql(3);
         
