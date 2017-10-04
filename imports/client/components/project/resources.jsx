@@ -1,15 +1,16 @@
 import _ from 'lodash';
 import moment_ from 'moment';
 import { extendMoment } from 'moment-range';
- 
+import { saveAs } from 'file-saver';
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, ControlLabel, FormControl } from 'react-bootstrap';
+import { Alert, ControlLabel, FormControl, ButtonToolbar, Button } from 'react-bootstrap';
 import Select from 'react-select';
 
 import Table from '../ui/table';
 import simulateProject from '../../../simulation/project';
-import { getPublicSetting, getSuffix, ISO } from '../../../utils';
+import { getPublicSetting, callMethod, ISO } from '../../../utils';
 
 const moment = extendMoment(moment_);
 const DATE_FORMAT = getPublicSetting('dateFormat');
@@ -39,6 +40,23 @@ export default class ResourceForecast extends Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         return !_.isEqual(this.state, nextState) || !_.isEqual(this.props, nextProps);
+    }
+
+    async downloadFile(e) {
+        e.preventDefault();
+
+        try {
+            const res = await callMethod('project/export', this.props.project._id, this.state.percentile, this.state.runs);
+            saveAs(
+                new Blob([res], {
+                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                }),
+                this.props.project.name + '.xlsx'
+            );
+        } catch(err) {
+            console.error(err);
+            alert("An error occurred whilst trying to export the project. Please see the console logs.");
+        }
     }
 
     render() {
@@ -141,20 +159,6 @@ export default class ResourceForecast extends Component {
             <div className="project-resources">
 
                 <div className="project-plan-controls">
-                    <span title="The confidence percentile to use to simulate the required resources">
-                        <ControlLabel>
-                            Percentile:
-                        </ControlLabel>
-                        <Select
-                            value={this.state.percentile}
-                            clearable={false}
-                            required
-                            onChange={option => { this.setState({ percentile: option? option.value : 0.85 }); }}
-                            options={[1, 0.99, 0.95, 0.9, 0.85, 0.75, 0.5, 0.25].map(v => (
-                                { value: v, label: `${Math.round(v * 100)}${getSuffix(Math.round(v * 100))}` }
-                            ))}
-                            />
-                    </span>
                     <span title="The number of runs of the simulator. More runs means a more nuanced result, but this will also take more time.">
                         <ControlLabel>
                             Simulations:
@@ -173,6 +177,20 @@ export default class ResourceForecast extends Component {
                             }}
                             />
                     </span>
+                    <span title="The confidence percentile to use to simulate the required resources">
+                        <ControlLabel>
+                            Confidence level:
+                        </ControlLabel>
+                        <Select
+                            value={this.state.percentile}
+                            clearable={false}
+                            required
+                            onChange={option => { this.setState({ percentile: option? option.value : 0.85 }); }}
+                            options={[1, 0.99, 0.95, 0.9, 0.85, 0.75, 0.5, 0.25].map(v => (
+                                { value: v, label: `${Math.round(v * 100)}%` }
+                            ))}
+                            />
+                    </span>
                 </div>
 
                 <div className="project-resources-table">
@@ -185,6 +203,14 @@ export default class ResourceForecast extends Component {
                         afterGetColHeader={annotateHeaders}
                         mergeCells={mergeCells}
                         />
+                </div>
+
+                <div className="project-resources-export">
+                    
+                    <ButtonToolbar>
+                        <Button bsStyle="primary" onClick={this.downloadFile.bind(this)}>Download forecast</Button>
+                    </ButtonToolbar>
+
                 </div>
                 
             </div>

@@ -5,6 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Meteor debug mode",
+            "program": "env NODE_OPTIONS='--debug-brk' meteor"
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Node attach",
+            "port": 5858
+        },
+        {
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",

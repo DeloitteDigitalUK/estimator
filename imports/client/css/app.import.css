@@ -267,7 +267,10 @@ body {
 }
 
 .project-plan-controls {
-    margin: 2em 0;
+    margin: 1em 0;
+    padding: 1em 0;
+    border-top: solid #eee 1px;
+    border-bottom: solid #eee 1px;
 }
 
 .project-plan-controls > span {
@@ -291,7 +294,7 @@ body {
 .project-plan-controls .Select {
     vertical-align: top;
     display: inline-block;
-    min-width: 150px;
+    min-width: 100px;
 }
 
 .project-resources .handsontable {

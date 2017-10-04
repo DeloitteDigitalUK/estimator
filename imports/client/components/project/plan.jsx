@@ -9,7 +9,7 @@ import Timeline from 'react-calendar-timeline'
 import Select from 'react-select';
 
 import simulateProject from '../../../simulation/project';
-import { getPublicSetting, getSuffix } from '../../../utils';
+import { getPublicSetting } from '../../../utils';
 
 const DATE_FORMAT = getPublicSetting('dateFormat');
 
@@ -55,48 +55,7 @@ export default class Plan extends Component {
         return (                
             <div className="project-plan">
 
-                <Timeline
-                    minZoom={24 * 60 * 60 * 1000}
-                    canMove={false}
-                    canChangeGroup={false}
-                    canResize={false}
-                    stackItems
-                    stickyOffset={50}
-                    groups={this.props.project.solutions}
-                    items={items}
-                    keys={{
-                        groupIdKey: '_id',
-                        groupTitleKey: 'name',
-                        itemIdKey: 'id',
-                        itemTitleKey: 'title',
-                        itemDivTitleKey: 'description',
-                        itemGroupKey: 'group',
-                        itemTimeStartKey: 'start',
-                        itemTimeEndKey: 'end'
-                    }}
-                    sidebarWidth={200}
-                    fullUpdate
-                    defaultTimeStart={moment(this.props.project.startDate)}
-                    defaultTimeEnd={moment(this.props.project.startDate).add(6, 'month')}
-                    groupRenderer={({group}) => (
-                        <Link to={`/project/${this.props.project._id}/solution/${group._id}`} title={group.description}>{group.name}</Link>
-                    )}
-                    />
-
                 <div className="project-plan-controls">
-                    <span title="The confidence percentiles to show for each simulated solution">
-                        <ControlLabel>
-                            Percentiles:
-                        </ControlLabel>
-                        <Select
-                            value={this.state.percentiles}
-                            multi
-                            onChange={values => { this.setState({ percentiles: values.map(v => v.value) }); }}
-                            options={[1, 0.99, 0.95, 0.9, 0.85, 0.75, 0.5, 0.25].map(v => (
-                                { value: v, label: `${Math.round(v * 100)}${getSuffix(Math.round(v * 100))}` }
-                            ))}
-                            />
-                    </span>
                     <span title="The number of runs of the simulator. More runs means a more nuanced result, but this will also take more time.">
                         <ControlLabel>
                             Simulations:
@@ -115,6 +74,51 @@ export default class Plan extends Component {
                             }}
                             />
                     </span>
+                    <span title="The confidence percentiles to show for each simulated solution">
+                        <ControlLabel>
+                            Confidence levels:
+                        </ControlLabel>
+                        <Select
+                            value={this.state.percentiles}
+                            multi
+                            onChange={values => { this.setState({ percentiles: values.map(v => v.value) }); }}
+                            options={[1, 0.99, 0.95, 0.9, 0.85, 0.75, 0.5, 0.25].map(v => (
+                                { value: v, label: `${Math.round(v * 100)}%` }
+                            ))}
+                            />
+                    </span>
+                </div>
+
+                <div className="project-plan-timeline">
+
+                    <Timeline
+                        minZoom={24 * 60 * 60 * 1000}
+                        canMove={false}
+                        canChangeGroup={false}
+                        canResize={false}
+                        stackItems
+                        stickyOffset={50}
+                        groups={this.props.project.solutions}
+                        items={items}
+                        keys={{
+                            groupIdKey: '_id',
+                            groupTitleKey: 'name',
+                            itemIdKey: 'id',
+                            itemTitleKey: 'title',
+                            itemDivTitleKey: 'description',
+                            itemGroupKey: 'group',
+                            itemTimeStartKey: 'start',
+                            itemTimeEndKey: 'end'
+                        }}
+                        sidebarWidth={200}
+                        fullUpdate
+                        defaultTimeStart={moment(this.props.project.startDate)}
+                        defaultTimeEnd={moment(this.props.project.startDate).add(6, 'month')}
+                        groupRenderer={({group}) => (
+                            <Link to={`/project/${this.props.project._id}/solution/${group._id}`} title={group.description}>{group.name}</Link>
+                        )}
+                        />
+
                 </div>
                 
             </div>
