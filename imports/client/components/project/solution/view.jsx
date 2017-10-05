@@ -3,14 +3,22 @@ import _ from 'lodash';
 import React from 'react';
 import moment from 'moment';
 
-import { PanelGroup, Panel, Table, HelpBlock } from 'react-bootstrap';
+import { PanelGroup, Panel, Table, HelpBlock, Label } from 'react-bootstrap';
 
 import { EstimateType, StartType, ThroughputType } from '../../../../collections/projects';
+import { checkSampleCount, checkSampleAge, checkSampleStability, checkBacklogGuess } from '../../../../simulation/check';
 import { getPublicSetting } from '../../../../utils';
 
 import SolutionForecast from './forecast';
 
-const DATE_FORMAT = getPublicSetting('dateFormat');
+const DATE_FORMAT = getPublicSetting('dateFormat'),
+      MIN_SAMPLES = getPublicSetting('minSamples'),
+      MAX_SAMPLES = getPublicSetting('maxSamples'),
+      SAMPLE_AGE_THRESHOLD = getPublicSetting('sampleAgeThreshold'),
+      SAMPLE_STABILITY_THRESHOLD = getPublicSetting('sampleStabilityThreshold'),
+      BACKLOG_GUESS_SPREAD_THRESHOLD = getPublicSetting('backlogGuessSpreadThreshold'),
+      SPLIT_RATE_GUESS_SPREAD_THRESHOLD = getPublicSetting('splitRateGuessSpreadThreshold'),
+      THROUGHPUT_SCALING_RATE_SPREAD_THRESHOLD = getPublicSetting('throughputScalingRateSpreadThreshold');
 
 const ViewSolution = ({ project, solution }) => {
 
@@ -36,9 +44,23 @@ const ViewSolution = ({ project, solution }) => {
                             &raquo; This solution is expected to require delivering a backlog of work consisting of:
                         </p>
                         <ul>
-                            <li>between <strong>{solution.backlog.lowGuess} and {solution.backlog.highGuess}</strong> work items</li>
+                            <li>
+                                between <strong>{solution.backlog.lowGuess} and {solution.backlog.highGuess}</strong> work
+                                items {!_.isEmpty(solution.backlog) && !checkBacklogGuess(solution.backlog.lowGuess, solution.backlog.highGuess, BACKLOG_GUESS_SPREAD_THRESHOLD) && (
+                                    <Label bsStyle="warning" title={`The high guess is less than ${Math.round(BACKLOG_GUESS_SPREAD_THRESHOLD * 100)}% above the low guess. Consider using a wider range.`}>
+                                        !
+                                    </Label>
+                                )}
+                            </li>
                             {(solution.backlog.lowSplitRate && solution.backlog.highSplitRate && solution.backlog.highSplitRate > 1) && (
-                            <li>of which we expect that <strong>every {solution.backlog.lowSplitRate} to {solution.backlog.highSplitRate}</strong> work items will be further split</li>
+                            <li>
+                                of which we expect that <strong>every {solution.backlog.lowSplitRate} to {solution.backlog.highSplitRate}</strong> work items will be further
+                                split {!_.isEmpty(solution.backlog) && !checkBacklogGuess(solution.backlog.lowSplitRate, solution.backlog.highSplitRate, SPLIT_RATE_GUESS_SPREAD_THRESHOLD) && (
+                                    <Label bsStyle="warning" title={`The high guess is less than ${Math.round(SPLIT_RATE_GUESS_SPREAD_THRESHOLD * 100)}% above the low guess. Consider using a wider range.`}>
+                                        !
+                                    </Label>
+                                )}
+                            </li>
                             )}
                             <li>with throughput measured to a cadence of <strong>{weeks(solution.throughputPeriodLength)}</strong></li>
                             <li>starting <strong>{
@@ -120,14 +142,33 @@ const ViewSolution = ({ project, solution }) => {
                     {(solution.estimateType === EstimateType.backlog && solution.team.throughputType === ThroughputType.estimate) && (
                     <p>
                         &raquo; The team's throughput is based on a <strong>guess</strong> (for lack of reliable historical data) of
-                        between <strong>{solution.team.throughputEstimate.lowGuess} and {solution.team.throughputEstimate.highGuess}</strong> work items completed per {weeks(solution.throughputPeriodLength)}.
+                        between <strong>{solution.team.throughputEstimate.lowGuess} and {solution.team.throughputEstimate.highGuess}</strong>
+                        work items completed per {weeks(solution.throughputPeriodLength)}. {!_.isEmpty(solution.team.throughputEstimate) && !checkBacklogGuess(solution.team.throughputEstimate.lowGuess, solution.team.throughputEstimate.highGuess, BACKLOG_GUESS_SPREAD_THRESHOLD) && (
+                            <Label bsStyle="warning" title={`The high guess is less than ${Math.round(BACKLOG_GUESS_SPREAD_THRESHOLD * 100)}% above the low guess. Consider using a wider range.`}>
+                                !
+                            </Label>
+                        )}
                     </p>
                     )}
 
                     {(solution.estimateType === EstimateType.backlog && solution.team.throughputType === ThroughputType.samples) && (
                     <div>
                         <p>
-                            The team's throughput is based on <strong>previous samples</strong>:
+                            The team's throughput is based on <strong>previous samples</strong>  {!checkSampleCount(solution.team.throughputSamples || [], MIN_SAMPLES, MAX_SAMPLES) &&
+                            <Label bsStyle="warning" title={`Using too few or too many (old) samples can skew the result. Consider aiming for ca ${MIN_SAMPLES}-${MAX_SAMPLES} samples.`}>
+                                !
+                            </Label>
+                        }
+                        {!checkSampleAge(solution.team.throughputSamples || [], SAMPLE_AGE_THRESHOLD) &&
+                            <Label bsStyle="warning" title={`The newest sample used for forecasting is over ${SAMPLE_AGE_THRESHOLD} days old. If the underlying conditions have changed, it is possible that this will provide a misleading baseline.`}>
+                                !
+                            </Label>
+                        }
+                        {!checkSampleStability(solution.team.throughputSamples || [], SAMPLE_STABILITY_THRESHOLD) &&
+                            <Label bsStyle="warning" title={`An analysis of the samples provided suggests they might not provide a stable baseline. This can happen if they cover a period of ramp-up or significant change, or if the number of samples is quite low. Consider choosing a different sample period, or adding more samples.`}>
+                                !
+                            </Label>
+                        }:
                         </p>
                         <Table condensed hover>
                             <thead>
@@ -143,13 +184,19 @@ const ViewSolution = ({ project, solution }) => {
                                 ))}
                             </tbody>
                         </Table>
+                    
                     </div>
                     )}
 
                     {(solution.estimateType === EstimateType.backlog && !_.isEmpty(solution.team.rampUp)) && (
                     <p>
                         &raquo; The team is expected to <strong>ramp up</strong> over <strong>{weeks(solution.team.rampUp.duration)}</strong>, when throughput is expected to
-                        be <strong>{Math.round(solution.team.rampUp.throughputScalingLowGuess * 100)}-{Math.round(solution.team.rampUp.throughputScalingHighGuess * 100)}%</strong> of this.
+                        be <strong>{Math.round(solution.team.rampUp.throughputScalingLowGuess * 100)}-{Math.round(solution.team.rampUp.throughputScalingHighGuess * 100)}%</strong> of
+                        this. {!checkBacklogGuess(solution.team.rampUp.throughputScalingLowGuess, solution.team.rampUp.throughputScalingHighGuess, THROUGHPUT_SCALING_RATE_SPREAD_THRESHOLD) && (
+                            <Label bsStyle="warning" title={`The high guess is less than ${Math.round(THROUGHPUT_SCALING_RATE_SPREAD_THRESHOLD * 100)}% above the low guess. Consider using a wider range.`}>
+                                !
+                            </Label>
+                        )}
                     </p>
                     )}
 

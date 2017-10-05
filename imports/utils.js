@@ -16,10 +16,11 @@ const defaultSettings = {
 
         minSamples: 7,
         maxSamples: 25,
-        sampleAgeThreshold: 90,
+        sampleAgeThreshold: 60,
         sampleStabilityThreshold: .25,
-        backlogGuessSpreadThreshold: .1,
-        splitRateGuessSpreadThreshold: .1
+        backlogGuessSpreadThreshold: .2,
+        splitRateGuessSpreadThreshold: .2,
+        throughputScalingRateSpreadThreshold: .2,
     }
 };
 

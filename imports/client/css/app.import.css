@@ -218,6 +218,10 @@ body {
     margin-bottom: 1em;
 }
 
+.view-solution .label {
+    cursor: pointer;
+}
+
 .simulation-controls {
     margin-top: 27px;
 }

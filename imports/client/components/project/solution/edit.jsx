@@ -21,7 +21,8 @@ const DATE_FORMAT = getPublicSetting('dateFormat'),
       SAMPLE_AGE_THRESHOLD = getPublicSetting('sampleAgeThreshold'),
       SAMPLE_STABILITY_THRESHOLD = getPublicSetting('sampleStabilityThreshold'),
       BACKLOG_GUESS_SPREAD_THRESHOLD = getPublicSetting('backlogGuessSpreadThreshold'),
-      SPLIT_RATE_GUESS_SPREAD_THRESHOLD = getPublicSetting('splitRateGuessSpreadThreshold');
+      SPLIT_RATE_GUESS_SPREAD_THRESHOLD = getPublicSetting('splitRateGuessSpreadThreshold'),
+      THROUGHPUT_SCALING_RATE_SPREAD_THRESHOLD = getPublicSetting('throughputScalingRateSpreadThreshold');
 
 const toFloat = str => str && str[str.length-1] === "."? str : _.toNumber(str);
 const weeks = n => `${n} week${n > 1? "s" : ""}`;
@@ -198,7 +199,7 @@ export default class EditSolution extends Component {
                                 </Panel>
 
                                 {solution.estimateType === EstimateType.backlog && (
-                                    <Panel collapsible header="Backlog parameters" eventKey="backlogParameters">
+                                    <Panel collapsible defaultExpanded header="Backlog parameters" eventKey="backlogParameters">
 
                                         <HelpBlock>
                                             When estimating based on a backlog, we simulate a team delivering
@@ -304,7 +305,7 @@ export default class EditSolution extends Component {
                                     </Panel>
                                 )}
 
-                                <Panel collapsible header="Team structure" eventKey="teamStructure">
+                                <Panel collapsible defaultExpanded header="Team structure" eventKey="teamStructure">
  
                                     <HelpBlock>
                                         To help us understand what capacity will be needed to deliver the solution
@@ -336,7 +337,7 @@ export default class EditSolution extends Component {
                                 </Panel>
 
                                 {solution.estimateType === EstimateType.backlog && (
-                                    <Panel collapsible header="Throughput parameters" eventKey="throughputParameters">
+                                    <Panel collapsible defaultExpanded header="Throughput parameters" eventKey="throughputParameters">
 
                                         <HelpBlock>
                                             To estimate the team's throughput, we can we either use historical samples,
@@ -444,7 +445,7 @@ export default class EditSolution extends Component {
                                     </Panel>
                                 )}
                                 {solution.estimateType === EstimateType.backlog && (
-                                    <Panel collapsible header="Ramp-up" eventKey="rampUp">
+                                    <Panel collapsible defaultExpanded header="Ramp-up" eventKey="rampUp">
                                         
                                         <HelpBlock>
                                             The team will typically not hit full productivity from day one. A
@@ -485,11 +486,19 @@ export default class EditSolution extends Component {
                                                     />
                                             </Col>
                                         </Row>
+
+                                        {!_.isEmpty(solution.team.rampUp) && !checkBacklogGuess(solution.team.rampUp.throughputScalingLowGuess, solution.team.rampUp.throughputScalingHighGuess, THROUGHPUT_SCALING_RATE_SPREAD_THRESHOLD) && (
+                                            <HelpBlock className="has-warning">
+                                                The high guess is less than {Math.round(THROUGHPUT_SCALING_RATE_SPREAD_THRESHOLD * 100)}% above the low guess.
+                                                Consider using a wider range.
+                                            </HelpBlock>
+                                        )}
+
                                     </Panel>
                                 )}
                                 
                                 {solution.estimateType === EstimateType.workPattern && (
-                                    <Panel collapsible header="Work pattern" eventKey="workPattern">
+                                    <Panel collapsible defaultExpanded header="Work pattern" eventKey="workPattern">
                                     <TableField
                                         object={solution}
                                         validationContext={validationContext}
@@ -521,7 +530,7 @@ export default class EditSolution extends Component {
                                     </Panel>
                                 )}
 
-                                <Panel collapsible header="Notes" eventKey="notes">
+                                <Panel collapsible defaultExpandedf header="Notes" eventKey="notes">
 
                                     <HelpBlock>
                                         Use this field to capture assumptions, questions and any
