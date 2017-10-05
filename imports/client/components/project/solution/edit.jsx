@@ -11,9 +11,17 @@ import { FormField, TableField } from '../../ui/forms';
 import { validators, rowValidator as $v } from '../../ui/table';
 
 import Projects, { Solution, EstimateType, StartType, ThroughputType } from '../../../../collections/projects';
+import { checkSampleCount, checkSampleAge, checkSampleStability, checkBacklogGuess } from '../../../../simulation/check';
 
 import { getPublicSetting, ISO } from '../../../../utils';
-const DATE_FORMAT = getPublicSetting('dateFormat');
+
+const DATE_FORMAT = getPublicSetting('dateFormat'),
+      MIN_SAMPLES = getPublicSetting('minSamples'),
+      MAX_SAMPLES = getPublicSetting('maxSamples'),
+      SAMPLE_AGE_THRESHOLD = getPublicSetting('sampleAgeThreshold'),
+      SAMPLE_STABILITY_THRESHOLD = getPublicSetting('sampleStabilityThreshold'),
+      BACKLOG_GUESS_SPREAD_THRESHOLD = getPublicSetting('backlogGuessSpreadThreshold'),
+      SPLIT_RATE_GUESS_SPREAD_THRESHOLD = getPublicSetting('splitRateGuessSpreadThreshold');
 
 const toFloat = str => str && str[str.length-1] === "."? str : _.toNumber(str);
 const weeks = n => `${n} week${n > 1? "s" : ""}`;
@@ -74,8 +82,8 @@ export default class EditSolution extends Component {
                 <form onSubmit={this.onSubmit.bind(this)}>
                     <Row>
                         <Col xs={12} sm={10} md={8}>
-                            {this.state.invalid? <Alert bsStyle="danger">Please correct the indicated errors</Alert> : ""}
-                            {this.state.error? <Alert bsStyle="danger">An unexpected error occurred. Please try again.</Alert> : ""}
+                            {this.state.invalid && <Alert bsStyle="danger">Please correct the indicated errors</Alert>}
+                            {this.state.error && <Alert bsStyle="danger">An unexpected error occurred. Please try again.</Alert>}
 
                             <PanelGroup defaultActiveKey="basicDetails">
                                 <Panel collapsible defaultExpanded header="Solution details" eventKey="basicDetails">
@@ -120,7 +128,7 @@ export default class EditSolution extends Component {
                                         <option value={EstimateType.workPattern}>Fixed working pattern</option>
                                     </FormField>
 
-                                    {solution.estimateType !== EstimateType.backlog? null :
+                                    {solution.estimateType === EstimateType.backlog && (
                                         <FormField
                                             object={solution}
                                             validationContext={validationContext}
@@ -129,7 +137,7 @@ export default class EditSolution extends Component {
                                             placeholder="1"
                                             onChange={this.saveValue.bind(this, 'throughputPeriodLength', e => parseInt(e.target.value, 10))}
                                             />
-                                    }
+                                    )}
 
                                     <HelpBlock>
                                         The estimated time to deliver each solution will be shown as lines on a
@@ -152,7 +160,7 @@ export default class EditSolution extends Component {
                                         <option value={StartType.with}>When work begins on another solution</option>
                                     </FormField>
 
-                                    {solution.startType !== StartType.fixedDate? null :
+                                    {solution.startType === StartType.fixedDate && (
                                         <FormField
                                             object={solution}
                                             validationContext={validationContext}
@@ -169,9 +177,9 @@ export default class EditSolution extends Component {
                                             field='startDate'
                                             title="Start date"
                                             />
-                                    }
+                                    )}
 
-                                    {solution.startType !== StartType.after && solution.startType !== StartType.with? null :
+                                    {(solution.startType === StartType.after || solution.startType === StartType.with) && (
                                         <FormField
                                             object={solution}
                                             validationContext={validationContext}
@@ -185,11 +193,11 @@ export default class EditSolution extends Component {
                                                 s._id === solution._id? null : <option key={s._id} value={s._id} title={s.description}>{s.name}</option>
                                             ))}
                                         </FormField>
-                                    }
+                                    )}
 
                                 </Panel>
 
-                                {solution.estimateType !== EstimateType.backlog? null :
+                                {solution.estimateType === EstimateType.backlog && (
                                     <Panel collapsible header="Backlog parameters" eventKey="backlogParameters">
 
                                         <HelpBlock>
@@ -223,6 +231,13 @@ export default class EditSolution extends Component {
                                             </Col>
                                         </Row>
 
+                                        {!_.isEmpty(solution.backlog) && !checkBacklogGuess(solution.backlog.lowGuess, solution.backlog.highGuess, BACKLOG_GUESS_SPREAD_THRESHOLD) && (
+                                            <HelpBlock className="has-warning">
+                                                The high guess is less than {Math.round(BACKLOG_GUESS_SPREAD_THRESHOLD * 100)}% above the low guess.
+                                                Consider using a wider range.
+                                            </HelpBlock>
+                                        )}
+
                                         <HelpBlock>
                                             It is not uncommon that we will discover new scope when we begin to
                                             work through the backlog. We can think of this work items being split,
@@ -254,6 +269,13 @@ export default class EditSolution extends Component {
                                             </Col>
                                         </Row>
 
+                                        {!_.isEmpty(solution.backlog) && !checkBacklogGuess(solution.backlog.lowSplitRate, solution.backlog.highSplitRate, SPLIT_RATE_GUESS_SPREAD_THRESHOLD) && (
+                                            <HelpBlock className="has-warning">
+                                                The high guess is less than {Math.round(SPLIT_RATE_GUESS_SPREAD_THRESHOLD * 100)}% above the low guess.
+                                                Consider using a wider range.
+                                            </HelpBlock>
+                                        )}
+
                                         <TableField
                                             object={solution}
                                             validationContext={validationContext}
@@ -280,7 +302,7 @@ export default class EditSolution extends Component {
                                             />
 
                                     </Panel>
-                                }
+                                )}
 
                                 <Panel collapsible header="Team structure" eventKey="teamStructure">
  
@@ -313,7 +335,7 @@ export default class EditSolution extends Component {
 
                                 </Panel>
 
-                                {solution.estimateType !== EstimateType.backlog? null :
+                                {solution.estimateType === EstimateType.backlog && (
                                     <Panel collapsible header="Throughput parameters" eventKey="throughputParameters">
 
                                         <HelpBlock>
@@ -339,61 +361,89 @@ export default class EditSolution extends Component {
                                             <option value={ThroughputType.estimate}>Based on an estimated range</option>
                                         </FormField>
 
-                                        {solution.team.throughputType !== ThroughputType.samples? null :
-                                            <TableField
-                                                object={solution}
-                                                validationContext={validationContext}
-                                                field='team.throughputSamples'
-                                                title="Throughput samples"
-                                                idProp={null}
-                                                data={(solution.team.throughputSamples || []).map(d => ({
-                                                    ...d,
-                                                    periodStartDate: moment.utc(d.periodStartDate).format(DATE_FORMAT)
-                                                }))}
-                                                onChange={this.saveValue.bind(this, 'team.throughputSamples', e => e.map(d => ({
-                                                    ...d,
-                                                    periodStartDate: moment.utc(d.periodStartDate, DATE_FORMAT).toDate()
-                                                })))}
-                                                showCellErrors={this.state.invalid}
-                                                dataSchema={{
-                                                    periodStartDate: null,
-                                                    description: null,
-                                                    throughput: null,
-                                                }}
-                                                columns={[
-                                                    {data: "periodStartDate", title: "Period start date", width: 150, type: "date", datePickerConfig: {firstDay: 1}, dateFormat: DATE_FORMAT, correctFormat: true, validator: $v(validators.requiredDate), allowInvalid: true},
-                                                    {data: "throughput", title: "Throughput in period", width: 150, type: "numeric", validator: $v(validators.requiredNumber), allowInvalid: true},
-                                                    {data: "description", title: "Description / notes", width: 300},
-                                                ]}
-                                                />
-                                        }
-                                        {solution.team.throughputType !== ThroughputType.estimate? null :
-                                            <Row>
-                                                <Col md={6}>
-                                                    <FormField
-                                                        object={solution}
-                                                        validationContext={validationContext}
-                                                        field='team.throughputEstimate.lowGuess'
-                                                        title={`Low throughput guess (items per ${weeks(solution.throughputPeriodLength)}`}
-                                                        placeholder="5"
-                                                        onChange={this.saveValue.bind(this, 'team.throughputEstimate.lowGuess', e => toFloat(e.target.value))}
-                                                        />
-                                                </Col>
-                                                <Col md={6}>
-                                                    <FormField
-                                                        object={solution}
-                                                        validationContext={validationContext}
-                                                        field='team.throughputEstimate.highGuess'
-                                                        title={`High guess (items per ${weeks(solution.throughputPeriodLength)})`}
-                                                        placeholder="8"
-                                                        onChange={this.saveValue.bind(this, 'team.throughputEstimate.highGuess', e => toFloat(e.target.value))}
-                                                        />
-                                                </Col>
-                                            </Row>
-                                        }
+                                        {solution.team.throughputType === ThroughputType.samples && (
+                                            <div className="throughput-samples-input">
+                                                <TableField
+                                                    object={solution}
+                                                    validationContext={validationContext}
+                                                    field='team.throughputSamples'
+                                                    title="Throughput samples"
+                                                    idProp={null}
+                                                    data={(solution.team.throughputSamples || []).map(d => ({
+                                                        ...d,
+                                                        periodStartDate: moment.utc(d.periodStartDate).format(DATE_FORMAT)
+                                                    }))}
+                                                    onChange={this.saveValue.bind(this, 'team.throughputSamples', e => e.map(d => ({
+                                                        ...d,
+                                                        periodStartDate: moment.utc(d.periodStartDate, DATE_FORMAT).toDate()
+                                                    })))}
+                                                    showCellErrors={this.state.invalid}
+                                                    dataSchema={{
+                                                        periodStartDate: null,
+                                                        description: null,
+                                                        throughput: null,
+                                                    }}
+                                                    columns={[
+                                                        {data: "periodStartDate", title: "Period start date", width: 150, type: "date", datePickerConfig: {firstDay: 1}, dateFormat: DATE_FORMAT, correctFormat: true, validator: $v(validators.requiredDate), allowInvalid: true},
+                                                        {data: "throughput", title: "Throughput in period", width: 150, type: "numeric", validator: $v(validators.requiredNumber), allowInvalid: true},
+                                                        {data: "description", title: "Description / notes", width: 300},
+                                                    ]}
+                                                    />
+                                                
+                                                {!checkSampleCount(solution.team.throughputSamples || [], MIN_SAMPLES, MAX_SAMPLES) &&
+                                                    <HelpBlock className="has-warning">
+                                                        Using too few or too many (old) samples can skew the result. Consider aiming for ca {MIN_SAMPLES}-{MAX_SAMPLES} samples.
+                                                    </HelpBlock>
+                                                }
+                                                {!checkSampleAge(solution.team.throughputSamples || [], SAMPLE_AGE_THRESHOLD) &&
+                                                    <HelpBlock className="has-warning">
+                                                        The newest sample used for forecasting is over {SAMPLE_AGE_THRESHOLD} days old. If the underlying conditions have changed, it is possible that this will provide a misleading baseline.
+                                                    </HelpBlock>
+                                                }
+                                                {!checkSampleStability(solution.team.throughputSamples || [], SAMPLE_STABILITY_THRESHOLD) &&
+                                                    <HelpBlock className="has-warning">
+                                                        An analysis of the samples provided suggests they might not provide a stable baseline. This can happen if they cover a period
+                                                        of ramp-up or significant change, or if the number of samples is quite low. Consider choosing a different sample period, or
+                                                        adding more samples.
+                                                    </HelpBlock>
+                                                }
+                                            </div>
+                                        )}
+                                        {solution.team.throughputType === ThroughputType.estimate && (
+                                            <div className="throughput-estimate-guess">
+                                                <Row>
+                                                    <Col md={6}>
+                                                        <FormField
+                                                            object={solution}
+                                                            validationContext={validationContext}
+                                                            field='team.throughputEstimate.lowGuess'
+                                                            title={`Low throughput guess (items per ${weeks(solution.throughputPeriodLength)})`}
+                                                            placeholder="5"
+                                                            onChange={this.saveValue.bind(this, 'team.throughputEstimate.lowGuess', e => toFloat(e.target.value))}
+                                                            />
+                                                    </Col>
+                                                    <Col md={6}>
+                                                        <FormField
+                                                            object={solution}
+                                                            validationContext={validationContext}
+                                                            field='team.throughputEstimate.highGuess'
+                                                            title={`High guess (items per ${weeks(solution.throughputPeriodLength)})`}
+                                                            placeholder="8"
+                                                            onChange={this.saveValue.bind(this, 'team.throughputEstimate.highGuess', e => toFloat(e.target.value))}
+                                                            />
+                                                    </Col>
+                                                </Row>
+                                                {!_.isEmpty(solution.team.throughputEstimate) && !checkBacklogGuess(solution.team.throughputEstimate.lowGuess, solution.team.throughputEstimate.highGuess, BACKLOG_GUESS_SPREAD_THRESHOLD) && (
+                                                    <HelpBlock className="has-warning">
+                                                        The high guess is less than {Math.round(BACKLOG_GUESS_SPREAD_THRESHOLD * 100)}% above the low guess.
+                                                        Consider using a wider range.
+                                                    </HelpBlock>
+                                                )}
+                                            </div>
+                                        )}
                                     </Panel>
-                                }
-                                {solution.estimateType !== EstimateType.backlog? null :
+                                )}
+                                {solution.estimateType === EstimateType.backlog && (
                                     <Panel collapsible header="Ramp-up" eventKey="rampUp">
                                         
                                         <HelpBlock>
@@ -436,9 +486,9 @@ export default class EditSolution extends Component {
                                             </Col>
                                         </Row>
                                     </Panel>
-                                }
+                                )}
                                 
-                                {solution.estimateType !== EstimateType.workPattern? null :
+                                {solution.estimateType === EstimateType.workPattern && (
                                     <Panel collapsible header="Work pattern" eventKey="workPattern">
                                     <TableField
                                         object={solution}
@@ -469,7 +519,7 @@ export default class EditSolution extends Component {
                                         ]}
                                         />
                                     </Panel>
-                                }
+                                )}
 
                                 <Panel collapsible header="Notes" eventKey="notes">
 

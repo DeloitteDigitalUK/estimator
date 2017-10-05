@@ -12,7 +12,14 @@ const defaultSettings = {
         locale: "en-GB",
         dateFormat: "DD/MM/YYYY",
         queryDebounce: 250,
-        queryMinLength: 3
+        queryMinLength: 3,
+
+        minSamples: 7,
+        maxSamples: 25,
+        sampleAgeThreshold: 90,
+        sampleStabilityThreshold: .25,
+        backlogGuessSpreadThreshold: .1,
+        splitRateGuessSpreadThreshold: .1
     }
 };
 
