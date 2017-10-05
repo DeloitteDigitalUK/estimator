@@ -102,6 +102,11 @@ body {
     white-space: normal;
 }
 
+.footer {
+    clear: both;
+    padding-top: 2em;
+}
+
 /*
  * Project CRUD
  */
