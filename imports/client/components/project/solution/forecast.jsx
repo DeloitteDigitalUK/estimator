@@ -16,7 +16,6 @@ class Chart extends Component {
 
     static propTypes = {
         data: PropTypes.array.isRequired,        // [[values...]{x0, x1}]
-        percentiles: PropTypes.array.isRequired, // [{percentile, value}]
         xAxisLabel: PropTypes.string.isRequired,
         yAxisLabel: PropTypes.string.isRequired,
         height: PropTypes.string.isRequired,
@@ -125,8 +124,7 @@ export default class SolutionForecast extends Component {
             return <Alert bsStyle="danger">{e.message}</Alert>;
         }
 
-        const distribution = simulationResults.map(r => r.periods);
-        distribution.sort();
+        const distribution = _.sortBy(simulationResults, 'periods').map(s => s.periods);
         
         const histogramGenerator = histogram()
         const data = histogramGenerator(distribution);
@@ -143,7 +141,6 @@ export default class SolutionForecast extends Component {
                         xAxisLabel="Weeks elapsed in simulation"
                         yAxisLabel="Number of simulations completing in this time"
                         data={data}
-                        percentiles={percentiles}
                         width="100%"
                         height="400px"
                         />
