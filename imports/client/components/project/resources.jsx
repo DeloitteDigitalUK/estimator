@@ -46,7 +46,7 @@ export default class ResourceForecast extends Component {
         e.preventDefault();
 
         try {
-            const res = await callMethod('project/export', this.props.project._id, this.state.percentile, this.state.runs);
+            const res = await callMethod('project/export', this.props.project._id, this.state.percentile, this.state.runs || 0);
             saveAs(
                 new Blob([res], {
                     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -64,7 +64,7 @@ export default class ResourceForecast extends Component {
         let simulationResults
 
         try {
-            simulationResults = simulateProject(this.props.project, [this.state.percentile], this.state.runs)
+            simulationResults = simulateProject(this.props.project, [this.state.percentile], this.state.runs || 0)
         } catch(e) {
             return <Alert bsStyle="danger">{e.message}</Alert>;
         }
@@ -167,9 +167,14 @@ export default class ResourceForecast extends Component {
                             type="number"
                             min={100}
                             max={10000}
-                            value={this.state.runs}
+                            value={this.state.runs || ""}
                             onChange={e => {
-                                const value = e.target.value? parseInt(e.target.value, 10) : 0;
+                                if(_.isEmpty(e.target.value)) {
+                                    this.setState({runs: null});
+                                    return;
+                                }
+
+                                const value = parseInt(e.target.value, 10)
                                 if(_.isNaN(value) || value < 0 || value > 10000) {
                                     return;
                                 }

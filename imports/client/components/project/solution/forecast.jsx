@@ -119,7 +119,7 @@ export default class SolutionForecast extends Component {
         let simulationResults;
 
         try {
-            simulationResults = simulateSolution(this.props.solution, this.state.runs, false);
+            simulationResults = simulateSolution(this.props.solution, this.state.runs || 0, false);
         } catch(e) {
             return <Alert bsStyle="danger">{e.message}</Alert>;
         }
@@ -170,9 +170,14 @@ export default class SolutionForecast extends Component {
                                     type="number"
                                     min={100}
                                     max={10000}
-                                    value={this.state.runs}
+                                    value={this.state.runs || ""}
                                     onChange={e => {
-                                        const value = e.target.value? parseInt(e.target.value, 10) : 0;
+                                        if(_.isEmpty(e.target.value)) {
+                                            this.setState({runs: null});
+                                            return;
+                                        }
+        
+                                        const value = parseInt(e.target.value, 10)
                                         if(_.isNaN(value) || value < 0 || value > 10000) {
                                             return;
                                         }

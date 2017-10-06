@@ -37,7 +37,7 @@ export default class Plan extends Component {
         let simulationResults
 
         try {
-            simulationResults = simulateProject(this.props.project, this.state.percentiles, this.state.runs)
+            simulationResults = simulateProject(this.props.project, this.state.percentiles, this.state.runs || 0)
         } catch(e) {
             return <Alert bsStyle="danger">{e.message}</Alert>;
         }
@@ -64,9 +64,14 @@ export default class Plan extends Component {
                             type="number"
                             min={100}
                             max={10000}
-                            value={this.state.runs}
+                            value={this.state.runs || ""}
                             onChange={e => {
-                                const value = e.target.value? parseInt(e.target.value, 10) : 0;
+                                if(_.isEmpty(e.target.value)) {
+                                    this.setState({runs: null});
+                                    return;
+                                }
+
+                                const value = parseInt(e.target.value, 10)
                                 if(_.isNaN(value) || value < 0 || value > 10000) {
                                     return;
                                 }
