@@ -234,6 +234,28 @@ body {
     display: block;
 }
 
+.chart-tooltip {
+    padding: 5px;
+}
+
+.chart-tooltip .tooltip-series {
+    font-weight: bold;
+}
+
+.chart-tooltip .tooltip-value {
+    margin-top: 5px;
+    font-style: italic;
+}
+
+.chart-tooltip .tooltip-details {
+    margin-top: 5px;
+}
+
+.chart-tooltip .tooltip-details ul  {
+    padding-left: 20px;
+    margin-bottom: 0;
+}
+
 /*
  * Project view
  */

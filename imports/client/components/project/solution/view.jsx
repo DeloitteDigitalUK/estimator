@@ -10,6 +10,7 @@ import { checkSampleCount, checkSampleAge, checkSampleStability, checkBacklogGue
 import { getPublicSetting } from '../../../../utils';
 
 import SolutionForecast from './forecast';
+import SolutionBurnup from './burnup';
 
 const DATE_FORMAT = getPublicSetting('dateFormat'),
       MIN_SAMPLES = getPublicSetting('minSamples'),
@@ -47,7 +48,7 @@ const ViewSolution = ({ project, solution }) => {
                             <li>
                                 between <strong>{solution.backlog.lowGuess} and {solution.backlog.highGuess}</strong> work
                                 items {!_.isEmpty(solution.backlog) && !checkBacklogGuess(solution.backlog.lowGuess, solution.backlog.highGuess, BACKLOG_GUESS_SPREAD_THRESHOLD) && (
-                                    <OverlayTrigger overlay={<Tooltip>The high guess is less than {Math.round(BACKLOG_GUESS_SPREAD_THRESHOLD * 100)}% above the low guess. Consider using a wider range.</Tooltip>}>
+                                    <OverlayTrigger overlay={<Tooltip id="warning-backlog-guess">The high guess is less than {Math.round(BACKLOG_GUESS_SPREAD_THRESHOLD * 100)}% above the low guess. Consider using a wider range.</Tooltip>}>
                                         <Label bsStyle="warning">
                                         !
                                         </Label>
@@ -58,7 +59,7 @@ const ViewSolution = ({ project, solution }) => {
                             <li>
                                 of which we expect that <strong>every {solution.backlog.lowSplitRate} to {solution.backlog.highSplitRate}</strong> work items will be further
                                 split {!_.isEmpty(solution.backlog) && !checkBacklogGuess(solution.backlog.lowSplitRate, solution.backlog.highSplitRate, SPLIT_RATE_GUESS_SPREAD_THRESHOLD) && (
-                                    <OverlayTrigger overlay={<Tooltip>The high guess is less than {Math.round(SPLIT_RATE_GUESS_SPREAD_THRESHOLD * 100)}% above the low guess. Consider using a wider range.</Tooltip>}>
+                                    <OverlayTrigger overlay={<Tooltip id="warning-split-rate">The high guess is less than {Math.round(SPLIT_RATE_GUESS_SPREAD_THRESHOLD * 100)}% above the low guess. Consider using a wider range.</Tooltip>}>
                                         <Label bsStyle="warning">
                                             !
                                         </Label>
@@ -146,9 +147,9 @@ const ViewSolution = ({ project, solution }) => {
                     {(solution.estimateType === EstimateType.backlog && solution.team.throughputType === ThroughputType.estimate) && (
                     <p>
                         &raquo; The team's throughput is based on a <strong>guess</strong> (for lack of reliable historical data) of
-                        between <strong>{solution.team.throughputEstimate.lowGuess} and {solution.team.throughputEstimate.highGuess}</strong>
-                        work items completed per {weeks(solution.throughputPeriodLength)}. {!_.isEmpty(solution.team.throughputEstimate) && !checkBacklogGuess(solution.team.throughputEstimate.lowGuess, solution.team.throughputEstimate.highGuess, BACKLOG_GUESS_SPREAD_THRESHOLD) && (
-                            <OverlayTrigger overlay={<Tooltip>The high guess is less than {Math.round(BACKLOG_GUESS_SPREAD_THRESHOLD * 100)}% above the low guess. Consider using a wider range.</Tooltip>}>
+                        between <strong>{solution.team.throughputEstimate.lowGuess} and {solution.team.throughputEstimate.highGuess}</strong> work
+                        items completed per {weeks(solution.throughputPeriodLength)}. {!_.isEmpty(solution.team.throughputEstimate) && !checkBacklogGuess(solution.team.throughputEstimate.lowGuess, solution.team.throughputEstimate.highGuess, BACKLOG_GUESS_SPREAD_THRESHOLD) && (
+                            <OverlayTrigger overlay={<Tooltip id="warning-throughput-guess">The high guess is less than {Math.round(BACKLOG_GUESS_SPREAD_THRESHOLD * 100)}% above the low guess. Consider using a wider range.</Tooltip>}>
                                 <Label bsStyle="warning" >
                                     !
                                 </Label>
@@ -160,27 +161,27 @@ const ViewSolution = ({ project, solution }) => {
                     {(solution.estimateType === EstimateType.backlog && solution.team.throughputType === ThroughputType.samples) && (
                     <div>
                         <p>
-                            The team's throughput is based on <strong>previous samples</strong>  {!checkSampleCount(solution.team.throughputSamples || [], MIN_SAMPLES, MAX_SAMPLES) &&
-                            <OverlayTrigger overlay={<Tooltip>Using too few or too many (old) samples can skew the result. Consider aiming for ca {MIN_SAMPLES}-{MAX_SAMPLES} samples.</Tooltip>}>
+                            The team's throughput is based on <strong>previous samples</strong>:  {!checkSampleCount(solution.team.throughputSamples || [], MIN_SAMPLES, MAX_SAMPLES) &&
+                            <OverlayTrigger overlay={<Tooltip id="warning-sample-size">Using too few or too many (old) samples can skew the result. Consider aiming for ca {MIN_SAMPLES}-{MAX_SAMPLES} samples.</Tooltip>}>
                                 <Label bsStyle="warning">
                                     !
                                 </Label>
                             </OverlayTrigger>
                         }
                         {!checkSampleAge(solution.team.throughputSamples || [], SAMPLE_AGE_THRESHOLD) &&
-                            <OverlayTrigger overlay={<Tooltip>The newest sample used for forecasting is over {SAMPLE_AGE_THRESHOLD} days old. If the underlying conditions have changed, it is possible that this will provide a misleading baseline.</Tooltip>}>
+                            <OverlayTrigger overlay={<Tooltip id="warning-sample-age">The newest sample used for forecasting is over {SAMPLE_AGE_THRESHOLD} days old. If the underlying conditions have changed, it is possible that this will provide a misleading baseline.</Tooltip>}>
                                 <Label bsStyle="warning">
                                     !
                                 </Label>
                             </OverlayTrigger>
                         }
                         {!checkSampleStability(solution.team.throughputSamples || [], SAMPLE_STABILITY_THRESHOLD) &&
-                            <OverlayTrigger overlay={<Tooltip>An analysis of the samples provided suggests they might not provide a stable baseline. This can happen if they cover a period of ramp-up or significant change, or if the number of samples is quite low. Consider choosing a different sample period, or adding more samples.</Tooltip>}>
+                            <OverlayTrigger overlay={<Tooltip id="warning-sample-stability">An analysis of the samples provided suggests they might not provide a stable baseline. This can happen if they cover a period of ramp-up or significant change, or if the number of samples is quite low. Consider choosing a different sample period, or adding more samples.</Tooltip>}>
                                 <Label bsStyle="warning">
                                     !
                                 </Label>
                             </OverlayTrigger>
-                        }:
+                        }
                         </p>
                         <Table condensed hover>
                             <thead>
@@ -205,7 +206,7 @@ const ViewSolution = ({ project, solution }) => {
                         &raquo; The team is expected to <strong>ramp up</strong> over <strong>{weeks(solution.team.rampUp.duration)}</strong>, when throughput is expected to
                         be <strong>{Math.round(solution.team.rampUp.throughputScalingLowGuess * 100)}-{Math.round(solution.team.rampUp.throughputScalingHighGuess * 100)}%</strong> of
                         this. {!checkBacklogGuess(solution.team.rampUp.throughputScalingLowGuess, solution.team.rampUp.throughputScalingHighGuess, THROUGHPUT_SCALING_RATE_SPREAD_THRESHOLD) && (
-                            <OverlayTrigger overlay={<Tooltip>The high guess is less than {Math.round(THROUGHPUT_SCALING_RATE_SPREAD_THRESHOLD * 100)}% above the low guess. Consider using a wider range.</Tooltip>}>
+                            <OverlayTrigger overlay={<Tooltip id="warning-ramp-up-guess">The high guess is less than {Math.round(THROUGHPUT_SCALING_RATE_SPREAD_THRESHOLD * 100)}% above the low guess. Consider using a wider range.</Tooltip>}>
                                 <Label bsStyle="warning">
                                     !
                                 </Label>
@@ -247,6 +248,22 @@ const ViewSolution = ({ project, solution }) => {
                     </HelpBlock>
 
                     <SolutionForecast solution={solution} />
+                </Panel>
+                )}
+
+                {solution.estimateType === EstimateType.backlog && (
+                <Panel collapsible defaultExpanded header="Simulation results" eventKey="simulationResults">
+
+                    <HelpBlock>
+                        <p>
+                            We can also drill into a smaller set of forecasts to understand how our
+                            simulations would see the project play out. The chart below shows a series
+                            of "burn-up" lines for different simulated scenarios. Hover over a data point
+                            to understand more about the scenario that led to it.
+                        </p>
+                    </HelpBlock>
+
+                    <SolutionBurnup solution={solution} />
                 </Panel>
                 )}
 
