@@ -43,6 +43,6 @@ Open a web browser to `http://localhost:3000` to see test results.
 
 * Martin Aspeli <optilude@gmail.com>
 
-## Changelog
+## Changelog
 
 * `0.1.0` (2017-10-06) -- Initial release
