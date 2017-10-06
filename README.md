@@ -1,12 +1,11 @@
 # Estimator
 
-A Monte Carlo simulation-based software project estimation tool, based on the excellent
+A Monte Carlo simulation-based software project estimation tool, inspired by the excellent
 work of Troy Magennis and FocusedObjective.
 
-See the [FocusedObjective.Resources repository](http://github.com/FocusedObjective/FocusedObjective.Resources),
-in particular the "Throughput Forecaster", of which this is in essence a web based version.
+See the [FocusedObjective.Resources repository](http://bit.ly/SimResources) for many tools.
 
-Build using [Meteor](https://www.meteor.com/) and [ReactJS](https://reactjs.org/).
+Built using [Meteor](https://www.meteor.com/) and [ReactJS](https://reactjs.org/).
 
 ## Run locally
 
