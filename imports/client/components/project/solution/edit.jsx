@@ -530,7 +530,7 @@ export default class EditSolution extends Component {
                                     </Panel>
                                 )}
 
-                                <Panel collapsible defaultExpandedf header="Notes" eventKey="notes">
+                                <Panel collapsible header="Notes" eventKey="notes">
 
                                     <HelpBlock>
                                         Use this field to capture assumptions, questions and any
