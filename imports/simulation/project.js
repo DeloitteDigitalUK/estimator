@@ -77,8 +77,7 @@ function calculateDates(solution, lookup, projectStartDate, percentiles, runs, o
         case EstimateType.backlog:
 
             const results = simulateSolution(solution, runs, false, overflow);
-            const distribution = results.map(r => r.periods);
-            distribution.sort();
+            const distribution = _.sortBy(results, 'periods').map(s => s.periods);
 
             return percentiles.map(percentile => {
                 const periods = quantile(distribution, percentile),
