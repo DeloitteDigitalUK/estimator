@@ -3,6 +3,7 @@ import { Accounts } from 'meteor/accounts-base';
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import SimpleSchema from 'simpl-schema';
 
 import { Alert, FormGroup, FormControl, Button, ControlLabel } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -44,8 +45,8 @@ export class SignUp extends Component {
                     {this.state.error ? <Alert bsStyle="danger">{this.state.error}</Alert> : ''}
 
                     <FormGroup controlId="username">
-                        <ControlLabel srOnly>Username</ControlLabel>
-                        <FormControl type="text" required autoFocus placeholder="Username" value={email} onChange={this.handleChange.bind(this, 'email')} />
+                        <ControlLabel srOnly>Email</ControlLabel>
+                        <FormControl type="email" required autoFocus placeholder="Email" value={email} onChange={this.handleChange.bind(this, 'email')} />
                     </FormGroup>
                     <FormGroup controlId="password">
                         <ControlLabel srOnly>Password</ControlLabel>
@@ -72,6 +73,9 @@ export class SignUp extends Component {
         const history = this.props.history;
 
         if (!this.state.email || !this.state.password || this.state.password !== this.state.confirmPassword) {
+            this.setState({ invalid: true, error: null });
+            return;
+        } else if(!SimpleSchema.RegEx.Email.test(this.state.email)) {
             this.setState({ invalid: true, error: null });
             return;
         } else {
@@ -131,8 +135,8 @@ export class Login extends Component {
                     {this.state.error ? <Alert bsStyle="danger">Login unsuccessful. Please try again.</Alert> : ''}
 
                     <FormGroup controlId="username">
-                        <ControlLabel srOnly>Username</ControlLabel>
-                        <FormControl type="text" required autoFocus placeholder="Username" value={email} onChange={this.handleChange.bind(this, 'email')} />
+                        <ControlLabel srOnly>Email</ControlLabel>
+                        <FormControl type="email" required autoFocus placeholder="Email" value={email} onChange={this.handleChange.bind(this, 'email')} />
                     </FormGroup>
                     <FormGroup controlId="password">
                         <ControlLabel srOnly>Password</ControlLabel>
