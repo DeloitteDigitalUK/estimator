@@ -86,7 +86,7 @@ class Chart extends Component {
             .axisLabel(props.xAxisLabel)
             .rotateLabels(-45)
             .tickValues(data => { // make sure all ticks are shown
-                const max = _.maxBy(data, d => d.values[d.values.length-1].x);
+                const max = data.values.length > 0? _.maxBy(data, d => d.values[d.values.length-1].x) : null;
                 if(!max) return [];
                 return _.range(1, max.values[max.values.length-1].x + 1);
             })

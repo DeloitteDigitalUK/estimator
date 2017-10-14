@@ -99,7 +99,7 @@ export default class AddSolution extends Component {
                 }
             });
 
-            this.props.history.push(this.props.location.state.returnTo);
+            this.props.history.push(`/project/${this.props.project._id}/solution/${solution._id}/edit`);
         } catch(err) {
             console.log(err);
             alert("UNEXPECTED ERROR: Unable to create solution");
