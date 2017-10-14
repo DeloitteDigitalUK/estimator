@@ -55,7 +55,7 @@ class Chart extends Component {
                     <div className="chart-tooltip">
                         <div className="tooltip-series">Simulation {d.seriesIndex + 1}</div>
                         <div className="tooltip-value">
-                            {d.point.y} work items completed after {d.point.x} weeks
+                            {d.point? d.point.y : "(unknown)"} work items completed after {d.point? d.point.x : "(unknown)"} weeks
                         </div>
                         {!_.isEmpty(metadata) && (
                         <div className="tooltip-details">
@@ -86,9 +86,8 @@ class Chart extends Component {
             .axisLabel(props.xAxisLabel)
             .rotateLabels(-45)
             .tickValues(data => { // make sure all ticks are shown
-                const max = data.values.length > 0? _.maxBy(data, d => d.values[d.values.length-1].x) : null;
-                if(!max) return [];
-                return _.range(1, max.values[max.values.length-1].x + 1);
+                const max = data.length > 0? _.maxBy(data, d => d.values.length > 0? d.values[d.values.length-1].x : -1) : null;
+                return (_.isEmpty(max) || _.isNull(max))? [] : _.range(1, max.values.length > 0? (max.values[max.values.length-1].x + 1) : 1);
             })
             .tickFormat(d => { // annotate with percentile where relevant
                 const p = _.find(this.props.percentiles, {value: d});
