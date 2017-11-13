@@ -21,6 +21,11 @@ Meteor.startup(function () {
         Roles.createRole('admin');
     }
 
+    Accounts.emailTemplates.from = getPrivateSetting('emailFrom');
+    Accounts.emailTemplates.resetPassword.subject = user => getPrivateSetting('resetPasswordEmailSubject');
+    Accounts.emailTemplates.enrollAccount.subject = user => getPrivateSetting('enrollAccountEmailSubject');
+    Accounts.emailTemplates.verifyEmail.subject = user => getPrivateSetting('verifyEmailSubject');
+
     Accounts.config({
         forbidClientAccountCreation: !getPublicSetting('allowSignUp'),
         sendVerificationEmail: false,

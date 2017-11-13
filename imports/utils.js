@@ -7,6 +7,12 @@ export const ISO = 'YYYY-MM-DD';
 
 const defaultSettings = {
     allowedEmailDomains: null, // set to a list of domains, e.g. ["example.org", "example.com"]
+    
+    emailFrom: 'no-reply@example.org',
+    resetPasswordEmailSubject: "Estimator - Reset password",
+    enrollAccountEmailSubject: "Estimator - Choose password",
+    verifyEmailSubject: "Estimator - Verify email address",
+
     public: {
         allowSignUp: true, // all users to sign up themselves
         locale: "en-GB",
