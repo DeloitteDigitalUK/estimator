@@ -118,7 +118,7 @@ export class SolutionSimulator extends MonteCarloSimulator {
  * 
  * @param {Object} solution The solution. Must have an `estimateType` of `EstimateType.backlog`.
  * @param {Integer} runs The number of runs to complete.
- * @param {Boolean} includeMetadata Set to `false` to not save metadata (reduces payload of resulsts)
+ * @param {Boolean} includeMetadata Set to `false` to not save metadata (reduces payload of results)
  * @param {Integer} overflow Raise `OverflowException` if any run is not able to complete
  *                           in this many iterations.
  */

@@ -16,6 +16,7 @@ export const EstimateType = {
 };
 
 export const StartType = {
+    teamNext: "teamNext",
     immediately: "immediately",
     fixedDate: "fixedDate",
     after: "after",
@@ -182,6 +183,11 @@ export const Solution = new SimpleSchema({
     "description": { type: String, optional: true },
     "notes": { type: String, optional: true },
 
+    // reference to `project.workstreams` and `project.teams`
+
+    "workstreamId": { type: String, optional: true },
+    "teamId": { type: String, optional: true },
+
     // how do we estimate? 
     "estimateType": { type: String, allowedValues: Object.values(EstimateType) },
 
@@ -219,6 +225,18 @@ export const Solution = new SimpleSchema({
     
 });
 
+export const ProjectTeam = new SimpleSchema({
+    "_id": String,
+    "name": { type: String, min: 1 },
+    "description": { type: String, optional: true }
+});
+
+export const Workstream = new SimpleSchema({
+    "_id": String,
+    "name": { type: String, min: 1 },
+    "description": { type: String, optional: true }
+});
+
 export const Project = new SimpleSchema({
     "_id": String,
 
@@ -231,6 +249,10 @@ export const Project = new SimpleSchema({
     "name": String,
     "description": { type: String, optional: true },
     "startDate": Date,
+
+    // reference data
+    "teams": [ProjectTeam],
+    "workstreams": [Workstream],
 
     // list of solutions
     "solutions": [Solution]
@@ -249,6 +271,8 @@ export function newProject({ name, owner, ...rest }) {
         name,
         description: null,
         startDate: moment.utc().startOf('day').toDate(),
+        teams: [],
+        workstreams: [],
         solutions: []
     }, rest));
 }
@@ -262,6 +286,9 @@ export function newSolution({ name, ...rest }) {
         name,
         description: null,
         notes: null,
+
+        teamId: null,
+        workstreamId: null,
 
         estimateType: EstimateType.backlog,
         throughputPeriodLength: 1,

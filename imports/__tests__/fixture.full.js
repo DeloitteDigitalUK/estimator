@@ -10,11 +10,26 @@ export default newProject({
     name: "Full project",
     description: "A test project",
     startDate: new Date(2017, 0, 1),
+    teams: [{
+        _id: "2gTtH4bazGYkJ2pS6",
+        name: "Front end team",
+        description: "Works on the front end"
+    },{
+        _id: "CwbnFtWkY6iXpyKbL",
+        name: "Back end team"
+    }],
+    workstreams: [{
+        _id: "XaNWEqWYCcAdhutwD",
+        name: "Channels",
+        description: "Work in the channels"
+    }],
     solutions: [{
         _id: firstSolutionId,
         name: "Front end",
         description: "Front end app and integrations",
         notes: "More details can go here",
+        workstreamId: "XaNWEqWYCcAdhutwD",
+        teamId: "2gTtH4bazGYkJ2pS6",
         estimateType: EstimateType.backlog,
         throughputPeriodLength: 2,
         startType: StartType.fixedDate,
@@ -67,6 +82,8 @@ export default newProject({
     },{
         _id: 'fgFoRfMFTCQH5yACA',
         name: "Middleware",
+        workstreamId: "XaNWEqWYCcAdhutwD",
+        teamId: "CwbnFtWkY6iXpyKbL",
         estimateType: EstimateType.backlog,
         throughputPeriodLength: 1,
         startType: StartType.after,
@@ -88,6 +105,8 @@ export default newProject({
     },{
         _id: 'uAxhHMCBjAfH4tyah',
         name: "Back end",
+        workstreamId: null,
+        teamId: "CwbnFtWkY6iXpyKbL",
         estimateType: EstimateType.workPattern,
         startType: StartType.with,
         startDependency: firstSolutionId,

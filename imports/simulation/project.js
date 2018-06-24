@@ -16,7 +16,54 @@ function sortInDependencyOrder(solutions) {
     ).map(idx => solutions[idx]);
 }
 
-function calculateStartDate(solution, lookup, projectStartDate, percentile) {
+function calculateRelativeStartDate(solution, dependency, projectStartDate, percentile) {
+    if(dependency.solution.estimateType === EstimateType.backlog) {
+        const percentileDates = _.find(dependency.dates, d => d.percentile === percentile);
+        
+        if(!percentileDates) {
+            throw new CannotSimulate(`Solution ${solution._id} depends on solution ${solution.startDependency}, but no forecast was provided at the ${percentile}${getSuffix(percentile)} percentile.`);
+        }
+
+        if(solution.startType === StartType.with) {
+            return percentileDates.startDate;
+        } else {
+            return moment.utc(percentileDates.endDate).add(1, 'day').toDate();
+        }
+
+    } else {
+
+        if(dependency.dates.length === 0) {
+            return projectStartDate;
+        }
+
+        if(solution.startType === StartType.with) {
+            return dependency.dates[0].startDate;
+        } else {
+            return moment.utc(dependency.dates[dependency.dates.length - 1].endDate).add(1, 'day').toDate();
+        }
+
+    }
+}
+
+function findPrecedingSolutionForTeam(solution, solutions, lookup) {
+    let current = null;
+    for(let s of solutions) {
+        
+        if(s._id === solution._id) {
+            break;
+        }
+
+        if((!s.teamId && ! solution.teamId) || (s.teamId === solution.teamId)) {
+            current = s;
+        }
+    }
+
+    return current;
+}
+
+function calculateStartDate(solution, solutions, lookup, projectStartDate, percentile) {
+
+    let dependency, previous;
 
     switch(solution.startType) {
         
@@ -29,39 +76,30 @@ function calculateStartDate(solution, lookup, projectStartDate, percentile) {
         case StartType.with:
         case StartType.after:
 
-            const dependency = lookup[solution.startDependency];
+            dependency = lookup[solution.startDependency];
 
             if(!dependency) {
                 throw new CannotSimulate(`Solution ${solution._id} depends on solution ${solution.startDependency}, which was not found.`);
             }
 
-            if(dependency.solution.estimateType === EstimateType.backlog) {
-                const percentileDates = _.find(dependency.dates, d => d.percentile === percentile);
-                
-                if(!percentileDates) {
-                    throw new CannotSimulate(`Solution ${solution._id} depends on solution ${solution.startDependency}, but no forecast was provided at the ${percentile}${getSuffix(percentile)} percentile.`);
-                }
-    
-                if(solution.startType === StartType.with) {
-                    return percentileDates.startDate;
-                } else {
-                    return moment.utc(percentileDates.endDate).add(1, 'day').toDate();
-                }
-
-            } else {
-
-                if(dependency.dates.length === 0) {
-                    return projectStartDate;
-                }
-
-                if(solution.startType === StartType.with) {
-                    return dependency.dates[0].startDate;
-                } else {
-                    return moment.utc(dependency.dates[dependency.dates.length - 1].endDate).add(1, 'day').toDate();
-                }
-
-            }
+            return calculateRelativeStartDate(solution, dependency, projectStartDate, percentile)
         
+        case StartType.teamNext:
+            
+            previous = findPrecedingSolutionForTeam(solution, solutions);
+
+            if(!previous) {
+                return projectStartDate;
+            }
+
+            dependency = lookup[previous._id];
+
+            if(!dependency) {
+                throw new CannotSimulate(`Solution ${solution._id} should start after solution ${previous._id}, which was not found.`);
+            }
+
+            return calculateRelativeStartDate(solution, dependency, projectStartDate, percentile)
+    
         default:
             throw new CannotSimulate(`Solution ${solution._id} does not have a valid startType`);
 
@@ -70,7 +108,7 @@ function calculateStartDate(solution, lookup, projectStartDate, percentile) {
 }
 
 // calculate the dates list for one solution -- {startDate, endDate, percentile?, description}
-function calculateDates(solution, lookup, projectStartDate, percentiles, runs, overflow, periodLength) {
+function calculateDates(solution, solutions, lookup, projectStartDate, percentiles, runs, overflow, periodLength) {
 
     switch(solution.estimateType) {
         
@@ -81,7 +119,7 @@ function calculateDates(solution, lookup, projectStartDate, percentiles, runs, o
 
             return percentiles.map(percentile => {
                 const periods = quantile(distribution, percentile),
-                      startDate = calculateStartDate(solution, lookup, projectStartDate, percentile),
+                      startDate = calculateStartDate(solution, solutions, lookup, projectStartDate, percentile),
                       endDate = moment.utc(startDate).add((periods * periodLength) - 1, 'days').toDate(),
                       description = `${Math.round(percentile * 100.0)}${getSuffix(Math.round(percentile * 100.0))} percentile`;
 
@@ -114,7 +152,7 @@ export default function simulateProject(project, percentiles, runs, overflow=100
         lookup = {}; // {[solution._id]: {solution, dates}}
 
     return solutions.map(solution => {
-        const dates = calculateDates(solution, lookup, project.startDate, percentiles, runs, overflow, periodLength);
+        const dates = calculateDates(solution, solutions, lookup, project.startDate, percentiles, runs, overflow, periodLength);
         lookup[solution._id] = {solution, dates};
         return {solution, dates};
     });

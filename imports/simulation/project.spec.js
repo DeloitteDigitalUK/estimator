@@ -744,6 +744,353 @@ describe('Project simulation', function() {
 
     });
 
+    it("Can simulate a project with a backlog solution sequenced by team order", function() {
+
+        const t1 = Random.id(),
+              t2 = Random.id();
+
+        const project = newProject({
+            name: "Test project",
+            owner: "abc1",
+            startDate: new Date(2017, 0, 1),
+            teams: [
+                {_id: t1, name: "Front end team"},
+                {_id: t2, name: "Back end team"}
+            ],
+            solutions: [
+                newSolution({
+                    name: "Test 1",
+                    teamId: t1,
+                    estimateType: EstimateType.backlog,
+                    startType: StartType.teamNext,
+                    backlog: {
+                        lowGuess: 3,
+                        highGuess: 3,
+                        lowSplitRate: 1,
+                        highSplitRate: 1   
+                    },
+                    team: {
+                        members: [],
+                        throughputType: ThroughputType.estimate,
+                        throughputSamples: [],
+                        throughputEstimate: {
+                            lowGuess: 1,
+                            highGuess: 1
+                        },
+                        rampUp: null,
+                        workPattern: []
+                    },
+                }),
+                newSolution({
+                    name: "Test 2",
+                    teamId: t2,
+                    estimateType: EstimateType.backlog,
+                    startType: StartType.teamNext,
+                    backlog: {
+                        lowGuess: 2,
+                        highGuess: 2,
+                        lowSplitRate: 1,
+                        highSplitRate: 1   
+                    },
+                    team: {
+                        members: [],
+                        throughputType: ThroughputType.estimate,
+                        throughputSamples: [],
+                        throughputEstimate: {
+                            lowGuess: 1,
+                            highGuess: 1
+                        },
+                        rampUp: null,
+                        workPattern: []
+                    },
+                }),
+                newSolution({
+                    name: "Test 3",
+                    teamId: t1,
+                    estimateType: EstimateType.backlog,
+                    startType: StartType.teamNext,
+                    backlog: {
+                        lowGuess: 2,
+                        highGuess: 2,
+                        lowSplitRate: 1,
+                        highSplitRate: 1   
+                    },
+                    team: {
+                        members: [],
+                        throughputType: ThroughputType.estimate,
+                        throughputSamples: [],
+                        throughputEstimate: {
+                            lowGuess: 1,
+                            highGuess: 1
+                        },
+                        rampUp: null,
+                        workPattern: []
+                    },
+                })
+            ]
+        });
+
+        const results = simulateProject(project, [.50], 100);
+
+        expect(results.length).to.eql(3);
+
+        expect(results[0].solution.name).to.eql("Test 1");
+        expect(results[0].dates).to.eql([{
+            startDate: new Date(2017, 0, 1),
+            endDate: new Date(2017, 0, 21),
+            percentile: .50,
+            description: '50th percentile'
+        }]);
+
+        expect(results[1].solution.name).to.eql("Test 2");
+        expect(results[1].dates).to.eql([{
+            startDate: new Date(2017, 0, 1),
+            endDate: new Date(2017, 0, 14),
+            percentile: .50,
+            description: '50th percentile'
+        }]);
+
+        expect(results[2].solution.name).to.eql("Test 3");
+        expect(results[2].dates).to.eql([{
+            startDate: new Date(2017, 0, 22),
+            endDate: new Date(2017, 1, 4),
+            percentile: .50,
+            description: '50th percentile'
+        }]);
+
+    });
+
+    it("Can simulate a project with a backlog solution sequenced by team order for default team", function() {
+
+        const t2 = Random.id();
+
+        const project = newProject({
+            name: "Test project",
+            owner: "abc1",
+            startDate: new Date(2017, 0, 1),
+            teams: [
+                {_id: t2, name: "Back end team"}
+            ],
+            solutions: [
+                newSolution({
+                    name: "Test 1",
+                    // teamId: null,
+                    estimateType: EstimateType.backlog,
+                    startType: StartType.teamNext,
+                    backlog: {
+                        lowGuess: 3,
+                        highGuess: 3,
+                        lowSplitRate: 1,
+                        highSplitRate: 1   
+                    },
+                    team: {
+                        members: [],
+                        throughputType: ThroughputType.estimate,
+                        throughputSamples: [],
+                        throughputEstimate: {
+                            lowGuess: 1,
+                            highGuess: 1
+                        },
+                        rampUp: null,
+                        workPattern: []
+                    },
+                }),
+                newSolution({
+                    name: "Test 2",
+                    teamId: t2,
+                    estimateType: EstimateType.backlog,
+                    startType: StartType.teamNext,
+                    backlog: {
+                        lowGuess: 2,
+                        highGuess: 2,
+                        lowSplitRate: 1,
+                        highSplitRate: 1   
+                    },
+                    team: {
+                        members: [],
+                        throughputType: ThroughputType.estimate,
+                        throughputSamples: [],
+                        throughputEstimate: {
+                            lowGuess: 1,
+                            highGuess: 1
+                        },
+                        rampUp: null,
+                        workPattern: []
+                    },
+                }),
+                newSolution({
+                    name: "Test 3",
+                    // teamId: null,
+                    estimateType: EstimateType.backlog,
+                    startType: StartType.teamNext,
+                    backlog: {
+                        lowGuess: 2,
+                        highGuess: 2,
+                        lowSplitRate: 1,
+                        highSplitRate: 1   
+                    },
+                    team: {
+                        members: [],
+                        throughputType: ThroughputType.estimate,
+                        throughputSamples: [],
+                        throughputEstimate: {
+                            lowGuess: 1,
+                            highGuess: 1
+                        },
+                        rampUp: null,
+                        workPattern: []
+                    },
+                })
+            ]
+        });
+
+        const results = simulateProject(project, [.50], 100);
+
+        expect(results.length).to.eql(3);
+
+        expect(results[0].solution.name).to.eql("Test 1");
+        expect(results[0].dates).to.eql([{
+            startDate: new Date(2017, 0, 1),
+            endDate: new Date(2017, 0, 21),
+            percentile: .50,
+            description: '50th percentile'
+        }]);
+
+        expect(results[1].solution.name).to.eql("Test 2");
+        expect(results[1].dates).to.eql([{
+            startDate: new Date(2017, 0, 1),
+            endDate: new Date(2017, 0, 14),
+            percentile: .50,
+            description: '50th percentile'
+        }]);
+
+        expect(results[2].solution.name).to.eql("Test 3");
+        expect(results[2].dates).to.eql([{
+            startDate: new Date(2017, 0, 22),
+            endDate: new Date(2017, 1, 4),
+            percentile: .50,
+            description: '50th percentile'
+        }]);
+
+    });
+
+    it("Can simulate a project with a backlog solution sequenced by team order after fixed start date", function() {
+
+        const t1 = Random.id(),
+              t2 = Random.id();
+
+        const project = newProject({
+            name: "Test project",
+            owner: "abc1",
+            startDate: new Date(2017, 0, 1),
+            teams: [
+                {_id: t1, name: "Front end team"},
+                {_id: t2, name: "Back end team"}
+            ],
+            solutions: [
+                newSolution({
+                    name: "Test 1",
+                    teamId: t1,
+                    estimateType: EstimateType.backlog,
+                    startType: StartType.fixedDate,
+                    startDate: new Date(2017, 1, 1),
+                    backlog: {
+                        lowGuess: 3,
+                        highGuess: 3,
+                        lowSplitRate: 1,
+                        highSplitRate: 1   
+                    },
+                    team: {
+                        members: [],
+                        throughputType: ThroughputType.estimate,
+                        throughputSamples: [],
+                        throughputEstimate: {
+                            lowGuess: 1,
+                            highGuess: 1
+                        },
+                        rampUp: null,
+                        workPattern: []
+                    },
+                }),
+                newSolution({
+                    name: "Test 2",
+                    teamId: t2,
+                    estimateType: EstimateType.backlog,
+                    startType: StartType.teamNext,
+                    backlog: {
+                        lowGuess: 2,
+                        highGuess: 2,
+                        lowSplitRate: 1,
+                        highSplitRate: 1   
+                    },
+                    team: {
+                        members: [],
+                        throughputType: ThroughputType.estimate,
+                        throughputSamples: [],
+                        throughputEstimate: {
+                            lowGuess: 1,
+                            highGuess: 1
+                        },
+                        rampUp: null,
+                        workPattern: []
+                    },
+                }),
+                newSolution({
+                    name: "Test 3",
+                    teamId: t1,
+                    estimateType: EstimateType.backlog,
+                    startType: StartType.teamNext,
+                    backlog: {
+                        lowGuess: 2,
+                        highGuess: 2,
+                        lowSplitRate: 1,
+                        highSplitRate: 1   
+                    },
+                    team: {
+                        members: [],
+                        throughputType: ThroughputType.estimate,
+                        throughputSamples: [],
+                        throughputEstimate: {
+                            lowGuess: 1,
+                            highGuess: 1
+                        },
+                        rampUp: null,
+                        workPattern: []
+                    },
+                })
+            ]
+        });
+
+        const results = simulateProject(project, [.50], 100);
+
+        expect(results.length).to.eql(3);
+
+        expect(results[0].solution.name).to.eql("Test 1");
+        expect(results[0].dates).to.eql([{
+            startDate: new Date(2017, 1, 1),
+            endDate: new Date(2017, 1, 21),
+            percentile: .50,
+            description: '50th percentile'
+        }]);
+
+        expect(results[1].solution.name).to.eql("Test 2");
+        expect(results[1].dates).to.eql([{
+            startDate: new Date(2017, 0, 1),
+            endDate: new Date(2017, 0, 14),
+            percentile: .50,
+            description: '50th percentile'
+        }]);
+
+        expect(results[2].solution.name).to.eql("Test 3");
+        expect(results[2].dates).to.eql([{
+            startDate: new Date(2017, 1, 22),
+            endDate: new Date(2017, 2, 7),
+            percentile: .50,
+            description: '50th percentile'
+        }]);
+
+    });
+
     it("Throws if solution depends on a solution that doesn't exist in the same project", function() {
         const id1 = Random.id();
         
