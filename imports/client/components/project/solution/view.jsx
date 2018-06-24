@@ -24,7 +24,9 @@ const DATE_FORMAT = getPublicSetting('dateFormat'),
 const ViewSolution = ({ project, solution }) => {
 
     const solutionLookup = project.solutions.reduce((m, s) => ({...m, [s._id]: s}), {}),
-          startDependency = solution.startDependency && solutionLookup[solution.startDependency]? solutionLookup[solution.startDependency].name : "(deleted)";
+          startDependency = solution.startDependency && solutionLookup[solution.startDependency]? solutionLookup[solution.startDependency].name : "(deleted)",
+          team = _.find(project.teams || [], t => t._id === solution.teamId),
+          workstream = _.find(project.workstreams || [], t => t._id === solution.workstreamId);
 
     const weeks = n => `${n} week${n > 1? "s" : ""}`;
 
@@ -38,6 +40,17 @@ const ViewSolution = ({ project, solution }) => {
             </p>
             <PanelGroup>
                 <Panel collapsible defaultExpanded header="Parameters" eventKey="simulationParameters">
+
+                    {team && (
+                    <p>
+                        &raquo; The solution is delivered by the team <strong>{team.name}</strong>
+                    </p>
+                    )}
+                    {workstream && (
+                    <p>
+                        &raquo; The solution is part of the workstream <strong>{workstream.name}</strong>
+                    </p>
+                    )}
 
                     {solution.estimateType === EstimateType.backlog && (
                     <div>
@@ -69,6 +82,7 @@ const ViewSolution = ({ project, solution }) => {
                             )}
                             <li>with throughput measured to a cadence of <strong>{weeks(solution.throughputPeriodLength)}</strong></li>
                             <li>starting <strong>{
+                                solution.startType === StartType.teamNext? "as soon as the team has capacity" :
                                 solution.startType === StartType.immediately? "immediately" :
                                 solution.startType === StartType.fixedDate? `on ${moment(solution.startDate).format(DATE_FORMAT)}` :
                                 solution.startType === StartType.after? `after "${startDependency}"` :

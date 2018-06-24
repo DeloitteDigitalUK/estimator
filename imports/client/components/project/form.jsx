@@ -1,9 +1,11 @@
 import { Meteor } from 'meteor/meteor';
+import { Random } from 'meteor/random';
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import moment from 'moment';
+import _ from 'lodash';
 
 import { FormGroup, ControlLabel, FormControl, HelpBlock, ButtonToolbar, Button, Row, Col, Alert } from 'react-bootstrap';
 import DatePicker from 'react-bootstrap-date-picker';
@@ -73,6 +75,14 @@ function expandShares(shares) {
     };
 };
 
+function addId(row) {
+    row = _.cloneDeep(row);
+    if(!row._id) {
+        row._id = Random.id();
+    }
+    return row;
+}
+
 export default class ProjectForm extends Component {
 
     static propTypes = {
@@ -92,6 +102,12 @@ export default class ProjectForm extends Component {
 
             startDate: props.project? props.project.startDate : null,
             startDateValid: true,
+
+            teams: props.project && props.project.teams? _.cloneDeep(props.project.teams) : [],
+            teamsValid: true,
+
+            workstreams: props.project && props.project.workstreams? _.cloneDeep(props.project.workstreams) : [],
+            workstreamsValid: true,
 
             shares: props.project? collapseShares(props.project) : [],
             sharesValid: true,
@@ -163,6 +179,48 @@ export default class ProjectForm extends Component {
                             <HelpBlock>Enter the beginning of time for the plan</HelpBlock>
                         </FormGroup>
 
+                        <FormGroup controlId="teams">
+                            <ControlLabel>Teams</ControlLabel>
+                            <HelpBlock>
+                                Define a list of teams. Teams can be associated with simulated solutions,
+                                and used to group and sequence the plan.
+                            </HelpBlock>
+                            <Table
+                                data={this.state.teams}
+                                onChange={data => { this.setState({teams: data.map(addId)}); }}
+                                onValidate={valid => { this.setState({teamsValid: valid }); }}
+                                dataSchema={{_id: null, name: null, description: null}}
+                                columns={[
+                                    {data: "name", title: "Name", width: 200, validator: $v(validators.required), allowInvalid: true},
+                                    {data: "description", title: "Description", width: 400}
+                                ]}
+                                />
+
+                            <FormControl.Feedback />
+
+                        </FormGroup>
+
+                        <FormGroup controlId="workstreams">
+                            <ControlLabel>Workstreams</ControlLabel>
+                            <HelpBlock>
+                                Define a list of workstreams. Teams can be associated with simulated solutions,
+                                and used to group the plan.
+                            </HelpBlock>
+                            <Table
+                                data={this.state.workstreams}
+                                onChange={data => { this.setState({workstreams: data.map(addId)}); }}
+                                onValidate={valid => { this.setState({workstreamsValid: valid }); }}
+                                dataSchema={{_id: null, name: null, description: null}}
+                                columns={[
+                                    {data: "name", title: "Name", width: 200, validator: $v(validators.required), allowInvalid: true},
+                                    {data: "description", title: "Description", width: 400}
+                                ]}
+                                />
+
+                            <FormControl.Feedback />
+
+                        </FormGroup>
+
                         <FormGroup controlId="shares">
                             <ControlLabel>Sharing</ControlLabel>
                             <HelpBlock>Search for other users to share this project with, either read-only or read-write.</HelpBlock>
@@ -172,7 +230,7 @@ export default class ProjectForm extends Component {
                                 onValidate={valid => { this.setState({sharesValid: valid }); }}
                                 dataSchema={{user: null, permissions: null}}
                                 columns={[
-                                    {title: "User", width: 300, data: "user", validator: $v(validators.required), ...KeyValueAutocompleteCell,
+                                    {title: "User", width: 400, data: "user", validator: $v(validators.required), ...KeyValueAutocompleteCell,
                                         handsontable: {
                                             dataSchema: {name: null, email: null},
                                             columns: [
@@ -204,7 +262,7 @@ export default class ProjectForm extends Component {
                                             })();
                                         })
                                     },
-                                    {title: "Permissions", width: 150, data: "permissions", type: "dropdown", source: [READ_ONLY, READ_WRITE], strict: true, validator: $v(validators.required), allowInvalid: false}
+                                    {title: "Permissions", width: 200, data: "permissions", type: "dropdown", source: [READ_ONLY, READ_WRITE], strict: true, validator: $v(validators.required), allowInvalid: false}
                                 ]}
                                 />
 
@@ -231,6 +289,8 @@ export default class ProjectForm extends Component {
         let validationState = {
             nameValid: true,
             startDateValid: true,
+            teamsValid: true,
+            workstreamsValid: true,
             invalid: false,
             error: false
         };
@@ -249,6 +309,14 @@ export default class ProjectForm extends Component {
             validationState.invalid = true;
         }
 
+        if(!this.state.teamsValid) {
+            validationState.invalid = true;
+        }
+
+        if(!this.state.workstreamsValid) {
+            validationState.invalid = true;
+        }
+
         this.setState(validationState);
         if(validationState.invalid) {
             return;
@@ -259,6 +327,8 @@ export default class ProjectForm extends Component {
                 name: this.state.name,
                 description: this.state.description,
                 startDate: this.state.startDate,
+                teams: this.state.teams,
+                workstreams: this.state.workstreams,
                 ...expandShares(this.state.shares)
             })
         }

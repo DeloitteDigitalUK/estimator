@@ -329,7 +329,7 @@ body {
 .project-plan-controls .Select {
     vertical-align: top;
     display: inline-block;
-    min-width: 100px;
+    min-width: 150px;
 }
 
 .project-resources .handsontable {

@@ -13,6 +13,13 @@ import { getPublicSetting } from '../../../utils';
 
 const DATE_FORMAT = getPublicSetting('dateFormat');
 
+const GroupBy = {
+    solution: "solution",
+    team: "team",
+    workstream: "workstream"
+};
+
+
 export default class Plan extends Component {
 
     static propTypes = {
@@ -23,6 +30,7 @@ export default class Plan extends Component {
         super(props);
 
         this.state = {
+            groupBy: GroupBy.solution,
             percentiles: [0.95, 0.85, 0.75],
             runs: 1000
         };
@@ -34,19 +42,27 @@ export default class Plan extends Component {
 
     render() {
         
-        let simulationResults
+        const { project } = this.props,
+              { groupBy, percentiles, runs } = this.state,
+              defaultGroup = {_id: null, name: "(Default)", description: ""};
+
+        let simulationResults;
 
         try {
-            simulationResults = simulateProject(this.props.project, this.state.percentiles, this.state.runs || 0)
+            simulationResults = simulateProject(project, percentiles, runs || 0)
         } catch(e) {
             return <Alert bsStyle="danger">{e.message}</Alert>;
         }
 
+        const showNameInTitle = groupBy !== GroupBy.solution;
+
         const items = _.flatMap(simulationResults, r => r.dates.map((d, i) => ({
             id: `${r.solution._id}:${i}`,
-            group: r.solution._id,
-            title: d.description,
-            description: `${d.description}: ${moment(d.startDate).format(DATE_FORMAT)} to ${moment(d.endDate).format(DATE_FORMAT)}`,
+            group: groupBy === GroupBy.solution? r.solution._id : 
+                   groupBy === GroupBy.team? (r.solution.teamId || null) : 
+                   groupBy === GroupBy.workstream? (r.solution.workstreamId || null) : null,
+            title: `${showNameInTitle? r.solution.name + " – " : ""}${d.description}`,
+            description: `${r.solution.name} – ${d.description}: ${moment(d.startDate).format(DATE_FORMAT)} to ${moment(d.endDate).format(DATE_FORMAT)}`,
             className: d.percentile? `percentile-${Math.floor(d.percentile * 10)}` : null,
             start: moment(d.startDate),
             end: moment(d.endDate)
@@ -64,7 +80,7 @@ export default class Plan extends Component {
                             type="number"
                             min={100}
                             max={10000}
-                            value={this.state.runs || ""}
+                            value={runs || ""}
                             onChange={e => {
                                 if(_.isEmpty(e.target.value)) {
                                     this.setState({runs: null});
@@ -84,12 +100,26 @@ export default class Plan extends Component {
                             Confidence levels:
                         </ControlLabel>
                         <Select
-                            value={this.state.percentiles}
+                            value={percentiles}
                             multi
                             onChange={values => { this.setState({ percentiles: values.map(v => v.value) }); }}
                             options={[1, 0.99, 0.95, 0.9, 0.85, 0.75, 0.5, 0.25].map(v => (
                                 { value: v, label: `${Math.round(v * 100)}%` }
                             ))}
+                            />
+                    </span>
+                    <span title="How to group the plan">
+                        <ControlLabel>
+                            Group by:
+                        </ControlLabel>
+                        <Select
+                            value={groupBy}
+                            onChange={value => { this.setState({ groupBy: value.value }); }}
+                            options={[
+                                { value: GroupBy.solution, label: "Solition" },
+                                { value: GroupBy.team, label: "Team" },
+                                { value: GroupBy.workstream, label: "Work stream" }
+                            ]}
                             />
                     </span>
                 </div>
@@ -103,7 +133,11 @@ export default class Plan extends Component {
                         canResize={false}
                         stackItems
                         stickyOffset={50}
-                        groups={this.props.project.solutions}
+                        groups={
+                            groupBy === GroupBy.solution? project.solutions : 
+                            groupBy === GroupBy.team? _.concat((project.teams || []), defaultGroup) : 
+                            groupBy === GroupBy.workstream? _.concat((project.workstreams || []), defaultGroup) : []
+                        }
                         items={items}
                         keys={{
                             groupIdKey: '_id',
@@ -117,10 +151,10 @@ export default class Plan extends Component {
                         }}
                         sidebarWidth={200}
                         fullUpdate
-                        defaultTimeStart={moment(this.props.project.startDate)}
-                        defaultTimeEnd={moment(this.props.project.startDate).add(6, 'month')}
+                        defaultTimeStart={moment(project.startDate)}
+                        defaultTimeEnd={moment(project.startDate).add(6, 'month')}
                         groupRenderer={({group}) => (
-                            <Link to={`/project/${this.props.project._id}/solution/${group._id}`} title={group.description}>{group.name}</Link>
+                            <span title={group.description}>{group.name}</span>
                         )}
                         />
 

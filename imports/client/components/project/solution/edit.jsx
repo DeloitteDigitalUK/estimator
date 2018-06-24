@@ -109,6 +109,39 @@ export default class EditSolution extends Component {
                                         />
                                     
                                     <HelpBlock>
+                                        Teams and workstreams can be listed on the <em>Project</em> edit
+                                        screen. These can be used to group and sequence the project plan.
+                                    </HelpBlock>
+                                    
+                                    <FormField
+                                        object={solution}
+                                        validationContext={validationContext}
+                                        componentClass="select"
+                                        field="teamId"
+                                        title="Team"
+                                        placeholder="The team performing the work"
+                                        onChange={this.saveValue.bind(this, 'teamId')}>
+                                        <option value={null}>(No team specified)</option>
+                                        {(project.teams || []).map(t =>
+                                            <option key={t._id} value={t._id} title={t.description}>{t.name}</option>
+                                        )}
+                                    </FormField>
+
+                                    <FormField
+                                        object={solution}
+                                        validationContext={validationContext}
+                                        componentClass="select"
+                                        field="workstreamId"
+                                        title="Workstream"
+                                        placeholder="The workstream this solution fits under"
+                                        onChange={this.saveValue.bind(this, 'workstreamId')}>
+                                        <option value={null}>(No workstream specified)</option>
+                                        {(project.workstreams || []).map(w =>
+                                            <option key={w._id} value={w._id} title={w.description}>{w.name}</option>
+                                        )}
+                                    </FormField>
+                                    
+                                    <HelpBlock>
                                         We can either estimate how long it will take to deliver a particular
                                         solution by estimating the size of a backlog of work and the pace
                                         (throughput) with which a team works through that backlog, or we can
@@ -143,6 +176,7 @@ export default class EditSolution extends Component {
                                     <HelpBlock>
                                         The estimated time to deliver each solution will be shown as lines on a
                                         plan. To be able to do this, we need to decide how and when work starts:
+                                        when the team next has capacity (i.e. when completing its previous work);
                                         right at the beginning of the project; on a particular date; after another
                                         solution has been delivered; or when work on another solution begins.
                                     </HelpBlock>
@@ -155,6 +189,7 @@ export default class EditSolution extends Component {
                                         title="Work starts"
                                         placeholder="Choose how work on this solution will be scheduled"
                                         onChange={this.saveValue.bind(this, 'startType')}>
+                                        <option value={StartType.teamNext}>As soon as the team has capacity</option>
                                         <option value={StartType.immediately}>As soon as the project starts</option>
                                         <option value={StartType.fixedDate}>On a fixed date</option>
                                         <option value={StartType.after}>After another solution is delivered</option>

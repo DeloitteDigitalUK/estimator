@@ -293,7 +293,7 @@ export function newSolution({ name, ...rest }) {
         estimateType: EstimateType.backlog,
         throughputPeriodLength: 1,
         
-        startType: StartType.immediately,
+        startType: StartType.teamNext,
         startDate: null,
         startDependency: null,
         
