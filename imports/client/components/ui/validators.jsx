@@ -50,6 +50,34 @@ const validators = {
         }
     },
 
+    positiveNumber(value, callback) {
+        if(value === null || value === undefined || value === "") {
+            callback(true);
+        } else if(!_.isFinite(value) || value <= 0) {
+            callback(false);
+        } else {
+            callback(true);
+        }
+    },
+
+    positiveInteger(value, callback) {
+        if(value === null || value === undefined || value === "") {
+            callback(true);
+        } else if(!_.isInteger(value) || value <= 0) {
+            callback(false);
+        } else {
+            callback(true);
+        }
+    },
+
+    requiredPositiveInteger(value, callback) {
+        if(!_.isInteger(value) || value <= 0) {
+            callback(false);
+        } else {
+            callback(true);
+        }
+    },
+
     percentage(value, callback) {
         if(value === null || value === undefined || value === "") {
             callback(true);
@@ -69,7 +97,7 @@ const validators = {
     },
 
     date(value, callback) {
-        if(value === null || value === undefined) {
+        if(value === null || value === undefined || value === "") {
             callback(true);
         } else {
             callback(moment(value, this.dateFormat, true).isValid());

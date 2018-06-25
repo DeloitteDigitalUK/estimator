@@ -310,10 +310,12 @@ export default class ProjectForm extends Component {
         }
 
         if(!this.state.teamsValid) {
+            validationState.teamsValid = false;
             validationState.invalid = true;
         }
 
         if(!this.state.workstreamsValid) {
+            validationState.workstreamsValid = false;
             validationState.invalid = true;
         }
 

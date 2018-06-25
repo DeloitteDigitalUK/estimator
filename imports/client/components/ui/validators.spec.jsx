@@ -246,6 +246,234 @@ describe('Table validators', () => {
 
     });
 
+    describe("positiveNumber", () => {
+
+        it("null", () => {
+            validators.positiveNumber(null, res => {
+                expect(res).to.be.true;
+            });
+        });
+
+        it("undefined", () => {
+            validators.positiveNumber(undefined, res => {
+                expect(res).to.be.true;
+            });
+        });
+
+        it("empty string", () => {
+            validators.positiveNumber("", res => {
+                expect(res).to.be.true;
+            });
+        });
+
+        it("0", () => {
+            validators.positiveNumber(0, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("-1", () => {
+            validators.positiveNumber(-1, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("-1.1", () => {
+            validators.positiveNumber(-1.1, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("1", () => {
+            validators.positiveNumber(1, res => {
+                expect(res).to.be.true;
+            });
+        });
+
+        it("0.1", () => {
+            validators.positiveNumber(0.1, res => {
+                expect(res).to.be.true;
+            });
+        });
+
+        it("string", () => {
+            validators.positiveNumber("string", res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("NaN", () => {
+            validators.positiveNumber(NaN, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("[]", () => {
+            validators.positiveNumber([], res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("{}", () => {
+            validators.positiveNumber({}, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+    });
+
+    describe("positiveInteger", () => {
+
+        it("null", () => {
+            validators.positiveInteger(null, res => {
+                expect(res).to.be.true;
+            });
+        });
+
+        it("undefined", () => {
+            validators.positiveInteger(undefined, res => {
+                expect(res).to.be.true;
+            });
+        });
+
+        it("empty string", () => {
+            validators.positiveInteger("", res => {
+                expect(res).to.be.true;
+            });
+        });
+
+        it("0", () => {
+            validators.positiveInteger(0, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("-1", () => {
+            validators.positiveInteger(-1, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("-1.1", () => {
+            validators.positiveInteger(-1.1, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("1", () => {
+            validators.positiveInteger(1, res => {
+                expect(res).to.be.true;
+            });
+        });
+
+        it("0.1", () => {
+            validators.positiveInteger(0.1, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("string", () => {
+            validators.positiveInteger("string", res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("NaN", () => {
+            validators.positiveInteger(NaN, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("[]", () => {
+            validators.positiveInteger([], res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("{}", () => {
+            validators.positiveInteger({}, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+    });
+
+    describe("requiredPositiveInteger", () => {
+
+        it("null", () => {
+            validators.requiredPositiveInteger(null, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("undefined", () => {
+            validators.requiredPositiveInteger(undefined, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("empty string", () => {
+            validators.requiredPositiveInteger("", res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("0", () => {
+            validators.requiredPositiveInteger(0, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("-1", () => {
+            validators.requiredPositiveInteger(-1, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("-1.1", () => {
+            validators.requiredPositiveInteger(-1.1, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("1", () => {
+            validators.requiredPositiveInteger(1, res => {
+                expect(res).to.be.true;
+            });
+        });
+
+        it("0.1", () => {
+            validators.requiredPositiveInteger(0.1, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("string", () => {
+            validators.requiredPositiveInteger("string", res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("NaN", () => {
+            validators.requiredPositiveInteger(NaN, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("[]", () => {
+            validators.requiredPositiveInteger([], res => {
+                expect(res).to.be.false;
+            });
+        });
+
+        it("{}", () => {
+            validators.requiredPositiveInteger({}, res => {
+                expect(res).to.be.false;
+            });
+        });
+
+    });
+
     describe("percentage", () => {
 
         it("null", () => {
@@ -420,7 +648,7 @@ describe('Table validators', () => {
             validators.date.bind({
                 dateFormat: "DD/MM/YYYY"
             })("", res => {
-                expect(res).to.be.false;
+                expect(res).to.be.true;
             });
         });
 

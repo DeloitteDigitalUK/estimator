@@ -17,6 +17,8 @@ import DeleteProject from './delete';
 import DuplicateProject from './duplicate';
 
 import AddSolution from './solution/add';
+import BulkAddSolution from './solution/bulkadd';
+
 import SolutionMain, { SolutionNav } from './solution/main';
 
 const ProjectMain = ({ history, location, match }) => {
@@ -34,11 +36,11 @@ const ProjectMain = ({ history, location, match }) => {
     return (
         <ModalSwitch className="container" {...{history, location, match}}>
 
-            <Route path={`${path}/solution/:solution_id`} render={props => <SolutionMain {...{project, ...props}} />} />
-
             <Route exact path={path} render={props => <ViewProject {...{project, ...props}} />} />
             {w? <Route exact path={`${path}/edit`} render={props => <EditProject {...{project, ...props}} />} /> : null}
             
+            {w? <Route exact path={`${path}/solution/bulkadd`} render={props => <BulkAddSolution {...{project, ...props}} />} /> : null}
+            <Route path={`${path}/solution/:solution_id`} render={props => <SolutionMain {...{project, ...props}} />} />
             <Route component={FourOhFour} />
 
             <ModalRoutes>
@@ -46,6 +48,7 @@ const ProjectMain = ({ history, location, match }) => {
                 {w? <Route exact path={`${path}/delete`} render={props => <DeleteProject {...{project, ...props}} />} /> : null}
                 {w? <Route exact path={`${path}/duplicate`} render={props => <DuplicateProject {...{project, ...props}} />} /> : null}
             </ModalRoutes>
+
 
         </ModalSwitch>
     );
@@ -72,6 +75,8 @@ export const ProjectNav = ({ match }) => {
             <LinkContainer to={prefix}><NavItem>{project.name}</NavItem></LinkContainer>
             <NavDropdown id="project-menu-dropdown" title="Project">
                 {w? <LinkContainer to={`${prefix}/edit`}><MenuItem>Edit</MenuItem></LinkContainer> : null}
+                {w? <ModalLinkContainer to={`${prefix}/solution/add`}><MenuItem>Add solution</MenuItem></ModalLinkContainer> : null}
+                {w? <LinkContainer to={`${prefix}/solution/bulkadd`}><MenuItem>Bulk add solutions&hellip;</MenuItem></LinkContainer> : null}
                     <ModalLinkContainer to={`${prefix}/duplicate`}><MenuItem>Duplicate&hellip;</MenuItem></ModalLinkContainer>
                 {o? <ModalLinkContainer to={`${prefix}/delete`}><MenuItem>Delete&hellip;</MenuItem></ModalLinkContainer> : null}
                     <LinkContainer to="/" isActive={() => false}><MenuItem>Close</MenuItem></LinkContainer>

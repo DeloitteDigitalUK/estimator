@@ -192,7 +192,7 @@ export default class EditSolution extends Component {
                                         <option value={StartType.teamNext}>As soon as the team has capacity</option>
                                         <option value={StartType.immediately}>As soon as the project starts</option>
                                         <option value={StartType.fixedDate}>On a fixed date</option>
-                                        <option value={StartType.after}>After another solution is delivered</option>
+                                        <option value={StartType.after}>After another solution is completed</option>
                                         <option value={StartType.with}>When work begins on another solution</option>
                                     </FormField>
 
