@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { FormGroup, FormControl, ButtonToolbar, Button, Alert } from 'react-bootstrap';
 
 import Table, { validators, rowValidator as $v, KeyValueAutocompleteCell, getIdValue } from '../../ui/table';
-import Projects, { EstimateType, StartType, newSolution, ThroughputType, Solution } from '../../../../collections/projects';
+import Projects, { StartType, newSolution, ThroughputType, Solution } from '../../../../collections/projects';
 import { getPublicSetting } from '../../../../utils';
 
 const DATE_FORMAT = getPublicSetting('dateFormat');
