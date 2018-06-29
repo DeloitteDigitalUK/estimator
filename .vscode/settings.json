@@ -4,5 +4,6 @@
         "**/.DS_Store": true,
         "**/node_modules": true,
         ".meteor/local": true
-    }
+    },
+    "eslint.enable": true
 }
