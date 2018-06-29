@@ -17,10 +17,6 @@
       "react/self-closing-comp": 1,
       "no-var": 1
   },
-  "ecmaFeatures": {
-      "jsx": true,
-      "modules": true
-  },
   "env": {
       "browser": true
   },
@@ -32,5 +28,5 @@
       "it": false,
       "ArrayBuffer": false,
       "Uint8Array": false
-  },
+  }
 }
