@@ -1,6 +1,6 @@
 const firstSolutionId = 'YW74Dcpr2BvLQdtSB';
 
-import { EstimateType, StartType, ThroughputType, newProject } from '../collections/projects';
+import { EstimateType, StartType, ThroughputType, newProject, ActualsStatus } from '../collections/projects';
 
 export default newProject({
     _id: 'm2uNAAg6T5vYjAyDm',
@@ -78,6 +78,12 @@ export default newProject({
                 throughputScalingLowGuess: 0.1,
                 throughputScalingHighGuess: 0.5,
             }
+        },
+        actuals: {
+            status: ActualsStatus.notStarted,
+            startDate: null,
+            toDate: null,
+            workItems: null 
         }
     },{
         _id: 'fgFoRfMFTCQH5yACA',
@@ -101,6 +107,12 @@ export default newProject({
                 lowGuess: 10,
                 highGuess: 15
             }
+        },
+        actuals: {
+            status: ActualsStatus.started,
+            startDate: new Date(2018, 0, 1),
+            toDate: new Date(2018, 1, 1),
+            workItems: 30 
         }
     },{
         _id: 'uAxhHMCBjAfH4tyah',

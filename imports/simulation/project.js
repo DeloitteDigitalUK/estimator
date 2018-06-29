@@ -3,10 +3,12 @@ import moment from 'moment';
 import { quantile } from 'd3-array';
 import toposort from 'toposort-keys';
 
-import { StartType, EstimateType } from '../collections/projects';
+import { StartType, EstimateType, ActualsStatus } from '../collections/projects';
 import simulateSolution, { CannotSimulate } from './solution';
 
-import { getSuffix } from '../utils';
+import { getSuffix, getPublicSetting } from '../utils';
+
+const DATE_FORMAT = getPublicSetting('dateFormat');
 
 function sortInDependencyOrder(solutions) {
     const lookup = solutions.reduce((m, s, idx) => ({...m, [s._id]: idx}), {}); // id => index in array
@@ -17,20 +19,11 @@ function sortInDependencyOrder(solutions) {
 }
 
 function calculateRelativeStartDate(solution, dependency, projectStartDate, percentile) {
-    if(dependency.solution.estimateType === EstimateType.backlog) {
-        const percentileDates = _.find(dependency.dates, d => d.percentile === percentile);
-        
-        if(!percentileDates) {
-            throw new CannotSimulate(`Solution ${solution._id} depends on solution ${solution.startDependency}, but no forecast was provided at the ${percentile}${getSuffix(percentile)} percentile.`);
-        }
-
-        if(solution.startType === StartType.with) {
-            return percentileDates.startDate;
-        } else {
-            return moment.utc(percentileDates.endDate).add(1, 'day').toDate();
-        }
-
-    } else {
+    if(dependency.solution.estimateType === EstimateType.workPattern || (
+        dependency.solution.estimateType === EstimateType.backlog &&
+        !_.isEmpty(dependency.solution.actuals) &&
+        dependency.solution.actuals.status === ActualsStatus.completed
+    )) {
 
         if(dependency.dates.length === 0) {
             return projectStartDate;
@@ -42,6 +35,18 @@ function calculateRelativeStartDate(solution, dependency, projectStartDate, perc
             return moment.utc(dependency.dates[dependency.dates.length - 1].endDate).add(1, 'day').toDate();
         }
 
+    } else {
+        const percentileDates = _.find(dependency.dates, d => d.percentile === percentile);
+        
+        if(!percentileDates) {
+            throw new CannotSimulate(`Solution ${solution._id} depends on solution ${solution.startDependency}, but no forecast was provided at the ${percentile}${getSuffix(percentile)} percentile.`);
+        }
+
+        if(solution.startType === StartType.with) {
+            return percentileDates.startDate;
+        } else {
+            return moment.utc(percentileDates.endDate).add(1, 'day').toDate();
+        }
     }
 }
 
@@ -65,6 +70,12 @@ function calculateStartDate(solution, solutions, lookup, projectStartDate, perce
 
     let dependency, previous;
 
+    // use actual start date if recorded
+    if(!_.isEmpty(solution.actuals) && solution.actuals.status !== ActualsStatus.notStarted) {
+        return solution.actuals.startDate;
+    } 
+
+    // otherwise calculate from dependency
     switch(solution.startType) {
         
         case StartType.immediately:
@@ -110,22 +121,41 @@ function calculateStartDate(solution, solutions, lookup, projectStartDate, perce
 // calculate the dates list for one solution -- {startDate, endDate, percentile?, description}
 function calculateDates(solution, solutions, lookup, projectStartDate, percentiles, runs, overflow, periodLength) {
 
+    const actuals = solution.actuals;
+
     switch(solution.estimateType) {
         
         case EstimateType.backlog:
 
+            // use actual start/end if we marked this as completed
+            if(!_.isEmpty(actuals) && actuals.status === ActualsStatus.completed) {
+                return [{
+                    startDate: actuals.startDate,
+                    endDate: actuals.toDate,
+                    description: "Actual (completed)"
+                }];
+            }
+            
             const results = simulateSolution(solution, runs, false, overflow);
             const distribution = _.sortBy(results, 'periods').map(s => s.periods);
 
             return percentiles.map(percentile => {
                 const periods = quantile(distribution, percentile),
-                      startDate = calculateStartDate(solution, solutions, lookup, projectStartDate, percentile),
-                      endDate = moment.utc(startDate).add((periods * periodLength) - 1, 'days').toDate(),
-                      description = `${Math.round(percentile * 100.0)}${getSuffix(Math.round(percentile * 100.0))} percentile`;
+                      startDate = calculateStartDate(solution, solutions, lookup, projectStartDate, percentile);
+                
+                let simulationStartDate = startDate,
+                    description = `${Math.round(percentile * 100.0)}${getSuffix(Math.round(percentile * 100.0))} percentile`;
+                
+                if(!_.isEmpty(actuals) && actuals.status === ActualsStatus.started) {
+                    simulationStartDate = moment.utc(actuals.toDate).add(1, 'days').toDate();
+                    description += ` (${actuals.workItems} work items completed to ${moment(actuals.toDate).format(DATE_FORMAT)})`;
+                }
+
+                const endDate = moment.utc(simulationStartDate).add((periods * periodLength) - 1, 'days').toDate();
 
                 return {startDate, endDate, percentile, description};
             });
-        
+
         case EstimateType.workPattern:
             return _.cloneDeep(solution.team.workPattern || []);
 

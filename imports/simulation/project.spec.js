@@ -2,7 +2,7 @@ import chai, { expect } from 'chai';
 
 import { Random } from 'meteor/random';
 
-import { newProject, newSolution, EstimateType, StartType, ThroughputType } from '../collections/projects';
+import { newProject, newSolution, EstimateType, StartType, ThroughputType, ActualsStatus } from '../collections/projects';
 
 import simulateProject from './project';
 
@@ -79,7 +79,7 @@ describe('Project simulation', function() {
                         lowGuess: 3,
                         highGuess: 3,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -135,7 +135,7 @@ describe('Project simulation', function() {
                         lowGuess: 3,
                         highGuess: 3,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -194,7 +194,7 @@ describe('Project simulation', function() {
                         lowGuess: 3,
                         highGuess: 3,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -217,7 +217,7 @@ describe('Project simulation', function() {
                         lowGuess: 2,
                         highGuess: 2,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -274,7 +274,7 @@ describe('Project simulation', function() {
                         lowGuess: 2,
                         highGuess: 2,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -297,7 +297,7 @@ describe('Project simulation', function() {
                         lowGuess: 3,
                         highGuess: 3,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -354,7 +354,7 @@ describe('Project simulation', function() {
                         lowGuess: 2,
                         highGuess: 2,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -378,7 +378,7 @@ describe('Project simulation', function() {
                         lowGuess: 3,
                         highGuess: 3,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -436,7 +436,7 @@ describe('Project simulation', function() {
                         lowGuess: 2,
                         highGuess: 2,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -460,7 +460,7 @@ describe('Project simulation', function() {
                         lowGuess: 1,
                         highGuess: 1,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -484,7 +484,7 @@ describe('Project simulation', function() {
                         lowGuess: 3,
                         highGuess: 3,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -549,7 +549,7 @@ describe('Project simulation', function() {
                         lowGuess: 2,
                         highGuess: 2,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -624,7 +624,7 @@ describe('Project simulation', function() {
                         lowGuess: 2,
                         highGuess: 2,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -699,7 +699,7 @@ describe('Project simulation', function() {
                         lowGuess: 2,
                         highGuess: 2,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -767,7 +767,7 @@ describe('Project simulation', function() {
                         lowGuess: 3,
                         highGuess: 3,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -790,7 +790,7 @@ describe('Project simulation', function() {
                         lowGuess: 2,
                         highGuess: 2,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -813,7 +813,7 @@ describe('Project simulation', function() {
                         lowGuess: 2,
                         highGuess: 2,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -881,7 +881,7 @@ describe('Project simulation', function() {
                         lowGuess: 3,
                         highGuess: 3,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -904,7 +904,7 @@ describe('Project simulation', function() {
                         lowGuess: 2,
                         highGuess: 2,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -927,7 +927,7 @@ describe('Project simulation', function() {
                         lowGuess: 2,
                         highGuess: 2,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -998,7 +998,7 @@ describe('Project simulation', function() {
                         lowGuess: 3,
                         highGuess: 3,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -1021,7 +1021,7 @@ describe('Project simulation', function() {
                         lowGuess: 2,
                         highGuess: 2,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -1044,7 +1044,7 @@ describe('Project simulation', function() {
                         lowGuess: 2,
                         highGuess: 2,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],
@@ -1091,6 +1091,370 @@ describe('Project simulation', function() {
 
     });
 
+    it("Can simulate a project with part finished work", function() {
+        
+        const project = newProject({
+            name: "Test project",
+            owner: "abc1",
+            startDate: new Date(2017, 0, 1),
+            solutions: [
+                newSolution({
+                    name: "Test 1",
+                    estimateType: EstimateType.backlog,
+                    startType: StartType.fixedDate,
+                    startDate: new Date(2017, 0, 1),
+                    backlog: {
+                        lowGuess: 3,
+                        highGuess: 3,
+                        lowSplitRate: 1,
+                        highSplitRate: 1
+                    },
+                    team: {
+                        members: [],
+                        throughputType: ThroughputType.estimate,
+                        throughputSamples: [],
+                        throughputEstimate: {
+                            lowGuess: 1,
+                            highGuess: 1
+                        },
+                        rampUp: null,
+                        workPattern: []
+                    },
+                    actuals: {  // 1 done, 2 remaining from 4/1/2017
+                        status: ActualsStatus.started,
+                        startDate: new Date(2017, 0, 2),
+                        toDate: new Date(2017, 0, 4),
+                        workItems: 1
+                    }
+                })
+            ]
+        });
+
+        const results = simulateProject(project, [.50], 100);
+
+        expect(results.length).to.eql(1);
+
+        expect(results[0].solution.name).to.eql("Test 1");
+        expect(results[0].dates).to.eql([{
+            startDate: new Date(2017, 0, 2),  // actual start
+            endDate: new Date(2017, 0, 18),  // 2 periods from 4/1
+            percentile: .50,
+            description: '50th percentile (1 work items completed to 04/01/2017)'
+        }]);
+
+    });
+
+    it("Can simulate a project with a solution dependent on another with part finished work", function() {
+        
+        const project = newProject({
+            name: "Test project",
+            owner: "abc1",
+            startDate: new Date(2017, 0, 1),
+            solutions: [
+                newSolution({
+                    name: "Test 1",
+                    estimateType: EstimateType.backlog,
+                    startType: StartType.fixedDate,
+                    startDate: new Date(2017, 0, 1),
+                    backlog: {
+                        lowGuess: 3,
+                        highGuess: 3,
+                        lowSplitRate: 1,
+                        highSplitRate: 1
+                    },
+                    team: {
+                        members: [],
+                        throughputType: ThroughputType.estimate,
+                        throughputSamples: [],
+                        throughputEstimate: {
+                            lowGuess: 1,
+                            highGuess: 1
+                        },
+                        rampUp: null,
+                        workPattern: []
+                    },
+                    actuals: {  // 1 done, 2 remaining from 4/1/2017
+                        status: ActualsStatus.started,
+                        startDate: new Date(2017, 0, 2),
+                        toDate: new Date(2017, 0, 4),
+                        workItems: 1
+                    }
+                }),
+                newSolution({
+                    name: "Test 2",
+                    estimateType: EstimateType.backlog,
+                    startType: StartType.teamNext,
+                    backlog: {
+                        lowGuess: 2,
+                        highGuess: 2,
+                        lowSplitRate: 1,
+                        highSplitRate: 1
+                    },
+                    team: {
+                        members: [],
+                        throughputType: ThroughputType.estimate,
+                        throughputSamples: [],
+                        throughputEstimate: {
+                            lowGuess: 1,
+                            highGuess: 1
+                        },
+                        rampUp: null,
+                        workPattern: []
+                    },
+                })
+            ]
+        });
+
+        const results = simulateProject(project, [.50], 100);
+
+        expect(results.length).to.eql(2);
+
+        expect(results[0].solution.name).to.eql("Test 1");
+        expect(results[0].dates).to.eql([{
+            startDate: new Date(2017, 0, 2),  // actual start
+            endDate: new Date(2017, 0, 18),  // 2 periods from 4/1
+            percentile: .50,
+            description: '50th percentile (1 work items completed to 04/01/2017)'
+        }]);
+
+        expect(results[1].solution.name).to.eql("Test 2");
+        expect(results[1].dates).to.eql([{
+            startDate: new Date(2017, 0, 19),
+            endDate: new Date(2017, 1, 1),
+            percentile: .50,
+            description: '50th percentile'
+        }]);
+
+    });
+
+    it("Can simulate a project where actual start date overrides dependent start date", function() {
+
+        const project = newProject({
+            name: "Test project",
+            owner: "abc1",
+            startDate: new Date(2017, 0, 1),
+            solutions: [
+                newSolution({
+                    name: "Test 1",
+                    estimateType: EstimateType.backlog,
+                    startType: StartType.fixedDate,
+                    startDate: new Date(2017, 0, 1),
+                    backlog: {
+                        lowGuess: 3,
+                        highGuess: 3,
+                        lowSplitRate: 1,
+                        highSplitRate: 1
+                    },
+                    team: {
+                        members: [],
+                        throughputType: ThroughputType.estimate,
+                        throughputSamples: [],
+                        throughputEstimate: {
+                            lowGuess: 1,
+                            highGuess: 1
+                        },
+                        rampUp: null,
+                        workPattern: []
+                    },
+                    actuals: {  // 1 done, 2 remaining from 4/1/2017
+                        status: ActualsStatus.started,
+                        startDate: new Date(2017, 0, 2),
+                        toDate: new Date(2017, 0, 4),
+                        workItems: 1
+                    }
+                }),
+                newSolution({
+                    name: "Test 2",
+                    estimateType: EstimateType.backlog,
+                    startType: StartType.teamNext,
+                    backlog: {
+                        lowGuess: 2,
+                        highGuess: 2,
+                        lowSplitRate: 1,
+                        highSplitRate: 1
+                    },
+                    team: {
+                        members: [],
+                        throughputType: ThroughputType.estimate,
+                        throughputSamples: [],
+                        throughputEstimate: {
+                            lowGuess: 1,
+                            highGuess: 1
+                        },
+                        rampUp: null,
+                        workPattern: []
+                    },
+                    actuals: {
+                        status: ActualsStatus.started,
+                        startDate: new Date(2017, 0, 17),
+                        toDate: new Date(2017, 0, 17),
+                        workItems: 0,
+                    }
+                })
+            ]
+        });
+
+        const results = simulateProject(project, [.50], 100);
+
+        expect(results.length).to.eql(2);
+
+        expect(results[0].solution.name).to.eql("Test 1");
+        expect(results[0].dates).to.eql([{
+            startDate: new Date(2017, 0, 2),  // actual start
+            endDate: new Date(2017, 0, 18),  // 2 periods from 4/1
+            percentile: .50,
+            description: '50th percentile (1 work items completed to 04/01/2017)'
+        }]);
+
+        expect(results[1].solution.name).to.eql("Test 2");
+        expect(results[1].dates).to.eql([{
+            startDate: new Date(2017, 0, 17),
+            endDate: new Date(2017, 0, 31),
+            percentile: .50,
+            description: '50th percentile (0 work items completed to 17/01/2017)'
+        }]);
+
+    })
+
+    it("Can simulate a project with completed work", function() {
+
+        const project = newProject({
+            name: "Test project",
+            owner: "abc1",
+            startDate: new Date(2017, 0, 1),
+            solutions: [
+                newSolution({
+                    name: "Test 1",
+                    estimateType: EstimateType.backlog,
+                    startType: StartType.fixedDate,
+                    startDate: new Date(2017, 0, 1),
+                    backlog: {
+                        lowGuess: 3,
+                        highGuess: 3,
+                        lowSplitRate: 1,
+                        highSplitRate: 1
+                    },
+                    team: {
+                        members: [],
+                        throughputType: ThroughputType.estimate,
+                        throughputSamples: [],
+                        throughputEstimate: {
+                            lowGuess: 1,
+                            highGuess: 1
+                        },
+                        rampUp: null,
+                        workPattern: []
+                    },
+                    actuals: {
+                        status: ActualsStatus.completed,
+                        startDate: new Date(2017, 0, 2),
+                        toDate: new Date(2017, 0, 4),
+                        workItems: 5
+                    }
+                })
+            ]
+        });
+
+        const results = simulateProject(project, [.50, .75], 100);
+
+        expect(results.length).to.eql(1);
+
+        expect(results[0].solution.name).to.eql("Test 1");
+        expect(results[0].dates).to.eql([{
+            startDate: new Date(2017, 0, 2),
+            endDate: new Date(2017, 0, 4),
+            description: 'Actual (completed)'
+        }]);
+
+    });
+
+    it("Can simulate a project with a solution dependent on another with completed work", function() {
+        
+        const project = newProject({
+            name: "Test project",
+            owner: "abc1",
+            startDate: new Date(2017, 0, 1),
+            solutions: [
+                newSolution({
+                    name: "Test 1",
+                    estimateType: EstimateType.backlog,
+                    startType: StartType.fixedDate,
+                    startDate: new Date(2017, 0, 1),
+                    backlog: {
+                        lowGuess: 3,
+                        highGuess: 3,
+                        lowSplitRate: 1,
+                        highSplitRate: 1
+                    },
+                    team: {
+                        members: [],
+                        throughputType: ThroughputType.estimate,
+                        throughputSamples: [],
+                        throughputEstimate: {
+                            lowGuess: 1,
+                            highGuess: 1
+                        },
+                        rampUp: null,
+                        workPattern: []
+                    },
+                    actuals: {
+                        status: ActualsStatus.completed,
+                        startDate: new Date(2017, 0, 2),
+                        toDate: new Date(2017, 0, 4),
+                        workItems: 5
+                    }
+                }),
+                newSolution({
+                    name: "Test 2",
+                    estimateType: EstimateType.backlog,
+                    startType: StartType.teamNext,
+                    backlog: {
+                        lowGuess: 2,
+                        highGuess: 2,
+                        lowSplitRate: 1,
+                        highSplitRate: 1
+                    },
+                    team: {
+                        members: [],
+                        throughputType: ThroughputType.estimate,
+                        throughputSamples: [],
+                        throughputEstimate: {
+                            lowGuess: 1,
+                            highGuess: 1
+                        },
+                        rampUp: null,
+                        workPattern: []
+                    },
+                })
+            ]
+        });
+
+        const results = simulateProject(project, [.50, .75], 100);
+
+        expect(results.length).to.eql(2);
+
+        expect(results[0].solution.name).to.eql("Test 1");
+        expect(results[0].dates).to.eql([{
+            startDate: new Date(2017, 0, 2),
+            endDate: new Date(2017, 0, 4),
+            description: 'Actual (completed)'
+        }]);
+
+        expect(results[1].solution.name).to.eql("Test 2");
+        expect(results[1].dates).to.eql([{
+            startDate: new Date(2017, 0, 5),
+            endDate: new Date(2017, 0, 18),
+            percentile: 0.5,
+            description: '50th percentile'
+        },{
+            startDate: new Date(2017, 0, 5),
+            endDate: new Date(2017, 0, 18),
+            percentile: 0.75,
+            description: '75th percentile'
+        }]);
+
+    });
+
     it("Throws if solution depends on a solution that doesn't exist in the same project", function() {
         const id1 = Random.id();
         
@@ -1108,7 +1472,7 @@ describe('Project simulation', function() {
                         lowGuess: 2,
                         highGuess: 2,
                         lowSplitRate: 1,
-                        highSplitRate: 1   
+                        highSplitRate: 1
                     },
                     team: {
                         members: [],

@@ -63,6 +63,9 @@ class Chart extends Component {
                             <ul>
                                 <li>An initial backlog of {metadata.initialBacklog} work items</li>
                                 <li>Splitting of work items added an additional {metadata.splits} work items</li>
+                                {metadata.actualsToDate > 0 && (
+                                    <li>{metadata.actualsToDate} work items completed to date</li>
+                                )}
                                 {metadata.risks.length > 0 && (
                                 <li>Risks incurred:
                                     <ul>

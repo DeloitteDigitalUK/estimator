@@ -29,9 +29,16 @@ export const ThroughputType = {
     none: "none"
 };
 
+export const ActualsStatus = {
+    notStarted: "notStarted",
+    started: "started",
+    completed: "completed"
+};
+
 export const ErrorTypes = {
     shouldBeSmaller: "shouldBeSmaller",
-    shouldBeGreater: "shouldBeGreater"
+    shouldBeGreater: "shouldBeGreater",
+    shouldBeAfterStartDate: "shouldBeAfterStartDate"
 }
 
 SimpleSchema.setDefaultMessages({
@@ -39,6 +46,7 @@ SimpleSchema.setDefaultMessages({
         en: {
             [ErrorTypes.shouldBeSmaller]: "{{{label}}} must be less than the high guess",
             [ErrorTypes.shouldBeGreater]: "{{{label}}} must be greater than the low guess",
+            [ErrorTypes.shouldBeAfterStartDate]: "{{{label}}} must be after start date",
         },
     },
 });
@@ -175,6 +183,36 @@ export const Team = new SimpleSchema({
 
 });
 
+export const Actuals = new SimpleSchema({
+
+    "status": { type: String, allowedValues: Object.values(ActualsStatus) },
+    
+    "startDate": { type: Date, optional: true, custom: function() {
+        if(!this.value && this.siblingField('status').value !== ActualsStatus.notStarted) {
+            return SimpleSchema.ErrorTypes.REQUIRED;
+        }
+    } },
+
+    "toDate": { type: Date, optional: true, custom: function() {
+        if(this.siblingField('status').value !== ActualsStatus.notStarted) {
+            if(!this.value) {
+                return SimpleSchema.ErrorTypes.REQUIRED;
+            }
+
+            const startDate = this.siblingField('startDate').value;
+            if(startDate && moment.utc(this.value).isBefore(moment.utc(startDate))) {
+                return ErrorTypes.shouldBeAfterStartDate;
+            }
+        }
+    } },
+
+    "workItems": { type: Integer, min: 0, optional: true, custom: function() {
+        if(!_.isInteger(this.value) && this.siblingField('status').value === ActualsStatus.started) {
+            return SimpleSchema.ErrorTypes.REQUIRED;
+        }
+    } }
+    
+});
 
 export const Solution = new SimpleSchema({
 
@@ -221,7 +259,10 @@ export const Solution = new SimpleSchema({
     } },
 
     // what is the team?
-    "team": Team
+    "team": Team,
+
+    // actuals
+    "actuals": { type: Actuals, optional: true }
     
 });
 
@@ -256,6 +297,7 @@ export const Project = new SimpleSchema({
 
     // list of solutions
     "solutions": [Solution]
+
 });
 
 /**
@@ -316,6 +358,13 @@ export function newSolution({ name, ...rest }) {
             },
             rampUp: null,
             workPattern: []
+        },
+
+        actuals: {
+            status: ActualsStatus.notStarted,
+            startDate: null,
+            toDate: null,
+            workItems: 0   
         },
 
         ...rest

@@ -1,5 +1,5 @@
 import chai, { expect } from 'chai';
-import { newSolution, EstimateType, ThroughputType } from '../collections/projects';
+import { newSolution, EstimateType, ThroughputType, ActualsStatus } from '../collections/projects';
 import simulateSolution from './solution';
 
 chai.config.truncateThreshold = 0;
@@ -136,6 +136,7 @@ describe('Solution simulation', function() {
             metadata: {
                 totalBacklog: 3,
                 initialBacklog: 3,
+                actualsToDate: 0,
                 splits: 0,
                 risks: [],
                 periods: [1, 1, 1]
@@ -176,6 +177,7 @@ describe('Solution simulation', function() {
             metadata: {
                 totalBacklog: 5,
                 initialBacklog: 3,
+                actualsToDate: 0,
                 splits: 2,
                 risks: [],
                 periods: [1, 1, 1, 1, 1]
@@ -222,12 +224,107 @@ describe('Solution simulation', function() {
             metadata: {
                 totalBacklog: 10,
                 initialBacklog: 3,
+                actualsToDate: 0,
                 splits: 0,
                 risks: [
                     {name: "B", likelihood: 1, lowImpact: 3, highImpact: 3, impact: 3},
                     {name: "C", likelihood: 1, lowImpact: 4, highImpact: 4, impact: 4},
                 ],
                 periods: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            }
+        } ]);
+
+    });
+
+    it("can reduce initial backlog based on actuals if started", function() {
+        
+        const solution = newSolution({
+            name: "Test solution",
+            estimateType: EstimateType.backlog,
+            backlog: {
+                lowGuess: 3, // setting high and low to the same value removes randomness for testing purposes
+                highGuess: 3,
+                lowSplitRate: 1,
+                highSplitRate: 1   
+            },
+            team: {
+                members: [],
+                throughputType: ThroughputType.estimate,
+                throughputSamples: [],
+                throughputEstimate: {
+                    lowGuess: 1,
+                    highGuess: 1
+                },
+                rampUp: null,
+                workPattern: []
+            },
+            actuals: {
+                status: ActualsStatus.started,
+                startDate: new Date(2018, 0, 1),
+                toDate: new Date(2018, 0, 15),
+                workItems: 1
+            }
+        });
+
+        const results = simulateSolution(solution, 1);
+
+        expect(results).to.eql([{
+            runNumber: 0,
+            periods: 2,
+            metadata: {
+                totalBacklog: 2,
+                initialBacklog: 3,
+                actualsToDate: 1,
+                splits: 0,
+                risks: [],
+                periods: [1, 1]
+            }
+        } ]);
+
+    });
+
+    it("does not reduce initial backlog based on actuals if not started", function() {
+        
+        const solution = newSolution({
+            name: "Test solution",
+            estimateType: EstimateType.backlog,
+            backlog: {
+                lowGuess: 3, // setting high and low to the same value removes randomness for testing purposes
+                highGuess: 3,
+                lowSplitRate: 1,
+                highSplitRate: 1   
+            },
+            team: {
+                members: [],
+                throughputType: ThroughputType.estimate,
+                throughputSamples: [],
+                throughputEstimate: {
+                    lowGuess: 1,
+                    highGuess: 1
+                },
+                rampUp: null,
+                workPattern: []
+            },
+            actuals: {
+                status: ActualsStatus.notStarted,
+                startDate: new Date(2018, 0, 1),
+                toDate: new Date(2018, 0, 15),
+                workItems: 1
+            }
+        });
+
+        const results = simulateSolution(solution, 1);
+
+        expect(results).to.eql([{
+            runNumber: 0,
+            periods: 3,
+            metadata: {
+                totalBacklog: 3,
+                initialBacklog: 3,
+                actualsToDate: 0,
+                splits: 0,
+                risks: [],
+                periods: [1, 1, 1]
             }
         } ]);
 
@@ -266,6 +363,7 @@ describe('Solution simulation', function() {
             metadata: {
                 totalBacklog: 8,
                 initialBacklog: 8,
+                actualsToDate: 0,
                 splits: 0,
                 risks: [],
                 periods: [2, 2, 2, 2]
@@ -305,6 +403,7 @@ describe('Solution simulation', function() {
             metadata: {
                 totalBacklog: 8,
                 initialBacklog: 8,
+                actualsToDate: 0,
                 splits: 0,
                 risks: [],
                 periods: [2, 2, 2, 2]
@@ -348,11 +447,118 @@ describe('Solution simulation', function() {
             metadata: {
                 totalBacklog: 8,
                 initialBacklog: 8,
+                actualsToDate: 0,
                 splits: 0,
                 risks: [],
                 periods: [1, 1, 2, 2, 2]
             }
         }]);
+
+    });
+
+    it("can scale throughput based on ramp-up taking actual progress into account", function() {
+        
+        let solution = newSolution({
+            name: "Test solution",
+            estimateType: EstimateType.backlog,
+            backlog: {
+                lowGuess: 8, // setting high and low to the same value removes randomness for testing purposes
+                highGuess: 8,
+                lowSplitRate: 1,
+                highSplitRate: 1   
+            },
+            team: {
+                members: [],
+                throughputType: ThroughputType.estimate,
+                throughputSamples: [], 
+                throughputEstimate: {
+                    lowGuess: 2,
+                    highGuess: 2
+                },
+                rampUp: {
+                    duration: 2,
+                    throughputScalingLowGuess: 0.5,
+                    throughputScalingHighGuess: 0.5   
+                },
+                workPattern: []
+            },
+            actuals: {
+                status: ActualsStatus.started,
+                startDate: new Date(2018, 0, 1),
+                toDate: new Date(2018, 0, 15), // two weeks in, i.e. one ramp-up period
+                workItems: 1,
+            }
+        });
+
+        let results = simulateSolution(solution, 1);
+
+        expect(results).to.eql([{
+            runNumber: 0,
+            periods: 4,
+            metadata: {
+                totalBacklog: 7,
+                initialBacklog: 8,
+                actualsToDate: 1,
+                splits: 0,
+                risks: [],
+                periods: [2, 2, 2, 2]
+            }
+        }]);
+
+        // what if a different period length? in this case, 2 weeks = 1 period
+        solution.throughputPeriodLength = 2;
+        results = simulateSolution(solution, 1);
+
+        expect(results).to.eql([{
+            runNumber: 0,
+            periods: 4,
+            metadata: {
+                totalBacklog: 7,
+                initialBacklog: 8,
+                actualsToDate: 1,
+                splits: 0,
+                risks: [],
+                periods: [1, 2, 2, 2]
+            }
+        }]);
+
+        // what if not started?
+        solution.throughputPeriodLength = 1;
+        solution.actuals.status = ActualsStatus.notStarted;
+        results = simulateSolution(solution, 1);
+
+        expect(results).to.eql([{
+            runNumber: 0,
+            periods: 5,
+            metadata: {
+                totalBacklog: 8,
+                initialBacklog: 8,
+                actualsToDate: 0,
+                splits: 0,
+                risks: [],
+                periods: [1, 1, 2, 2, 2]
+            }
+        }]);
+
+        // what if not an entire week?
+        solution.actuals.toDate = new Date(2018, 0, 14);
+        solution.actuals.status = ActualsStatus.started;
+
+        results = simulateSolution(solution, 1);
+
+        expect(results).to.eql([{
+            runNumber: 0,
+            periods: 4,
+            metadata: {
+                totalBacklog: 7,
+                initialBacklog: 8,
+                actualsToDate: 1,
+                splits: 0,
+                risks: [],
+                periods: [1, 2, 2, 2]
+            }
+        }]);
+
 
     });
 

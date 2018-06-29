@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Project, newProject, Solution, newSolution, EstimateType, ThroughputType, StartType } from './projects';
+import { Project, newProject, Solution, newSolution, EstimateType, ThroughputType, StartType, ActualsStatus } from './projects';
 
 describe('Project factory', function() {
     
@@ -504,6 +504,210 @@ describe('Validation', function() {
 
     });
 
+    it("Actuals is optional", function() {
+        expect(() => {
+            Solution.validate(newSolution({
+                name: "Test solution",
+                actuals: null
+            }))
+        }).not.to.throw();
+    });
+
+    it("Actual start date is required if status is not 'not started'", function() {
+        
+        expect(() => {
+            Solution.validate(newSolution({
+                name: "Test solution",
+                actuals: {
+                    status: ActualsStatus.started,
+                    startDate: null,
+                    toDate: new Date(2018, 1, 1),
+                    workItems: 0
+                }
+            }))
+        }).to.throw();
+
+        expect(() => {
+            Solution.validate(newSolution({
+                name: "Test solution",
+                actuals: {
+                    status: ActualsStatus.completed,
+                    startDate: null,
+                    toDate: new Date(2018, 1, 1),
+                    workItems: 0
+                }
+            }))
+        }).to.throw();
+
+        expect(() => {
+            Solution.validate(newSolution({
+                name: "Test solution",
+                actuals: {
+                    status: ActualsStatus.notStarted,
+                    startDate: null,
+                    toDate: new Date(2018, 1, 1),
+                    workItems: 0
+                }
+            }))
+        }).not.to.throw();
+
+    });
+
+    it("Actual end date is required if status is not 'not started'", function() {
+        
+        expect(() => {
+            Solution.validate(newSolution({
+                name: "Test solution",
+                actuals: {
+                    status: ActualsStatus.started,
+                    startDate: new Date(2018, 1, 1),
+                    toDate: null,
+                    workItems: 0
+                }
+            }))
+        }).to.throw();
+
+        expect(() => {
+            Solution.validate(newSolution({
+                name: "Test solution",
+                actuals: {
+                    status: ActualsStatus.completed,
+                    startDate: new Date(2018, 1, 1),
+                    toDate: null,
+                    workItems: 0
+                }
+            }))
+        }).to.throw();
+
+        expect(() => {
+            Solution.validate(newSolution({
+                name: "Test solution",
+                actuals: {
+                    status: ActualsStatus.notStarted,
+                    startDate: new Date(2018, 1, 1),
+                    toDate: null,
+                    workItems: 0
+                }
+            }))
+        }).not.to.throw();
+
+    });
+
+    it("Actual end date must be after actual start date", function() {
+        
+        expect(() => {
+            Solution.validate(newSolution({
+                name: "Test solution",
+                actuals: {
+                    status: ActualsStatus.started,
+                    startDate: new Date(2018, 1, 2),
+                    toDate: new Date(2018, 1, 1),
+                    workItems: 0
+                }
+            }))
+        }).to.throw();
+
+        expect(() => {
+            Solution.validate(newSolution({
+                name: "Test solution",
+                actuals: {
+                    status: ActualsStatus.started,
+                    startDate: new Date(2018, 1, 2),
+                    toDate: new Date(2018, 1, 2),
+                    workItems: 0
+                }
+            }))
+        }).not.to.throw();
+
+        expect(() => {
+            Solution.validate(newSolution({
+                name: "Test solution",
+                actuals: {
+                    status: ActualsStatus.started,
+                    startDate: new Date(2018, 1, 2),
+                    toDate: new Date(2018, 1, 3),
+                    workItems: 0
+                }
+            }))
+        }).not.to.throw();
+
+    });
+
+    it("Work item count required if status is 'started'", function() {
+        
+        expect(() => {
+            Solution.validate(newSolution({
+                name: "Test solution",
+                actuals: {
+                    status: ActualsStatus.started,
+                    startDate: new Date(2018, 1, 1),
+                    toDate: new Date(2018, 1, 1),
+                    workItems: 0
+                }
+            }))
+        }).not.to.throw();
+
+        expect(() => {
+            Solution.validate(newSolution({
+                name: "Test solution",
+                actuals: {
+                    status: ActualsStatus.started,
+                    startDate: new Date(2018, 1, 1),
+                    toDate: new Date(2018, 1, 1),
+                    workItems: 1
+                }
+            }))
+        }).not.to.throw();
+
+        expect(() => {
+            Solution.validate(newSolution({
+                name: "Test solution",
+                actuals: {
+                    status: ActualsStatus.started,
+                    startDate: new Date(2018, 1, 1),
+                    toDate: new Date(2018, 1, 1),
+                    workItems: -1
+                }
+            }))
+        }).to.throw();
+
+        expect(() => {
+            Solution.validate(newSolution({
+                name: "Test solution",
+                actuals: {
+                    status: ActualsStatus.started,
+                    startDate: new Date(2018, 1, 1),
+                    toDate: new Date(2018, 1, 1),
+                    workItems: null
+                }
+            }))
+        }).to.throw();
+
+        expect(() => {
+            Solution.validate(newSolution({
+                name: "Test solution",
+                actuals: {
+                    status: ActualsStatus.notStarted,
+                    startDate: new Date(2018, 1, 1),
+                    toDate: new Date(2018, 1, 1),
+                    workItems: null
+                }
+            }))
+        }).not.to.throw();
+
+        expect(() => {
+            Solution.validate(newSolution({
+                name: "Test solution",
+                actuals: {
+                    status: ActualsStatus.completed,
+                    startDate: new Date(2018, 1, 1),
+                    toDate: new Date(2018, 1, 1),
+                    workItems: null
+                }
+            }))
+        }).not.to.throw();
+
+    });
 
 });
     

@@ -5,7 +5,7 @@ import moment from 'moment';
 
 import { PanelGroup, Panel, Table, HelpBlock, Label, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
-import { EstimateType, StartType, ThroughputType } from '../../../../collections/projects';
+import { EstimateType, StartType, ThroughputType, ActualsStatus } from '../../../../collections/projects';
 import { checkSampleCount, checkSampleAge, checkSampleStability, checkBacklogGuess } from '../../../../simulation/check';
 import { getPublicSetting } from '../../../../utils';
 
@@ -136,6 +136,23 @@ const ViewSolution = ({ project, solution }) => {
                     </div>
                     )}
 
+                    {!_.isEmpty(solution.actuals) && solution.actuals.status !== ActualsStatus.notStarted && (
+                    <div>
+                        <p>
+                            &raquo; Work <strong>started</strong> on {moment(solution.actuals.startDate).format(DATE_FORMAT)}.
+                            {solution.actuals.status === ActualsStatus.started && (
+                                <span> As of <strong>{moment(solution.actuals.toDate).format(DATE_FORMAT)}</strong>, <strong>{solution.actuals.workItems}</strong> were completed.</span>
+                            )}
+                            {solution.actuals.status === ActualsStatus.completed && (
+                                <span> Work <strong>completed</strong> on {moment(solution.actuals.toDate).format(DATE_FORMAT)}.</span>
+                            )}
+                        </p>
+                        
+                    </div>
+                    )}
+
+                    
+
                     {solution.estimateType === EstimateType.workPattern && (
                     <div>
                         <p>
@@ -237,7 +254,7 @@ const ViewSolution = ({ project, solution }) => {
                     <HelpBlock>
                         <p>
                             Based on the parameters above, we can forecast the number of weeks required to
-                            deliver this solution. The various parameters all have a degree of uncertainty,
+                            complete this solution. The various parameters all have a degree of uncertainty,
                             expressed as high and low guesses or based on a set of samples &mdash; we cannot
                             ever be completely sure about the future!
                         </p>
@@ -271,7 +288,7 @@ const ViewSolution = ({ project, solution }) => {
                     <HelpBlock>
                         <p>
                             We can also drill into a smaller set of forecasts to understand how our
-                            simulations would see the project play out. The chart below shows a series
+                            simulations would see the delivery play out. The chart below shows a series
                             of "burn-up" lines for different simulated scenarios. Hover over a data point
                             to understand more about the scenario that led to it.
                         </p>

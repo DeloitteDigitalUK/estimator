@@ -10,7 +10,7 @@ import DatePicker from 'react-bootstrap-date-picker';
 import { FormField, TableField } from '../../ui/forms';
 import { validators, rowValidator as $v } from '../../ui/table';
 
-import Projects, { Solution, EstimateType, StartType, ThroughputType } from '../../../../collections/projects';
+import Projects, { Solution, EstimateType, StartType, ThroughputType, ActualsStatus } from '../../../../collections/projects';
 import { checkSampleCount, checkSampleAge, checkSampleStability, checkBacklogGuess } from '../../../../simulation/check';
 
 import { getPublicSetting, ISO } from '../../../../utils';
@@ -494,7 +494,7 @@ export default class EditSolution extends Component {
                                             object={solution}
                                             validationContext={validationContext}
                                             field='team.rampUp.duration'
-                                            title="Ramp up period (weeks)"
+                                            title="Ramp up time (periods)"
                                             placeholder="8"
                                             onChange={this.saveValue.bind(this, 'team.rampUp.duration', e => parseInt(e.target.value, 10))}
                                             />
@@ -562,6 +562,85 @@ export default class EditSolution extends Component {
                                             {data: "description", title: "Description / notes", width: 300},
                                         ]}
                                         />
+                                    </Panel>
+                                )}
+
+                                {solution.estimateType === EstimateType.backlog && (
+                                    <Panel collapsible defaultExpanded header="Actuals" eventKey="actuals">
+        
+                                        <HelpBlock>
+                                            If work has already begun, we can adjust the simulation to start at an
+                                            actual recorded start date, and simulate the work to completion if not
+                                            yet done.
+                                        </HelpBlock>
+
+                                        <FormField
+                                            object={solution}
+                                            validationContext={validationContext}
+                                            componentClass="select"
+                                            field='actuals.status'
+                                            title="Work progress"
+                                            placeholder="Whether work is started and/or completed"
+                                            onChange={this.saveValue.bind(this, 'actuals.status')}>
+                                            <option value={ActualsStatus.notStarted}>Not started</option>
+                                            <option value={ActualsStatus.started}>Started</option>
+                                            <option value={ActualsStatus.completed}>Completed</option>
+                                        </FormField>
+                                        
+                                        {solution.actuals && solution.actuals.status !== ActualsStatus.notStarted && (
+                                            
+                                            <Row>
+                                                <Col md={4}>
+                                                    <FormField
+                                                        object={solution}
+                                                        validationContext={validationContext}
+                                                        className="date-input"
+                                                        control={
+                                                            <DatePicker
+                                                                weekStartsOn={1}
+                                                                showClearButton={false}
+                                                                value={solution.actuals && solution.actuals.startDate? moment(solution.actuals.startDate).format(ISO) : null}
+                                                                onChange={this.saveValue.bind(this, 'actuals.startDate', v => moment.utc(v, ISO).toDate())}
+                                                                dateFormat={DATE_FORMAT}
+                                                                />
+                                                        }
+                                                        field='actuals.startDate'
+                                                        title="Actual start date"
+                                                        />
+                                                </Col>
+                                                {solution.actuals && solution.actuals.status === ActualsStatus.started && (
+                                                <Col md={4}>
+                                                    <FormField
+                                                        object={solution}
+                                                        validationContext={validationContext}
+                                                        field='actuals.workItems'
+                                                        title="Work items completed"
+                                                        placeholder="0"
+                                                        onChange={this.saveValue.bind(this, 'actuals.workItems', e => parseInt(e.target.value, 10))}
+                                                        />
+                                                </Col>
+                                                )}
+                                                <Col md={4}>
+                                                    <FormField
+                                                        object={solution}
+                                                        validationContext={validationContext}
+                                                        className="date-input"
+                                                        control={
+                                                            <DatePicker
+                                                                weekStartsOn={1}
+                                                                showClearButton={false}
+                                                                value={solution.actuals && solution.actuals.toDate? moment(solution.actuals.toDate).format(ISO) : null}
+                                                                onChange={this.saveValue.bind(this, 'actuals.toDate', v => moment.utc(v, ISO).toDate())}
+                                                                dateFormat={DATE_FORMAT}
+                                                                />
+                                                        }
+                                                        field='actuals.toDate'
+                                                        title={solution.actuals && solution.actuals.status === ActualsStatus.completed? "Actual completion date" : "As of date"}
+                                                        />
+                                                </Col>
+                                            </Row>
+  
+                                        )}
                                     </Panel>
                                 )}
 

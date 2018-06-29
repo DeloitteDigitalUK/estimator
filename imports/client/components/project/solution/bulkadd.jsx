@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { FormGroup, FormControl, ButtonToolbar, Button, Alert } from 'react-bootstrap';
 
 import Table, { validators, rowValidator as $v, KeyValueAutocompleteCell, getIdValue } from '../../ui/table';
-import Projects, { StartType, newSolution, ThroughputType, Solution } from '../../../../collections/projects';
+import Projects, { StartType, ActualsStatus, newSolution, ThroughputType, Solution } from '../../../../collections/projects';
 import { getPublicSetting } from '../../../../utils';
 
 const DATE_FORMAT = getPublicSetting('dateFormat');
@@ -92,6 +92,12 @@ export default class BulkAddSolution extends Component {
                                     },
                                     workPattern: []
                                 },
+                                actuals: {
+                                    status: null,
+                                    startDate: null,
+                                    toDate: null,
+                                    workItems: null
+                                }
                             }}
                             columns={[
                                 {data: "name", title: "Name", width: 150, validator: $v(validators.required), allowInvalid: true},
@@ -164,6 +170,23 @@ export default class BulkAddSolution extends Component {
                                 {data: "team.rampUp.duration", title: "Ramp up (weeks)", type: "numeric", validator: $v(validators.positiveInteger), allowInvalid: true},
                                 {data: "team.rampUp.throughputScalingLowGuess", title: "Scaling (low)", type: "numeric", format: '0,0.00', validator: $v(validators.positiveNumber), allowInvalid: true},
                                 {data: "team.rampUp.throughputScalingHighGuess", title: "Scaling (high)", type: "numeric", format: '0,0.00', validator: $v(validators.positiveNumber), allowInvalid: true},
+                                {data: "actuals.status", title: "Progress", ...KeyValueAutocompleteCell,
+                                    handsontable: {
+                                        columns: [
+                                            {title: "Name", width: 150, data: 'name'},
+                                        ],
+                                        getValue: getIdValue
+                                    },
+                                    extractTitle: row => row? row.name : null,
+                                    source: [
+                                        {_id: ActualsStatus.notStarted, name: "Not started" },
+                                        {_id: ActualsStatus.started, name: "Started" },
+                                        {_id: ActualsStatus.completed, name: "Completed" },
+                                    ]
+                                },
+                                {data: "actuals.startDate", title: "Actual start", type: "date", datePickerConfig: {firstDay: 1}, dateFormat: DATE_FORMAT, correctFormat: true, validator: $v(validators.date), allowInvalid: true},
+                                {data: "actuals.toDate", title: "Actual to date", type: "date", datePickerConfig: {firstDay: 1}, dateFormat: DATE_FORMAT, correctFormat: true, validator: $v(validators.date), allowInvalid: true},
+                                {data: "actuals.workItems", title: "Work items completed", type: "numeric", validator: $v(validators.positiveInteger), allowInvalid: true},
                             ]}
                             />
 
@@ -222,6 +245,10 @@ export default class BulkAddSolution extends Component {
                 !solution.team.rampUp.throughputScalingHighGuess
             ) {
                 solution.team.rampUp = null;
+            }
+
+            if(!solution.actuals.status) {
+                solution.actuals.status = ActualsStatus.notStarted;
             }
             
             solution = newSolution(solution);

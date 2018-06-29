@@ -1,6 +1,7 @@
 import _ from 'lodash';
+import moment from 'moment';
 
-import { EstimateType, ThroughputType, Solution } from '../collections/projects';
+import { EstimateType, ThroughputType, Solution, ActualsStatus } from '../collections/projects';
 
 import MonteCarloSimulator from './montecarlo';
 
@@ -31,7 +32,7 @@ export class SolutionSimulator extends MonteCarloSimulator {
 
         const backlog = this.solution.backlog;
 
-        let totalBacklog = 0;
+        let totalBacklog = 0, actualsToDate = 0;
 
         // initial size: random number between `backlog.lowGuess` and `backlog.highGuess`
         const initialBacklog = _.random(backlog.lowGuess, backlog.highGuess);
@@ -56,12 +57,19 @@ export class SolutionSimulator extends MonteCarloSimulator {
             }
         });
 
+        // subtract actuals to date if we have some
+        if(!_.isEmpty(this.solution.actuals) && this.solution.actuals.status !== ActualsStatus.notStarted) {
+            actualsToDate = this.solution.actuals.workItems || 0;
+            totalBacklog = Math.max(0, totalBacklog - actualsToDate);
+        }
+
         this.backlog = totalBacklog;
 
         if(this.includeMetadata) {
             this.metadata = {
                 totalBacklog,
                 initialBacklog,
+                actualsToDate,
                 splits,
                 risks,
                 periods: []
@@ -80,9 +88,15 @@ export class SolutionSimulator extends MonteCarloSimulator {
     }
     
     getThroughputSample(periodNumber) {
-        const team = this.solution.team;
-        let periodThroughput = 0,
-            scalingFactor = 1;
+        const team = this.solution.team,
+              actuals = this.solution.actuals;
+        
+        let periodThroughput = 0;
+
+        // account for actuals
+        if(!_.isEmpty(actuals) && actuals.status !== ActualsStatus.notStarted) {
+            periodNumber += moment(actuals.toDate).diff(actuals.startDate, 'weeks') / this.solution.throughputPeriodLength;
+        }
 
         if(team.throughputType === ThroughputType.samples) {
             periodThroughput = _.sample(team.throughputSamples.map(s => s.throughput))
@@ -92,7 +106,7 @@ export class SolutionSimulator extends MonteCarloSimulator {
 
         // account for ramp-up
         if(team.rampUp && periodNumber <= team.rampUp.duration) {
-            scalingFactor = _.random(team.rampUp.throughputScalingLowGuess, team.rampUp.throughputScalingHighGuess, true);
+            let scalingFactor = _.random(team.rampUp.throughputScalingLowGuess, team.rampUp.throughputScalingHighGuess, true);
             periodThroughput = _.round(periodThroughput * scalingFactor);
         }
 
