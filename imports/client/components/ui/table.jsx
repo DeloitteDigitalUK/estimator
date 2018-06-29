@@ -64,6 +64,7 @@ export default class Table extends Component {
         tableConfig: PropTypes.object,
 
         // shortcut properties passed to handsontable
+        minSpareRows: PropTypes.number,
         readOnly: PropTypes.bool,
         width: PropTypes.number,
         height: PropTypes.number,
@@ -82,9 +83,9 @@ export default class Table extends Component {
     static defaultProps = {
         updateData: false,
         idProp: '_id',
+        minSpareRows: null, // defaults to 0 or 1 depending on `readOnly`
         tableConfig: {
             contextMenu: ['row_above', 'row_below', 'remove_row', 'undo', 'redo'],
-            minSpareRows: 1,
             autoColumnSize: true,
             autoWrapRow: true,
             allowInvalid: false,
@@ -205,7 +206,7 @@ export default class Table extends Component {
             sortIndicator: this.props.sortIndicator,
             width: this.props.width,
             height: this.props.height,
-            minSpareRows: this.props.readOnly? 0 : 1,
+            minSpareRows: !_.isNull(this.props.minSpareRows)? this.props.minSpareRows : this.props.readOnly? 0 : 1,
             readOnly: this.props.readOnly,
             dataSchema: this.props.dataSchema,
             columns: this.props.columns,
