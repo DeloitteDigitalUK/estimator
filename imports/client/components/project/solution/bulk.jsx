@@ -537,7 +537,7 @@ export class BulkEditSolutions extends Component {
         let solutionsByIndex = {};
         for(let i = 0; i < this.props.project.solutions.length; ++i) {
             let editedSolution = solutions[this.props.project.solutions[i]._id];
-            if(!_.isEmpty(editedSolution)) {
+            if(!_.isUndefined(editedSolution)) {
                 solutionsByIndex[`solutions.${i}`] = editedSolution;
             }
         }
