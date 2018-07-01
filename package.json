@@ -21,6 +21,7 @@
     "moment-range": "^3.0.3",
     "numbro": "^1.11.0",
     "nvd3": "^1.8.6",
+    "pptxgenjs": "^2.2.0",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-addons-pure-render-mixin": "^15.6.0",
@@ -33,6 +34,7 @@
     "react-router-dom": "^4.2.2",
     "react-select": "^1.0.0-rc.10",
     "react-sortable-hoc": "^0.6.7",
+    "sanitize-filename": "^1.6.1",
     "simpl-schema": "^0.3.2",
     "toposort-keys": "^1.0.4",
     "xlsx-template": "^0.1.1"

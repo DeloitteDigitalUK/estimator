@@ -6,6 +6,7 @@ import { ModalLinkContainer } from '../routing';
 import SolutionList from './solution/list';
 import Plan from './plan';
 import ResourceForecast from './resources';
+import POAPExport from './poap';
 
 const ViewProject = ({ project, match }) => {
 
@@ -67,6 +68,23 @@ const ViewProject = ({ project, match }) => {
                     </HelpBlock>
 
                     <ResourceForecast project={project} />
+
+                </Panel>
+                )}
+
+                {project.solutions.length > 0 && (
+                <Panel collapsible header="Download plan on a page" eventKey="poap">
+
+                    <HelpBlock>
+                        <p>
+                            To download a copy of the plan in PowerPoint format, set the relevant
+                            simuation parameters below and click <em>Download plan</em>. This will
+                            run a new simulation each time, so it is possible that the outputs will
+                            be slightly different on multiple runs, even if nothing changes!
+                        </p>
+                    </HelpBlock>
+
+                    <POAPExport project={project} />
 
                 </Panel>
                 )}

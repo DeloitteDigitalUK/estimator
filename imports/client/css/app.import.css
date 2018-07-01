@@ -111,8 +111,14 @@ body {
  * Project CRUD
  */
 
- .date-input input {
+ .number-input input,
+ .date-input input,
+ .dropdown-input .Select {
     max-width: 150px;
+}
+
+.date-input .input-group {
+    max-width: 180px;
 }
 
 .data-table {
