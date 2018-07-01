@@ -74,8 +74,8 @@ const SolutionsTable = ({project, data, ...props}) => (
             {data: "teamId", title: "Team", ...KeyValueAutocompleteCell,
                 handsontable: {
                     columns: [
-                        {title: "Name", width: 150, data: 'name'},
-                        {title: "Description", width: 400, data: 'description'},
+                        {title: "Name", width: 300, data: 'name'},
+                        {title: "Description", width: 300, data: 'description'},
                     ],
                     getValue: getIdValue
                 },
@@ -85,7 +85,7 @@ const SolutionsTable = ({project, data, ...props}) => (
             {data: "workstreamId", title: "Workstream", ...KeyValueAutocompleteCell,
                 handsontable: {
                     columns: [
-                        {title: "Name", width: 150, data: 'name'},
+                        {title: "Name", width: 300, data: 'name'},
                         {title: "Description", width: 400, data: 'description'},
                     ],
                     getValue: getIdValue
@@ -193,7 +193,7 @@ const solutionToRow = (project, solution) => {
     return row;
 };
 
-const rowToSolution = (row) => {
+const rowToSolution = (project, row) => {
 
     let solution = _.cloneDeep(row);
 
@@ -228,6 +228,28 @@ const rowToSolution = (row) => {
 
     if(solution.actuals.toDate && _.isString(solution.actuals.toDate)) {
         solution.actuals.toDate = moment.utc(solution.actuals.toDate, DATE_FORMAT).toDate();
+    }
+
+    if(solution.teamId) {
+        if(!_.find(project.teams, v => v._id === solution.teamId)) {
+            const teamByName = _.find(project.teams, v => v.name === solution.teamId);
+            if(teamByName) {
+                solution.teamId = teamByName._id;
+            } else {
+                solution.teamId = null;
+            }
+        }
+    }
+
+    if(solution.workstreamId) {
+        if(!_.find(project.workstreams, v => v._id === solution.workstreamId)) {
+            const workstreamByName = _.find(project.workstreams, v => v.name === solution.workstreamId);
+            if(workstreamByName) {
+                solution.workstreamId = workstreamByName._id;
+            } else {
+                solution.workstreamId = null;
+            }
+        }
     }
 
     return solution;
@@ -267,6 +289,11 @@ export class BulkAddSolutions extends Component {
                     team members. You can of course edit any solution after it
                     has been created to make further changes.
                 </p>
+                <p>
+                    <em>Hint:</em> To paste in multiple rows, first create a
+                    series of blank rows by using the <code>Enter</code> key 
+                    in the bottom left cell.
+                </p> 
 
                 {this.state.invalid? <Alert bsStyle="danger">
                     Please correct the indicated errors.
@@ -331,7 +358,7 @@ export class BulkAddSolutions extends Component {
 
         let solutions = [], errors = [];
         for(let row of this.state.solutions) {
-            let solution = newSolution(rowToSolution(row));
+            let solution = newSolution(rowToSolution(this.props.project, row));
 
             try {
                 Solution.validate(solution);
@@ -485,7 +512,7 @@ export class BulkEditSolutions extends Component {
 
         let solutions = {}, errors = [];
         for(let row of this.state.solutions) {
-            let solution = rowToSolution(_.cloneDeep(row));
+            let solution = rowToSolution(this.props.project, row);
             
             try {
                 Solution.validate(solution);
