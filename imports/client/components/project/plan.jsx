@@ -3,7 +3,6 @@ import moment from 'moment';
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { Alert, ControlLabel, FormControl } from 'react-bootstrap';
 import Timeline from 'react-calendar-timeline'
 import Select from 'react-select';
@@ -114,9 +113,10 @@ export default class Plan extends Component {
                         </ControlLabel>
                         <Select
                             value={groupBy}
+                            clearable={false}
                             onChange={value => { this.setState({ groupBy: value.value }); }}
                             options={[
-                                { value: GroupBy.solution, label: "Solition" },
+                                { value: GroupBy.solution, label: "Solution" },
                                 { value: GroupBy.team, label: "Team" },
                                 { value: GroupBy.workstream, label: "Work stream" }
                             ]}
