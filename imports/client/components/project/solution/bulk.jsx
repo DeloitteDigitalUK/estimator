@@ -131,7 +131,7 @@ const SolutionsTable = ({project, data, ...props}) => (
             {data: "backlog.highSplitRate", title: "Split rate (high)", type: "numeric",  format: '0,0.00', validator: $v(validators.positiveNumber), allowInvalid: true},
             {data: "team.throughputEstimate.lowGuess", title: "Throughput (low)", type: "numeric", validator: $v(validators.requiredPositiveInteger), allowInvalid: true},
             {data: "team.throughputEstimate.highGuess", title: "Throughput (high)", type: "numeric", validator: $v(validators.requiredPositiveInteger), allowInvalid: true},
-            {data: "team.rampUp.duration", title: "Ramp up (weeks)", type: "numeric", validator: $v(validators.positiveInteger), allowInvalid: true},
+            {data: "team.rampUp.duration", title: "Ramp up (periods)", type: "numeric", validator: $v(validators.positiveInteger), allowInvalid: true},
             {data: "team.rampUp.throughputScalingLowGuess", title: "Scaling (low)", type: "numeric", format: '0,0.00', validator: $v(validators.positiveNumber), allowInvalid: true},
             {data: "team.rampUp.throughputScalingHighGuess", title: "Scaling (high)", type: "numeric", format: '0,0.00', validator: $v(validators.positiveNumber), allowInvalid: true},
             {data: "actuals.status", title: "Progress", ...KeyValueAutocompleteCell,
