@@ -260,7 +260,7 @@ class GridWriter {
                 name = this.barToName(bar),
                 x = this.colToX(this.barsBox, bar.startCol),
                 y = this.rowToY(this.barsBox, bar.row) + padding,
-                w = this.colsToWidth((bar.endCol - bar.startCol) + 1) - padding,
+                w = this.colsToWidth((bar.endCol - bar.startCol) + 1),
                 h = this.rowHeight - (padding * 2);
             
             slide.addText(name, { 
@@ -544,7 +544,7 @@ export default class POAPExport extends Component {
             lanesBox: {x: 0.31, y: 1.57, w: 1.09, h: 9.90},
             barsBox: {x: 1.57, y: 1.57, w: 14.7, h: 9.90},
             rowHeight: 0.31,
-            barPadding: 0.01,
+            barPadding: 0.02,
             maxColWidth: 0.16,
             onNewSlide: (slide) => {
                 slide.addText(slideName, {
