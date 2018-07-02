@@ -361,6 +361,21 @@ body {
     font-weight: bold;
 }
 
+.project-resources-table {
+    margin-bottom: 1em;
+}
+
 .Select-menu-outer {
     z-index: 500;
+}
+
+/* 
+ * Bulk add/edit
+ */
+
+ .bulk-add .handsontable,
+ .bulk-edit .handsontable {
+    height: 700px;
+    width: 1140px;
+    overflow: hidden;
 }

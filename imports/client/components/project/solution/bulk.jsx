@@ -68,6 +68,7 @@ const SolutionsTable = ({project, data, ...props}) => (
                 workItems: null
             }
         }}
+        fixedColumnsLeft={1}
         columns={[
             {data: "name", title: "Name", width: 150, validator: $v(validators.required), allowInvalid: true},
             {data: "description", title: "Description", width: 200},
@@ -279,7 +280,7 @@ export class BulkAddSolutions extends Component {
         const { project } = this.props;
 
         return (
-            <div>
+            <div className="bulk-add">
                 <h1 className="page-header">Bulk add solutions</h1>
                 <p>
                     Use this table to create multiple solutions in one go.
@@ -423,7 +424,7 @@ export class BulkEditSolutions extends Component {
         const { project } = this.props;
 
         return (
-            <div>
+            <div className="bulk-edit">
                 <h1 className="page-header">Bulk edit solutions</h1>
                 <p>
                     Use this table to edit solutions in one go.
