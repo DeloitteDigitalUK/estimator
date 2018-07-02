@@ -378,3 +378,8 @@ body {
     height: 700px;
     overflow: hidden;
 }
+
+.bulk-add .handsontable .handsontable,
+ .bulk-edit .handsontable .handsontable {
+    overflow: visible;
+}
