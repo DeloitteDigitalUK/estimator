@@ -376,6 +376,5 @@ body {
  .bulk-add .handsontable,
  .bulk-edit .handsontable {
     height: 700px;
-    width: 1140px;
     overflow: hidden;
 }
