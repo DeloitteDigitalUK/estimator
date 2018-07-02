@@ -345,7 +345,7 @@ class GridWriter {
             
             slide.addText(name, { 
                 shape: this.pptx.shapes.RECTANGLE,
-                align: 'l',
+                align: 'c',
                 valign: 'middle',
                 x, y, w, h,
                 bold: true,

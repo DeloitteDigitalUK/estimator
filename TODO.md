@@ -1,5 +1,7 @@
 # Estimator Todo
 
+## Actions
+
 ## Bugs
 
 - When creating a new project and adding a solution for the first time, the
