@@ -366,9 +366,9 @@ class GridWriter {
               team = _.find(project.teams || [], t => t._id === solution.teamId),
               workstream = _.find(project.workstreams || [], t => t._id === solution.workstreamId);
         
-        return this.groupBy === GroupBy.team? `${workstream && workstream.name + ': '}${solution.name}` :
-               this.groupBy === GroupBy.workstream? `${solution.name}${team && ' [' + team.name + ']'}` :
-               `${workstream && workstream.name + ': '}${solution.name}${team && ' [' + team.name + ']'}`
+        return this.groupBy === GroupBy.team? `${workstream && (workstream.name + ': ') || ""}${solution.name}` :
+               this.groupBy === GroupBy.workstream? `${solution.name}${team && (' [' + team.name + ']') || ""}` :
+               `${workstream && (workstream.name + ': ') || ""}${solution.name}${team && (' [' + team.name + ']') || ""}`
     }
 
     // row -> slide index

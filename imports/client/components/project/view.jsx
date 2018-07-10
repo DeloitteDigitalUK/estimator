@@ -73,7 +73,7 @@ const ViewProject = ({ project, match }) => {
                 )}
 
                 {project.solutions.length > 0 && (
-                <Panel collapsible header="Download plan on a page" eventKey="poap">
+                <Panel collapsible defaultExpanded header="Download plan on a page" eventKey="poap">
 
                     <HelpBlock>
                         <p>
